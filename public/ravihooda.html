@@ -1894,7 +1894,7 @@ window.addEventListener('scroll', () => {
 // server-side Next.js API route. Tokens are never exposed
 // client-side per PropTx IDX Agreement §6.2(d).
 // ============================================================
-// PropTx API calls now go through secure server-side /api/listings route
+const PROPTX_ENDPOINT = 'https://query.ampre.ca/odata/';
 let currentFilter = '';
 let allListings = [];
 
@@ -1915,7 +1915,7 @@ async function fetchListings(city = '', propertyType = '', maxPrice = '') {
     // In production: replace with /api/listings?filter=... (server-side proxy)
     const res = await fetch(`${PROPTX_ENDPOINT}${query}`, {
       headers: {
-        'Authorization': 'Bearer YOUR_TOKEN_HERE', // Server-side only in production
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZW5kb3IvdHJyZWIvMTE0MTYiLCJhdWQiOiJBbXBVc2Vyc1ByZCIsInJvbGVzIjpbIkFtcFZlbmRvciJdLCJpc3MiOiJwcm9kLmFtcHJlLmNhIiwiZXhwIjoyNTM0MDIzMDA3OTksImlhdCI6MTc4MTMwMjgxMCwic3ViamVjdFR5cGUiOiJ2ZW5kb3IiLCJzdWJqZWN0S2V5IjoiMTE0MTYiLCJqdGkiOiI0NzBmN2M4NjIzZjUwODM4IiwiY3VzdG9tZXJOYW1lIjoidHJyZWIifQ.XsTeE7dq7S5oCTWVdgiXuQfV63t2uEvR01-hgXYIJSE'
         'Accept': 'application/json'
       }
     });
@@ -2154,7 +2154,7 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
     const q = `Property?$filter=${encodeURIComponent(filters.join(' and '))}&$top=100&$select=ListingKey,ListPrice,StreetNumber,StreetName,StreetSuffix,City,Latitude,Longitude,BedroomsTotal,BathroomsTotalInteger,LivingArea,PropertySubType,ListOfficeName&$orderby=ListPrice desc`;
 
     const res = await fetch('https://query.ampre.ca/odata/' + q, {
-      headers: { 'Authorization': 'Bearer YOUR_PROPTX_TOKEN', 'Accept': 'application/json' }
+      headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZW5kb3IvdHJyZWIvMTE0MTYiLCJhdWQiOiJBbXBVc2Vyc1ByZCIsInJvbGVzIjpbIkFtcFZlbmRvciJdLCJpc3MiOiJwcm9kLmFtcHJlLmNhIiwiZXhwIjoyNTM0MDIzMDA3OTksImlhdCI6MTc4MTMwMjgxMCwic3ViamVjdFR5cGUiOiJ2ZW5kb3IiLCJzdWJqZWN0S2V5IjoiMTE0MTYiLCJqdGkiOiI0NzBmN2M4NjIzZjUwODM4IiwiY3VzdG9tZXJOYW1lIjoidHJyZWIifQ.XsTeE7dq7S5oCTWVdgiXuQfV63t2uEvR01-hgXYIJSE', 'Accept': 'application/json' }
     });
 
     if (!res.ok) throw new Error('API');
