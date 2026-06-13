@@ -1913,12 +1913,13 @@ async function fetchListings(city = '', propertyType = '', maxPrice = '') {
     const query = `Property?$filter=${encodeURIComponent(filterStr)}&$top=100&$orderby=ListPrice desc&$select=ListingKey,ListPrice,StreetNumber,StreetName,StreetSuffix,City,BedroomsTotal,BathroomsTotalInteger,LivingArea,PropertySubType,ListOfficeName,PublicRemarks,Media`;
     
     // In production: replace with /api/listings?filter=... (server-side proxy)
-    const res = await fetch(`${PROPTX_ENDPOINT}${query}`, {
-      headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZW5kb3IvdHJyZWIvMTE0MTYiLCJhdWQiOiJBbXBVc2Vyc1ByZCIsInJvbGVzIjpbIkFtcFZlbmRvciJdLCJpc3MiOiJwcm9kLmFtcHJlLmNhIiwiZXhwIjoyNTM0MDIzMDA3OTksImlhdCI6MTc4MTMwMjgxMCwic3ViamVjdFR5cGUiOiJ2ZW5kb3IiLCJzdWJqZWN0S2V5IjoiMTE0MTYiLCJqdGkiOiI0NzBmN2M4NjIzZjUwODM4IiwiY3VzdG9tZXJOYW1lIjoidHJyZWIifQ.XsTeE7dq7S5oCTWVdgiXuQfV63t2uEvR01-hgXYIJSE'
-        'Accept': 'application/json'
-      }
-    });
+    const params = new URLSearchParams();
+    if (city) params.set('city', city);
+    if (propertyType) params.set('type', propertyType);
+    if (maxPrice) params.set('maxPrice', maxPrice);
+    if (minPrice) params.set('minPrice', minPrice);
+    if (beds) params.set('beds', beds);
+    const res = await fetch('/api/listings?' + params.toString());
     
     if (!res.ok) throw new Error('API error');
     const data = await res.json();
@@ -2153,9 +2154,13 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
 
     const q = `Property?$filter=${encodeURIComponent(filters.join(' and '))}&$top=100&$select=ListingKey,ListPrice,StreetNumber,StreetName,StreetSuffix,City,Latitude,Longitude,BedroomsTotal,BathroomsTotalInteger,LivingArea,PropertySubType,ListOfficeName&$orderby=ListPrice desc`;
 
-    const res = await fetch('https://query.ampre.ca/odata/' + q, {
-      headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2ZW5kb3IvdHJyZWIvMTE0MTYiLCJhdWQiOiJBbXBVc2Vyc1ByZCIsInJvbGVzIjpbIkFtcFZlbmRvciJdLCJpc3MiOiJwcm9kLmFtcHJlLmNhIiwiZXhwIjoyNTM0MDIzMDA3OTksImlhdCI6MTc4MTMwMjgxMCwic3ViamVjdFR5cGUiOiJ2ZW5kb3IiLCJzdWJqZWN0S2V5IjoiMTE0MTYiLCJqdGkiOiI0NzBmN2M4NjIzZjUwODM4IiwiY3VzdG9tZXJOYW1lIjoidHJyZWIifQ.XsTeE7dq7S5oCTWVdgiXuQfV63t2uEvR01-hgXYIJSE', 'Accept': 'application/json' }
-    });
+    const mapParams = new URLSearchParams();
+    if (city) mapParams.set('city', city);
+    if (propType) mapParams.set('type', propType);
+    if (minP) mapParams.set('minPrice', minP);
+    if (maxP) mapParams.set('maxPrice', maxP);
+    if (beds) mapParams.set('beds', beds);
+    const res = await fetch('/api/listings?' + mapParams.toString());
 
     if (!res.ok) throw new Error('API');
     const data = await res.json();
