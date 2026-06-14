@@ -1898,38 +1898,35 @@ const PROPTX_ENDPOINT = 'https://query.ampre.ca/odata/';
 let currentFilter = '';
 let allListings = [];
 
-async function fetchListings(city = '', propertyType = '', maxPrice = '') {
+async function fetchListings(city = '', propertyType = '', maxPrice = '', minPrice = '', beds = '') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
   
   try {
-    // Build OData filter — max 100 per IDX Agreement §6.3(b)
-    let filters = ['MlsStatus eq \'Active\''];
-    if (city) filters.push(`City eq '${city}'`);
-    if (propertyType) filters.push(`PropertySubType eq '${propertyType}'`);
-    if (maxPrice) filters.push(`ListPrice le ${maxPrice}`);
-    
-    const filterStr = filters.join(' and ');
-    const query = `Property?$filter=${encodeURIComponent(filterStr)}&$top=100&$orderby=ListPrice desc&$select=ListingKey,ListPrice,StreetNumber,StreetName,StreetSuffix,City,BedroomsTotal,BathroomsTotalInteger,LivingArea,PropertySubType,ListOfficeName,PublicRemarks,Media`;
-    
-    // In production: replace with /api/listings?filter=... (server-side proxy)
     const params = new URLSearchParams();
     if (city) params.set('city', city);
     if (propertyType) params.set('type', propertyType);
     if (maxPrice) params.set('maxPrice', maxPrice);
     if (minPrice) params.set('minPrice', minPrice);
     if (beds) params.set('beds', beds);
-    const res = await fetch('/api/listings?' + params.toString());
     
-    if (!res.ok) throw new Error('API error');
+    const res = await fetch('/api/listings?' + params.toString());
+    if (!res.ok) throw new Error('API returned ' + res.status);
     const data = await res.json();
+    if (data.error) throw new Error(data.error);
     allListings = data.value || [];
+    if (allListings.length === 0) {
+      grid.innerHTML = '<p style="color:var(--gray);text-align:center;padding:40px;grid-column:1/-1">No listings found. <a href="#contact" style="color:var(--sky)">Contact us</a> for off-market options.</p>';
+      return;
+    }
     renderListings(allListings);
   } catch(e) {
-    // Fallback to sample cards while API is being configured
-    renderSampleListings();
+    console.error('Listings fetch error:', e);
+    grid.innerHTML = '<p style="color:var(--gray);text-align:center;padding:40px;grid-column:1/-1">Unable to load listings right now. Please try again shortly.</p>';
   }
 }
+
+function renderListings
 
 function renderListings(listings) {
   const grid = document.getElementById('listingsGrid');
@@ -2160,6 +2157,12 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
     if (propType) mapParams.set('type', propType);
     if (minP) mapParams.set('minPrice', minP);
     if (maxP) mapParams.set('maxPrice', maxP);
+    if (beds) mapParams.set('beds', beds);
+    const mapParams = new URLSearchParams();
+    if (city) mapParams.set('city', city);
+    if (propType) mapParams.set('type', propType);
+    if (minPrice) mapParams.set('minPrice', minPrice);
+    if (maxPrice) mapParams.set('maxPrice', maxPrice);
     if (beds) mapParams.set('beds', beds);
     const res = await fetch('/api/listings?' + mapParams.toString());
 
