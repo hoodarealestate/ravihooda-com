@@ -1889,122 +1889,91 @@ window.addEventListener('scroll', () => {
 });
 
 // ============================================================
-// LISTINGS — PropTx OData API integration
-// Note: In production, all API calls must go through a
-// server-side Next.js API route. Tokens are never exposed
-// client-side per PropTx IDX Agreement §6.2(d).
+// LISTINGS
 // ============================================================
-const PROPTX_ENDPOINT = 'https://query.ampre.ca/odata/';
-let currentFilter = '';
 let allListings = [];
+let currentFilter = '';
 
-async function fetchListings(city = '', propertyType = '', maxPrice = '', minPrice = '', beds = '') {
+async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
   try {
-    const params = new URLSearchParams();
-    if (city) params.set('city', city);
-    if (propertyType) params.set('type', propertyType);
-    if (maxPrice) params.set('maxPrice', maxPrice);
-    if (minPrice) params.set('minPrice', minPrice);
-    if (beds) params.set('beds', beds);
-    const res = await fetch(window.location.origin + '/api/listings?' + params.toString());
-    if (!res.ok) throw new Error('API ' + res.status);
-    const data = await res.json();
-    allListings = data.value || [];
+    const p = new URLSearchParams();
+    if (city) p.set('city', city);
+    if (propertyType) p.set('type', propertyType);
+    if (maxPrice) p.set('maxPrice', maxPrice);
+    if (minPrice) p.set('minPrice', minPrice);
+    if (beds) p.set('beds', beds);
+    const url = '/api/listings?' + p.toString();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    allListings = json.value || [];
+    if (!allListings.length) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No listings found. Try different filters.</p>';
+      return;
+    }
     renderListings(allListings);
-  } catch(e) {
-    console.error('fetchListings error:', e);
-    grid.innerHTML = '<p style="text-align:center;padding:40px;color:var(--gray)">Unable to load listings. Please refresh the page.</p>';
+  } catch(err) {
+    console.error('Listings error:', err);
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">Could not load listings — please refresh.</p>';
   }
 }
 
-function renderListings(listings) {
+function renderListings(list) {
   const grid = document.getElementById('listingsGrid');
-  if (!listings.length) {
-    grid.innerHTML = '<p style="color:var(--gray);text-align:center;padding:40px;grid-column:1/-1">No listings found for this search. <a href="#contact" style="color:var(--sky)">Contact us</a> for off-market options.</p>';
-    return;
-  }
-  const badges = ['badge-new','badge-open','badge-featured'];
-  const badgeLabels = ['New Listing','Open House','Featured'];
-  grid.innerHTML = listings.slice(0,9).map((l, i) => {
-    const price = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
-    const address = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
-    const beds = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
-    const baths = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
-    const sqftVal = l.LivingArea || l.BuildingAreaTotal;
-    const sqft = sqftVal ? Number(sqftVal).toLocaleString() + ' sqft' : '—';
+  const badges = [['badge-new','New Listing'],['badge-open','Open House'],['badge-featured','Featured']];
+  grid.innerHTML = list.slice(0,9).map((l,i) => {
+    const price  = l.ListPrice ? '\$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
+    const addr   = [l.StreetNumber,l.StreetName,l.StreetSuffix].filter(Boolean).join(' ') + (l.City?', '+l.City:'');
+    const beds   = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+    const baths  = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+    const sqft   = (l.LivingArea||l.BuildingAreaTotal) ? Number(l.LivingArea||l.BuildingAreaTotal).toFixed(0)+' sqft' : '—';
     const broker = l.ListOfficeName || 'Listing Brokerage';
-    const bIdx = i % 3;
-    return `
+    const [badgeCls,badgeLbl] = badges[i%3];
+    return \`
       <div class="listing-card">
         <div class="listing-img">
-          <div class="listing-img-placeholder"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg><div style="font-size:0.75rem;color:#9CA3AF;margin-top:8px">Property Photo</div></div>
-          <span class="listing-badge ${badges[bIdx]}">${badgeLabels[bIdx]}</span>
-          <span class="listing-broker" title="${broker}">${broker}</span>
+          <div class="listing-img-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg>
+            <span style="font-size:.75rem;color:#9CA3AF;margin-top:8px">Property Photo</span>
+          </div>
+          <span class="listing-badge \${badgeCls}">\${badgeLbl}</span>
+          <span class="listing-broker" title="\${broker}">\${broker}</span>
         </div>
         <div class="listing-body">
-          <div class="listing-price">${price}</div>
-          <div class="listing-address">${address}</div>
+          <div class="listing-price">\${price}</div>
+          <div class="listing-address">\${addr}</div>
           <div class="listing-meta">
-            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M2 4v16M2 8h20v12M2 12h4"/><rect x="8" y="8" width="4" height="4" rx="1"/><rect x="14" y="8" width="4" height="4" rx="1"/></svg> ${beds} bed</span>
-            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M4 12H2v4a2 2 0 002 2h16a2 2 0 002-2v-4H4z"/><path d="M4 12V5a2 2 0 012-2h1a2 2 0 012 2v7"/></svg> ${baths} bath</span>
-            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polyline points="3 3 3 21 21 21"/><polyline points="3 17 9 11 13 15 17 11 21 7"/></svg> ${sqft}</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M2 4v16M2 8h20v12M2 12h4"/><rect x="8" y="8" width="4" height="4" rx="1"/><rect x="14" y="8" width="4" height="4" rx="1"/></svg>\${beds} bed</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M4 12H2v4a2 2 0 002 2h16a2 2 0 002-2v-4H4z"/><path d="M4 12V5a2 2 0 012-2h1a2 2 0 012 2v7"/></svg>\${baths} bath</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polyline points="3 3 3 21 21 21"/><polyline points="3 17 9 11 13 15 17 11 21 7"/></svg>\${sqft}</span>
           </div>
         </div>
-      </div>`;
+      </div>\`;
   }).join('');
-}
-
-function renderSampleListings() {
-  const samples = [
-    {price:'$1,249,000',addr:'42 Maple Crest Dr, Vaughan',beds:4,baths:3,sqft:'2,450',badge:'badge-new',bl:'New Listing',broker:'Century 21 Red Star Realty Inc.'},
-    {price:'$899,000',addr:'187 Lakeview Blvd, Mississauga',beds:3,baths:2,sqft:'1,800',badge:'badge-featured',bl:'Featured',broker:'Royal LePage Realty Plus'},
-    {price:'$1,575,000',addr:'28 Heritage Crt, Markham',beds:5,baths:4,sqft:'3,100',badge:'badge-open',bl:'Open House',broker:'RE/MAX Hallmark Realty'},
-    {price:'$649,000',addr:'910-55 Bloor St W, Toronto',beds:2,baths:2,sqft:'950',badge:'badge-new',bl:'New Listing',broker:'Bosley Real Estate'},
-    {price:'$2,100,000',addr:'14 Ravine Ridge Rd, Oakville',beds:5,baths:5,sqft:'4,200',badge:'badge-featured',bl:'Featured',broker:'Century 21 Red Star Realty Inc.'},
-    {price:'$785,000',addr:'33 Sandalwood Pkwy, Brampton',beds:3,baths:3,sqft:'1,650',badge:'badge-new',bl:'New Listing',broker:'iPro Realty Ltd.'},
-  ];
-  const grid = document.getElementById('listingsGrid');
-  grid.innerHTML = samples.map(s => `
-    <div class="listing-card">
-      <div class="listing-img">
-        <div class="listing-img-placeholder"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg><div style="font-size:0.75rem;color:#9CA3AF;margin-top:8px">Property Photo</div></div>
-        <span class="listing-badge ${s.badge}">${s.bl}</span>
-        <span class="listing-broker">${s.broker}</span>
-      </div>
-      <div class="listing-body">
-        <div class="listing-price">${s.price}</div>
-        <div class="listing-address">${s.addr}</div>
-        <div class="listing-meta">
-          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M2 4v16M2 8h20v12M2 12h4"/><rect x="8" y="8" width="4" height="4" rx="1"/><rect x="14" y="8" width="4" height="4" rx="1"/></svg> ${s.beds} bed</span>
-          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M4 12H2v4a2 2 0 002 2h16a2 2 0 002-2v-4H4z"/><path d="M4 12V5a2 2 0 012-2h1a2 2 0 012 2v7"/></svg> ${s.baths} bath</span>
-          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polyline points="3 3 3 21 21 21"/><polyline points="3 17 9 11 13 15 17 11 21 7"/></svg> ${s.sqft} sqft</span>
-        </div>
-      </div>
-    </div>`).join('');
 }
 
 function filterListings(btn, type) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentFilter = type;
-  const city = document.getElementById('heroCity')?.value || '';
-  fetchListings(city, type);
+  fetchListings('', type);
 }
 
 function searchListings() {
-  const city = document.getElementById('heroCity').value;
-  const type = document.getElementById('heroType').value;
-  const price = document.getElementById('heroPrice').value;
+  const city  = document.getElementById('heroCity')?.value || '';
+  const type  = document.getElementById('heroType')?.value || '';
+  const price = document.getElementById('heroPrice')?.value || '';
   fetchListings(city, type, price);
-  document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+  document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 }
 
 function quickSearch(city) {
-  document.getElementById('heroCity').value = city;
-  fetchListings(city, '');
-  document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+  const el = document.getElementById('heroCity');
+  if (el) el.value = city;
+  fetchListings(city);
+  document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 }
 
 // ============================================================
