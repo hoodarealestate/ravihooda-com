@@ -1904,8 +1904,12 @@ async function fetchListings(city='', propertyType='', maxPrice='', minPrice='',
     if (maxPrice) p.set('maxPrice', maxPrice);
     if (minPrice) p.set('minPrice', minPrice);
     if (beds) p.set('beds', beds);
-    const url = '/api/listings?' + p.toString();
-    const res = await fetch(url);
+    const base = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://ravihooda.com';
+    const url = base + '/api/listings?' + p.toString();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     allListings = json.value || [];
