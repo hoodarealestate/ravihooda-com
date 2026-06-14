@@ -1910,7 +1910,7 @@ async function fetchListings(city = '', propertyType = '', maxPrice = '', minPri
     if (minPrice) params.set('minPrice', minPrice);
     if (beds) params.set('beds', beds);
     
-    const res = await fetch('/api/listings?' + params.toString());
+    const res = await fetch(window.location.origin + '/api/listings?' + params.toString());
     if (!res.ok) throw new Error('API returned ' + res.status);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
@@ -2164,7 +2164,7 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
     if (minPrice) mapParams.set('minPrice', minPrice);
     if (maxPrice) mapParams.set('maxPrice', maxPrice);
     if (beds) mapParams.set('beds', beds);
-    const res = await fetch('/api/listings?' + mapParams.toString());
+    const res = await fetch(window.location.origin + '/api/listings?' + mapParams.toString());
 
     if (!res.ok) throw new Error('API');
     const data = await res.json();
