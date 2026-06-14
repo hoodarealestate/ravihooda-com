@@ -1901,7 +1901,6 @@ let allListings = [];
 async function fetchListings(city = '', propertyType = '', maxPrice = '', minPrice = '', beds = '') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
-  
   try {
     const params = new URLSearchParams();
     if (city) params.set('city', city);
@@ -1909,24 +1908,16 @@ async function fetchListings(city = '', propertyType = '', maxPrice = '', minPri
     if (maxPrice) params.set('maxPrice', maxPrice);
     if (minPrice) params.set('minPrice', minPrice);
     if (beds) params.set('beds', beds);
-    
     const res = await fetch(window.location.origin + '/api/listings?' + params.toString());
-    if (!res.ok) throw new Error('API returned ' + res.status);
+    if (!res.ok) throw new Error('API ' + res.status);
     const data = await res.json();
-    if (data.error) throw new Error(data.error);
     allListings = data.value || [];
-    if (allListings.length === 0) {
-      grid.innerHTML = '<p style="color:var(--gray);text-align:center;padding:40px;grid-column:1/-1">No listings found. <a href="#contact" style="color:var(--sky)">Contact us</a> for off-market options.</p>';
-      return;
-    }
     renderListings(allListings);
   } catch(e) {
-    console.error('Listings fetch error:', e);
-    grid.innerHTML = '<p style="color:var(--gray);text-align:center;padding:40px;grid-column:1/-1">Unable to load listings right now. Please try again shortly.</p>';
+    console.error('fetchListings error:', e);
+    grid.innerHTML = '<p style="text-align:center;padding:40px;color:var(--gray)">Unable to load listings. Please refresh the page.</p>';
   }
 }
-
-function renderListings
 
 function renderListings(listings) {
   const grid = document.getElementById('listingsGrid');
