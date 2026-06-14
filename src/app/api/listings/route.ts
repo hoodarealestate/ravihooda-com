@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const minPrice     = searchParams.get('minPrice')
     const beds         = searchParams.get('beds')
 
-    // Build OData filter
+    // Standard RESO fields that PropTx supports
     const filters: string[] = ["StandardStatus eq 'Active'"]
     if (city)         filters.push(`City eq '${city}'`)
     if (propertyType) filters.push(`PropertySubType eq '${propertyType}'`)
@@ -20,13 +20,28 @@ export async function GET(req: NextRequest) {
     if (minPrice)     filters.push(`ListPrice ge ${minPrice}`)
     if (beds)         filters.push(`BedroomsTotal ge ${beds}`)
 
-    // Minimal select — only guaranteed PropTx fields
-    const select = 'ListingKey,ListPrice,StreetNumber,StreetName,City,BedroomsTotal,BathroomsTotalInteger,PropertySubType,ListOfficeName,Latitude,Longitude,LivingArea'
+    // Only use core RESO standard fields — no custom PropTx extensions
+    const select = [
+      'ListingKey',
+      'ListPrice',
+      'StreetNumber',
+      'StreetName',
+      'StreetSuffix',
+      'City',
+      'StateOrProvince',
+      'PostalCode',
+      'Latitude',
+      'Longitude',
+      'BedroomsTotal',
+      'BathroomsTotalInteger',
+      'BuildingAreaTotal',
+      'PropertySubType',
+      'ListOfficeName',
+      'StandardStatus',
+      'ListingContractDate'
+    ].join(',')
 
-    // Use $top max 100 per IDX agreement
     const url = `${ENDPOINT}Property?$filter=${encodeURIComponent(filters.join(' and '))}&$top=100&$orderby=ListPrice desc&$select=${select}`
-
-    console.log('PropTx URL:', url)
 
     const res = await fetch(url, {
       headers: { 
@@ -38,27 +53,36 @@ export async function GET(req: NextRequest) {
     })
 
     const responseText = await res.text()
-    console.log('PropTx status:', res.status)
-    console.log('PropTx response:', responseText.substring(0, 500))
 
     if (!res.ok) {
+      // Try to parse error for detail
+      let detail = responseText.substring(0, 300)
+      try {
+        const errJson = JSON.parse(responseText)
+        detail = errJson?.error?.message || detail
+      } catch {}
       return NextResponse.json({ 
         error: `PropTx error: ${res.status}`, 
-        detail: responseText.substring(0, 200),
+        detail,
         value: [] 
       }, { status: 500 })
     }
     
     const data = JSON.parse(responseText)
+    const listings = (data.value || []).map((l: any) => ({
+      ...l,
+      LivingArea: l.BuildingAreaTotal // map to name the HTML expects
+    }))
+
     return NextResponse.json({
-      value: data.value || [],
-      count: (data.value || []).length,
+      value: listings,
+      count: listings.length,
       disclaimer: 'Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.'
     })
   } catch (err: any) {
     console.error('Listings API error:', err)
     return NextResponse.json({ 
-      error: err.message || 'Failed to fetch listings', 
+      error: err.message || 'Failed', 
       value: [] 
     }, { status: 500 })
   }
