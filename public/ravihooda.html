@@ -1941,10 +1941,11 @@ function renderListings(listings) {
   const badgeLabels = ['New Listing','Open House','Featured'];
   grid.innerHTML = listings.slice(0,9).map((l, i) => {
     const price = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
-    const address = `${l.StreetNumber || ''} ${l.StreetName || ''} ${l.StreetSuffix || ''}, ${l.City || ''}`.trim();
-    const beds = l.BedroomsTotal || '—';
-    const baths = l.BathroomsTotalInteger || '—';
-    const sqft = l.LivingArea ? Number(l.LivingArea).toLocaleString() + ' sqft' : '—';
+    const address = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+    const beds = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+    const baths = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+    const sqftVal = l.LivingArea || l.BuildingAreaTotal;
+    const sqft = sqftVal ? Number(sqftVal).toLocaleString() + ' sqft' : '—';
     const broker = l.ListOfficeName || 'Listing Brokerage';
     const bIdx = i % 3;
     return `
@@ -2236,10 +2237,11 @@ function renderMapListings(listings) {
 
 function showInfoWindow(marker, l) {
   const price = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
-  const addr = `${l.StreetNumber||''} ${l.StreetName||''} ${l.StreetSuffix||''}, ${l.City||''}`.trim();
-  const beds = l.BedroomsTotal || '—';
-  const baths = l.BathroomsTotalInteger || '—';
-  const sqft = l.LivingArea ? Number(l.LivingArea).toLocaleString() + ' sqft' : '';
+  const addr = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+  const beds = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+  const baths = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+  const sqftVal = l.LivingArea || l.BuildingAreaTotal;
+  const sqft = sqftVal ? Number(sqftVal).toLocaleString() + ' sqft' : '';
   const broker = l.ListOfficeName || 'Listing Brokerage';
   const type = l.PropertySubType || '';
 
@@ -2280,10 +2282,11 @@ function renderSidebarList(listings) {
   }
   list.innerHTML = listings.map((l, i) => {
     const price = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
-    const addr = `${l.StreetNumber||''} ${l.StreetName||''} ${l.StreetSuffix||''}, ${l.City||''}`.trim();
-    const beds = l.BedroomsTotal || '—';
-    const baths = l.BathroomsTotalInteger || '—';
-    const sqft = l.LivingArea ? Number(l.LivingArea).toLocaleString() : '—';
+    const addr = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+    const beds = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+    const baths = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+    const sqftVal = l.LivingArea || l.BuildingAreaTotal;
+    const sqft = sqftVal ? Number(sqftVal).toLocaleString() : '—';
     const broker = l.ListOfficeName || 'Listing Brokerage';
     return `
       <div class="map-result-card" id="map-card-${l.ListingKey}" onclick="focusMarker(${i}, '${l.ListingKey}')">
