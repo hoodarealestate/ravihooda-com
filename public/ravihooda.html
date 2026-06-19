@@ -2127,8 +2127,11 @@ async function fetchListings(city='', propertyType='', maxPrice='', minPrice='',
     if (maxPrice) p.set('maxPrice', maxPrice);
     if (minPrice) p.set('minPrice', minPrice);
     if (beds) p.set('beds', beds);
-    const base = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://ravihooda.com';
-    const url = base + '/api/listings?' + p.toString();
+    // Same-origin call: the page is served from www.ravihooda.com, but the apex
+    // ravihooda.com 308-redirects there. Hardcoding the apex forced an
+    // unnecessary cross-origin redirect on every load; using the page's own
+    // origin (as the map + power-of-sale fetches already do) avoids it.
+    const url = window.location.origin + '/api/listings?' + p.toString();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     const res = await fetch(url, { signal: controller.signal });
