@@ -1200,6 +1200,29 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 .vow-lock-text { font-size: 0.82rem; font-weight: 600; color: var(--navy); text-align: center; }
 .vow-lock-sub { font-size: 0.72rem; color: var(--gray); text-align: center; }
 
+/* ============================================================
+   POWER OF SALE
+   ============================================================ */
+.nav-pos-link { color: #A8894A !important; font-weight: 600 !important; }
+.pos-gate { display: flex; justify-content: center; padding: 20px 0 40px; }
+.pos-gate-card {
+  background: var(--white); border-radius: 16px; padding: 40px;
+  max-width: 460px; width: 100%; box-shadow: var(--shadow-lg);
+  border-top: 3px solid #A8894A; text-align: center;
+}
+.pos-gate-icon {
+  width: 56px; height: 56px; border-radius: 14px; background: #F5EDD8;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+}
+.pos-gate-form { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.pos-input {
+  padding: 12px 14px; border: 1.5px solid var(--lgray); border-radius: 8px;
+  font-family: var(--font-body); font-size: 0.9rem; color: var(--navy);
+  outline: none; transition: border-color 0.2s; width: 100%;
+}
+.pos-input:focus { border-color: #1C3557; }
+.badge-pos { background: #A8894A; color: #fff; border-radius: 6px; font-size: 0.65rem; }
 </style>
 </head>
 <body>
@@ -1214,6 +1237,7 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
     <div class="nav-links">
       <a href="#listings">Listings</a>
       <a href="#mapsearch">Map Search</a>
+      <a href="#powerofsale" class="nav-pos-link">Power of Sale</a>
       <a href="#services">Services</a>
       <a href="#team">About Us</a>
       <a href="#calculator">Calculator</a>
@@ -1233,6 +1257,7 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 <div class="mobile-menu" id="mobileMenu">
   <a href="#listings" onclick="toggleMenu()">Listings</a>
   <a href="#mapsearch" onclick="toggleMenu()">Map Search</a>
+  <a href="#powerofsale" onclick="toggleMenu()">Power of Sale</a>
   <a href="#services" onclick="toggleMenu()">Services</a>
   <a href="#team" onclick="toggleMenu()">About Us</a>
   <a href="#calculator" onclick="toggleMenu()">Calculator</a>
@@ -1714,6 +1739,51 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 </section>
 
 
+<!-- POWER OF SALE -->
+<section class="section" id="powerofsale" style="background:#F4F1EA">
+  <div class="section-inner">
+    <div class="section-label" style="color:#A8894A">Distressed &amp; Power of Sale</div>
+    <h2 class="section-title">Power of Sale Opportunities</h2>
+    <p class="section-sub">Below-market opportunities across the GTA \u2014 power of sale, court-ordered, and estate properties, pulled live from active MLS\u00ae listings. Register your email for full access and instant alerts when new properties match.</p>
+
+    <!-- Gate -->
+    <div id="posGate" class="pos-gate">
+      <div class="pos-gate-card">
+        <div class="pos-gate-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A8894A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h3 style="margin-bottom:8px">Unlock Power of Sale Listings</h3>
+        <p style="font-size:0.88rem;margin-bottom:20px">Enter your email to view all current power of sale and distressed properties across the GTA \u2014 updated live from MLS\u00ae.</p>
+        <div class="pos-gate-form">
+          <input type="text" id="posName" placeholder="Full Name" class="pos-input"/>
+          <input type="email" id="posEmail" placeholder="Email Address" class="pos-input"/>
+          <input type="tel" id="posPhone" placeholder="Phone (optional)" class="pos-input"/>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="posUnlock()">Unlock Listings \u2192</button>
+        </div>
+        <p class="vow-legal" style="margin-top:14px">By registering you confirm a bona fide interest in the purchase, sale, or lease of real estate. Your information is protected under PIPEDA and never sold.</p>
+      </div>
+    </div>
+
+    <!-- Results (hidden until unlocked) -->
+    <div id="posResults" style="display:none">
+      <div class="listings-header">
+        <div style="font-size:0.85rem;color:var(--gray)">
+          <span id="posResultCount">\u2014</span> power of sale properties found across the GTA
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="loadPowerOfSale()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div id="posGrid" class="listings-grid"></div>
+      <div class="listing-disclaimer">
+        <strong>Important:</strong> "Power of Sale" classification is generated automatically by scanning public listing remarks for relevant keywords and has not been independently verified. Always confirm property status directly with the listing brokerage. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. The information provided herein must only be used by consumers that have a bona fide interest in the purchase, sale, or lease of real estate.
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -1874,6 +1944,102 @@ function showVowWelcome(name) {
 // Check if user is VOW authenticated
 function isVowUser() { return vowUser !== null; }
 
+// ============================================================
+// POWER OF SALE — gated lead capture + live filtered listings
+// ============================================================
+function posUnlock() {
+  const name  = document.getElementById('posName').value.trim();
+  const email = document.getElementById('posEmail').value.trim();
+  const phone = document.getElementById('posPhone').value.trim();
+
+  if (!name || !email) { alert('Please enter your name and email.'); return; }
+  if (!email.includes('@')) { alert('Please enter a valid email.'); return; }
+
+  const lead = { name, email, phone, unlockedAt: new Date().toISOString() };
+  localStorage.setItem('hooda_pos_lead', JSON.stringify(lead));
+
+  // Reuse the same CRM contact capture used by VOW registration
+  if (typeof crmAddContact === 'function') {
+    crmAddContact({ name, email, phone, status: 'POS Lead', source: 'Power of Sale Page',
+      notes: 'Unlocked Power of Sale listings on website', date: new Date().toISOString() });
+  }
+
+  // Notify office via contact API (best-effort, non-blocking)
+  fetch(window.location.origin + '/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      firstName: name.split(' ')[0],
+      lastName: name.split(' ').slice(1).join(' '),
+      email, phone,
+      intent: 'Power of Sale Lead',
+      message: name + ' unlocked the Power of Sale listings page.'
+    })
+  }).catch(() => {});
+
+  document.getElementById('posGate').style.display = 'none';
+  document.getElementById('posResults').style.display = '';
+  loadPowerOfSale();
+}
+
+function posCheckUnlocked() {
+  const stored = localStorage.getItem('hooda_pos_lead');
+  if (stored) {
+    document.getElementById('posGate').style.display = 'none';
+    document.getElementById('posResults').style.display = '';
+    loadPowerOfSale();
+  }
+}
+
+async function loadPowerOfSale() {
+  const grid = document.getElementById('posGrid');
+  grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Scanning live MLS\u00ae listings for Power of Sale properties\u2026</p></div>';
+  try {
+    const res = await fetch(window.location.origin + '/api/power-of-sale');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const list = json.value || [];
+    document.getElementById('posResultCount').textContent = list.length;
+    if (!list.length) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No power of sale properties found right now. <a href="#contact" style="color:#1C3557">Contact us</a> and we will alert you the moment one appears.</p>';
+      return;
+    }
+    grid.innerHTML = list.slice(0, 24).map(l => {
+      const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
+      const addr   = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+      const beds   = l.BedroomsTotal != null ? l.BedroomsTotal : '\u2014';
+      const baths  = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '\u2014';
+      const sqft   = l.LivingArea ? Number(l.LivingArea).toFixed(0) + ' sqft' : '\u2014';
+      const broker = l.ListOfficeName || 'Listing Brokerage';
+      return `
+        <div class="listing-card">
+          <div class="listing-img">
+            <div class="listing-img-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg>
+              <span style="font-size:.75rem;color:#9CA3AF;margin-top:8px">Property Photo</span>
+            </div>
+            <span class="listing-badge badge-pos">Power of Sale</span>
+            <span class="listing-broker" title="${broker}">${broker}</span>
+          </div>
+          <div class="listing-body">
+            <div class="listing-price">${price}</div>
+            <div class="listing-address">${addr}</div>
+            <div class="listing-meta">
+              <span>${beds} bed</span>
+              <span>${baths} bath</span>
+              <span>${sqft}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    console.error('Power of Sale fetch error:', err);
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">Could not load listings right now \u2014 please refresh.</p>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', posCheckUnlocked);
+
 // Initialise on load
 document.addEventListener('DOMContentLoaded', initVow);
 
@@ -1942,19 +2108,19 @@ function renderListings(list) {
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg>
             <span style="font-size:.75rem;color:#9CA3AF;margin-top:8px">Property Photo</span>
           </div>
-          <span class="listing-badge \${badgeCls}">\${badgeLbl}</span>
-          <span class="listing-broker" title="\${broker}">\${broker}</span>
+          <span class="listing-badge ${badgeCls}">${badgeLbl}</span>
+          <span class="listing-broker" title="${broker}">${broker}</span>
         </div>
         <div class="listing-body">
-          <div class="listing-price">\${price}</div>
-          <div class="listing-address">\${addr}</div>
+          <div class="listing-price">${price}</div>
+          <div class="listing-address">${addr}</div>
           <div class="listing-meta">
-            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M2 4v16M2 8h20v12M2 12h4"/><rect x="8" y="8" width="4" height="4" rx="1"/><rect x="14" y="8" width="4" height="4" rx="1"/></svg>\${beds} bed</span>
-            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M4 12H2v4a2 2 0 002 2h16a2 2 0 002-2v-4H4z"/><path d="M4 12V5a2 2 0 012-2h1a2 2 0 012 2v7"/></svg>\${baths} bath</span>
-            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polyline points="3 3 3 21 21 21"/><polyline points="3 17 9 11 13 15 17 11 21 7"/></svg>\${sqft}</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M2 4v16M2 8h20v12M2 12h4"/><rect x="8" y="8" width="4" height="4" rx="1"/><rect x="14" y="8" width="4" height="4" rx="1"/></svg>${beds} bed</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M4 12H2v4a2 2 0 002 2h16a2 2 0 002-2v-4H4z"/><path d="M4 12V5a2 2 0 012-2h1a2 2 0 012 2v7"/></svg>${baths} bath</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polyline points="3 3 3 21 21 21"/><polyline points="3 17 9 11 13 15 17 11 21 7"/></svg>${sqft}</span>
           </div>
         </div>
-      </div>\`;
+      </div>`;
   }).join('');
 }
 
