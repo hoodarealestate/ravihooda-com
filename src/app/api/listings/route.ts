@@ -16,6 +16,15 @@ const AUTH = {
 // specific property type is requested).
 const RESIDENTIAL = "(PropertyType eq 'Residential Freehold' or PropertyType eq 'Residential Condo & Other')"
 
+// TRREB splits Toronto into ~35 districts ('Toronto C01', 'Toronto E05', ...),
+// so `City eq 'Toronto'` matches nothing. Use a prefix match for Toronto; all
+// other GTA cities in the dropdown are exact, single values.
+function cityFilter(city: string): string {
+  return city === 'Toronto'
+    ? "startswith(City,'Toronto')"
+    : `City eq '${city}'`
+}
+
 // Map the website's friendly filter-button labels to real PropTx field filters.
 // PropTx PropertySubType values are specific strings (e.g. 'Condo Apartment',
 // 'Att/Row/Townhouse'), so a plain `PropertySubType eq 'Condo'` matches nothing.
@@ -82,7 +91,7 @@ export async function GET(req: NextRequest) {
       "StandardStatus eq 'Active'",
       "TransactionType eq 'For Sale'"
     ]
-    if (city)         filters.push(`City eq '${city}'`)
+    if (city)         filters.push(cityFilter(city))
     if (propertyType) filters.push(typeFilter(propertyType))
     else              filters.push(RESIDENTIAL)
     if (maxPrice)     filters.push(`ListPrice le ${maxPrice}`)

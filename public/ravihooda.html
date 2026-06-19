@@ -83,17 +83,17 @@ p { line-height: 1.7; color: var(--gray); }
    NAV
    ============================================================ */
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(255,255,255,0.98); backdrop-filter: blur(16px); border-bottom: 1px solid #E2E4E8; height: 70px; display: flex; align-items: center; }
-.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; width: 100%; display: flex; align-items: center; justify-content: space-between; }
-.nav-logo { display: flex; flex-direction: column; gap: 1px; }
-.nav-logo-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; color: #1A1F2E; letter-spacing: -0.01em; }
-.nav-logo-sub { font-size: 0.65rem; font-weight: 500; color: #A8894A; letter-spacing: 0.1em; text-transform: uppercase; }
-.nav-links { display: flex; align-items: center; gap: 8px; }
-.nav-links a { padding: 8px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; color: var(--navy); transition: all 0.2s; }
+.nav-inner { max-width: 1340px; margin: 0 auto; padding: 0 28px; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.nav-logo { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.nav-logo-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; color: #1A1F2E; letter-spacing: -0.01em; line-height: 1.1; white-space: nowrap; }
+.nav-logo-sub { font-size: 0.62rem; font-weight: 600; color: #A8894A; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-links a { padding: 7px 11px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; color: var(--navy); transition: all 0.2s; white-space: nowrap; }
 .nav-links a:hover { background: transparent; color: #A8894A; border-bottom: 1px solid #A8894A; }
-.nav-cta { background: #1C3557; color: #FFFFFF !important; border-radius: 6px !important; padding: 9px 22px !important; letter-spacing: 0.03em; font-size: 0.82rem !important; }
+.nav-cta { background: #1C3557; color: #FFFFFF !important; border-radius: 6px !important; padding: 9px 20px !important; letter-spacing: 0.03em; font-size: 0.8rem !important; margin-left: 6px; }
 .nav-cta:hover { background: #A8894A !important; color: #fff !important; }
-.nav-phones { display: flex; flex-direction: column; align-items: flex-end; font-size: 0.78rem; font-weight: 600; gap: 2px; }
-.nav-phones a { color: var(--navy); transition: color 0.2s; }
+.nav-phones { display: flex; flex-direction: column; align-items: flex-end; font-size: 0.76rem; font-weight: 600; gap: 3px; flex-shrink: 0; padding-left: 20px; border-left: 1px solid #E2E4E8; }
+.nav-phones a { color: var(--navy); transition: color 0.2s; white-space: nowrap; }
 .nav-phones a:hover { color: #A8894A; }
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
 .hamburger span { width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all 0.3s; }
@@ -2058,10 +2058,14 @@ async function loadPowerOfSale() {
       const baths  = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
       const sqft   = l.LivingArea ? Number(l.LivingArea).toFixed(0) + ' sqft' : '—';
       const broker = l.ListOfficeName || 'Listing Brokerage';
+      const photo = l.PhotoURL
+        ? `<img src="${l.PhotoURL}" alt="${addr}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : '';
       return `
         <div class="listing-card">
           <div class="listing-img">
-            <div class="listing-img-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
+            ${photo}
+            <div class="listing-img-placeholder" style="display:${l.PhotoURL ? 'none' : 'flex'};flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg>
               <span style="font-size:.75rem;color:#9CA3AF;margin-top:8px">Property Photo</span>
             </div>
@@ -2303,6 +2307,59 @@ const GTA_BOUNDS = { north: 44.08, south: 43.40, east: -78.90, west: -80.10 };
 const GTA_CENTER = { lat: 43.7417, lng: -79.3733 };
 const MAPS_KEY = 'AIzaSyDDsqASShU4BZECa0sVbc4WgfC1bl4Kt_M';
 
+// PropTx does NOT return Latitude/Longitude for listings, so we geocode them
+// client-side via the Google Geocoder. Markers are keyed by ListingKey; a render
+// token invalidates stale async results when the user changes filters; results
+// are cached and capped to limit Geocoding API calls.
+let markersByKey = {};
+let mapRenderToken = 0;
+const MAP_GEOCODE_LIMIT = 60;
+const geoCache = {};
+const geoPending = {};
+let geoQueue = [], geoActive = false, _geocoder = null;
+
+function getGeocoder() { return _geocoder || (_geocoder = new google.maps.Geocoder()); }
+
+function mapAddr(l) {
+  const street = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ');
+  const city = (l.City || '').replace(/\s+[CEWNS]\d+$/, ''); // 'Toronto C01' -> 'Toronto'
+  return [street, city, 'Ontario', 'Canada'].filter(Boolean).join(', ');
+}
+
+function geocodeListing(l) {
+  const key = l.PostalCode || mapAddr(l);
+  if (key in geoCache) return Promise.resolve(geoCache[key]);
+  if (geoPending[key]) return geoPending[key];
+  const query = l.PostalCode ? (l.PostalCode + ', Ontario, Canada') : mapAddr(l);
+  const p = new Promise(resolve => { geoQueue.push({ query, key, resolve }); pumpGeoQueue(); });
+  geoPending[key] = p;
+  p.then(() => { delete geoPending[key]; });
+  return p;
+}
+
+function pumpGeoQueue() {
+  if (geoActive) return;
+  const job = geoQueue.shift();
+  if (!job) return;
+  geoActive = true;
+  getGeocoder().geocode({ address: job.query }, (results, status) => {
+    if (status === 'OK' && results && results[0]) {
+      const loc = results[0].geometry.location;
+      geoCache[job.key] = { lat: loc.lat(), lng: loc.lng() };
+    } else if (status === 'OVER_QUERY_LIMIT') {
+      geoQueue.unshift(job);              // requeue and back off
+      geoActive = false;
+      setTimeout(pumpGeoQueue, 1000);
+      return;
+    } else {
+      geoCache[job.key] = null;           // ZERO_RESULTS / denied -> no pin
+    }
+    job.resolve(geoCache[job.key]);
+    geoActive = false;
+    setTimeout(pumpGeoQueue, 100);
+  });
+}
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('googleMap'), {
     center: GTA_CENTER,
@@ -2383,22 +2440,17 @@ function getSampleListings() {
 function renderMapListings(listings) {
   document.getElementById('mapResultCount').textContent = listings.length;
   clearMapMarkers();
+  renderSidebarList(listings);
 
+  const myToken = ++mapRenderToken;
   const bounds = new google.maps.LatLngBounds();
-  let hasCoords = false;
+  let placed = 0;
 
-  listings.forEach((l, i) => {
-    const lat = parseFloat(l.Latitude);
-    const lng = parseFloat(l.Longitude);
-    if (!lat || !lng) return;
-
-    hasCoords = true;
-    const pos = { lat, lng };
-    bounds.extend(pos);
+  const place = (l, i, pos) => {
+    if (myToken !== mapRenderToken) return;          // a newer search superseded this
+    if (!pos || markersByKey[l.ListingKey]) return;
 
     const price = l.ListPrice ? '$' + formatPrice(l.ListPrice) : '—';
-
-    // Custom price label marker
     const markerIcon = {
       url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
         <svg xmlns="http://www.w3.org/2000/svg" width="80" height="34">
@@ -2409,21 +2461,21 @@ function renderMapListings(listings) {
       scaledSize: new google.maps.Size(80, 34),
       anchor: new google.maps.Point(40, 34)
     };
-
-    const marker = new google.maps.Marker({
-      position: pos,
-      map,
-      icon: markerIcon,
-      title: price,
-      zIndex: listings.length - i
-    });
-
+    const marker = new google.maps.Marker({ position: pos, map, icon: markerIcon, title: price, zIndex: listings.length - i });
     marker.addListener('click', () => showInfoWindow(marker, l));
-    markers.push(marker);
-  });
+    markersByKey[l.ListingKey] = marker;
 
-  if (hasCoords) map.fitBounds(bounds);
-  renderSidebarList(listings);
+    bounds.extend(pos);
+    placed++;
+    if (placed <= 60) map.fitBounds(bounds);          // refit as pins arrive
+  };
+
+  listings.forEach((l, i) => {
+    const lat = parseFloat(l.Latitude), lng = parseFloat(l.Longitude);
+    if (lat && lng) { place(l, i, { lat, lng }); return; }
+    // No coords from PropTx — geocode (capped to limit Geocoding API usage).
+    if (i < MAP_GEOCODE_LIMIT) geocodeListing(l).then(pos => place(l, i, pos));
+  });
 }
 
 function showInfoWindow(marker, l) {
@@ -2482,11 +2534,13 @@ function renderSidebarList(listings) {
     return `
       <div class="map-result-card" id="map-card-${l.ListingKey}" onclick="focusMarker(${i}, '${l.ListingKey}')">
         <div class="map-result-img">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          ${l.PhotoURL
+            ? `<img src="${l.PhotoURL}" alt="${addr}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.remove()">`
+            : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="5" width="20" height="14" rx="2"/>
             <circle cx="12" cy="12" r="3.5"/>
             <path d="M8 5l1-2h6l1 2"/>
-          </svg>
+          </svg>`}
         </div>
         <div class="map-result-body">
           <div class="map-result-price">${price}</div>
@@ -2503,10 +2557,11 @@ function renderSidebarList(listings) {
 }
 
 function focusMarker(index, key) {
-  if (markers[index]) {
-    map.panTo(markers[index].getPosition());
+  const marker = markersByKey[key];
+  if (marker) {
+    map.panTo(marker.getPosition());
     map.setZoom(15);
-    google.maps.event.trigger(markers[index], 'click');
+    google.maps.event.trigger(marker, 'click');
   }
   document.querySelectorAll('.map-result-card').forEach(c => c.classList.remove('active'));
   const card = document.getElementById('map-card-' + key);
@@ -2514,8 +2569,10 @@ function focusMarker(index, key) {
 }
 
 function clearMapMarkers() {
-  markers.forEach(m => m.setMap(null));
+  Object.values(markersByKey).forEach(m => m.setMap(null));
+  markersByKey = {};
   markers = [];
+  geoQueue = [];               // drop pending geocodes from a prior search
   if (infoWindow) infoWindow.close();
 }
 
