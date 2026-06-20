@@ -14,19 +14,29 @@ const AUTH = {
 // field across all TRREB listings. Each maps to a canonical human-written casing
 // (the form actually used in remarks, e.g. "Power of Sale" — note the lowercase
 // "of", which .title() would wrongly capitalise).
+// 'power of sale' also catches 'under power of sale'; 'receiver' catches
+// 'receivership' / 'court appointed receiver' — so we don't list those twice.
 const POS_KEYWORDS: Record<string, string> = {
   'power of sale':   'Power of Sale',
+  'bank sale':       'Bank Sale',
+  'bank owned':      'Bank Owned',
+  'foreclosure':     'Foreclosure',
   'court order':     'Court Order',
   'estate sale':     'Estate Sale',
-  'sold as is':      'Sold As Is',
-  'as-is where-is':  'As-Is Where-Is',
-  'as is where is':  'As Is Where Is',
   'judicial sale':   'Judicial Sale',
-  'mortgagee sale':  'Mortgagee Sale'
+  'mortgagee sale':  'Mortgagee Sale',
+  'receiver':        'Receiver',
+  'tax sale':        'Tax Sale',
+  'sold as is':      'Sold As Is',
+  'as is where is':  'As Is Where Is',
+  'as-is where-is':  'As-Is Where-Is'
 }
 
-export const maxDuration = 30
+export const maxDuration = 60
 export const dynamic = 'force-dynamic' // reads query params; never prerender at build
+// PropTx remarks-scan queries are slow (~7s each). Cache results so only the
+// occasional cold request pays the cost; warm requests are near-instant.
+const POS_REVALIDATE = 300
 
 // TRREB splits Toronto into ~35 districts ('Toronto C01', ...), so
 // `City eq 'Toronto'` matches nothing. Prefix-match Toronto; other GTA cities
@@ -51,7 +61,7 @@ async function fetchPrimaryPhotos(keys: string[]): Promise<Record<string, string
     const filter = `ResourceRecordKey in (${keyList}) and MediaCategory eq 'Photo' and ImageSizeDescription eq 'Medium' and Order eq 0`
     const url = `${ENDPOINT}Media?$filter=${encodeURIComponent(filter)}&$select=ResourceRecordKey,MediaURL,ImageSizeDescription,Order&$top=500`
     try {
-      const res = await fetch(url, { headers: AUTH, cache: 'no-store' })
+      const res = await fetch(url, { headers: AUTH, next: { revalidate: POS_REVALIDATE } })
       if (!res.ok) continue
       const data = await res.json()
       for (const m of (data.value || [])) {
@@ -92,18 +102,31 @@ export async function GET(req: NextRequest) {
     // keyword/casing times out (60s) scanning PublicRemarks board-wide. So we
     // fire one query per keyword (each a small case-variant OR that returns
     // quickly) IN PARALLEL, then merge. Wall time ≈ the slowest single query.
-    const queries = Object.entries(POS_KEYWORDS).map(([lower, canon]) => {
-      const forms = Array.from(new Set([lower, lower.toUpperCase(), canon]))
+    const runKeyword = ([lower, canon]: [string, string]) => {
+      // Cover the casings actually seen in remarks: lower, UPPER, the canonical
+      // human form, and each-word-capitalized ('Power Of Sale'). PropTx contains
+      // is case-sensitive and has no tolower(), so we OR these explicitly.
+      const eachWordCap = lower.replace(/\b\w/g, c => c.toUpperCase())
+      const forms = Array.from(new Set([lower, lower.toUpperCase(), canon, eachWordCap]))
       const clause = forms.map(f => `contains(PublicRemarks,'${f}')`).join(' or ')
       const fullFilter = `(${baseFilters.join(' and ')}) and (${clause})`
       const url = `${ENDPOINT}Property?$filter=${encodeURIComponent(fullFilter)}&$top=100&$select=${select}`
-      return fetch(url, { headers: AUTH, cache: 'no-store' })
+      return fetch(url, { headers: AUTH, next: { revalidate: POS_REVALIDATE } })
         .then(r => r.ok ? r.json() : { value: [] })
         .then(d => d.value || [])
         .catch(() => [])
-    })
+    }
 
-    const results = await Promise.all(queries)
+    // Run in batches to avoid opening too many concurrent connections to PropTx
+    // (which has timed out under heavy parallelism), while staying well under
+    // maxDuration. Each batch's wall time ≈ its slowest keyword query.
+    const entries = Object.entries(POS_KEYWORDS)
+    const BATCH = 7
+    const results: any[][] = []
+    for (let i = 0; i < entries.length; i += BATCH) {
+      const batch = await Promise.all(entries.slice(i, i + BATCH).map(runKeyword))
+      results.push(...batch)
+    }
 
     // Merge + dedupe by ListingKey
     const byKey = new Map<string, any>()

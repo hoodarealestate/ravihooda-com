@@ -1416,6 +1416,9 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
         <p>Loading live MLS listings…</p>
       </div>
     </div>
+    <div style="text-align:center;margin-top:32px">
+      <button id="listingsMore" class="btn btn-primary" style="display:none;padding:12px 32px" onclick="loadMoreListings()"></button>
+    </div>
     <div class="listing-disclaimer">
       <strong>Data Disclaimer:</strong> Listing data is provided by PROPTX INNOVATIONS INC. and is deemed reliable but not guaranteed accurate. All measurements are approximate. Not intended to solicit properties already listed for sale. The information provided herein must only be used by consumers that have a bona fide interest in the purchase, sale, or lease of real estate.
     </div>
@@ -1902,6 +1905,8 @@ function openVowModal() {
 function closeVowModal() {
   document.getElementById('vowModal').classList.remove('open');
   document.body.style.overflow = '';
+  const g = document.getElementById('vowGateMsg');
+  if (g) g.style.display = 'none';   // reset gate message for next open
 }
 
 function switchVowTab(tab) {
@@ -1983,6 +1988,90 @@ function showVowWelcome(name) {
 function isVowUser() { return vowUser !== null; }
 
 // ============================================================
+// PROPERTY VIEW GATE  — 3 free detail views, then register
+// ============================================================
+function getViewedKeys() {
+  try { return JSON.parse(localStorage.getItem('hooda_viewed_props') || '[]'); }
+  catch { return []; }
+}
+function viewsRemaining() {
+  if (isVowUser()) return Infinity;
+  return Math.max(0, FREE_VIEW_LIMIT - getViewedKeys().length);
+}
+// Returns true if the view is permitted (and records it); false if gated.
+function recordView(key) {
+  if (isVowUser()) return true;                 // registered members: unlimited
+  const keys = getViewedKeys();
+  if (keys.includes(key)) return true;          // re-viewing the same property is free
+  if (keys.length >= FREE_VIEW_LIMIT) return false;
+  keys.push(key);
+  localStorage.setItem('hooda_viewed_props', JSON.stringify(keys));
+  return true;
+}
+
+function findListing(key) {
+  return (allListings || []).find(x => x.ListingKey === key)
+      || (window._mapListings || []).find(x => x.ListingKey === key);
+}
+
+function openListingDetail(key) {
+  const l = findListing(key);
+  if (!l) return;
+  if (!recordView(key)) {                        // limit reached -> registration wall
+    openVowGate('You’ve viewed your ' + FREE_VIEW_LIMIT + ' free properties. Register a free account to keep viewing full listing details across the GTA.');
+    return;
+  }
+  showListingDetail(l);
+}
+
+function showListingDetail(l) {
+  const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
+  const addr   = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+  const beds   = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+  const baths  = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+  const sqftV  = l.LivingArea || l.BuildingAreaTotal;
+  const sqft   = sqftV ? Number(sqftV).toLocaleString() + ' sqft' : '—';
+  const type   = l.PropertySubType || '';
+  const broker = l.ListOfficeName || 'Listing Brokerage';
+  const postal = l.PostalCode || '';
+  const remain = viewsRemaining();
+  const remainNote = isVowUser() ? ''
+    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:14px">${remain} free ${remain === 1 ? 'view' : 'views'} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
+  const img = l.PhotoURL
+    ? `<img src="${l.PhotoURL}" alt="${addr}" style="width:100%;height:280px;object-fit:cover;border-radius:12px;display:block">`
+    : `<div style="width:100%;height:280px;border-radius:12px;background:linear-gradient(135deg,#eef2f7,#d0dcea);display:flex;align-items:center;justify-content:center;color:#9CA3AF">Property Photo</div>`;
+  document.getElementById('listingModalBody').innerHTML = `
+    ${img}
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;gap:12px;flex-wrap:wrap">
+      <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#1B2A41">${price}</div>
+      ${type ? `<span style="font-size:0.8rem;color:#6B7280;background:#f3f4f6;padding:4px 12px;border-radius:50px">${type}</span>` : ''}
+    </div>
+    <div style="font-size:0.95rem;color:#374151;margin-top:6px">${addr}${postal ? ' ' + postal : ''}</div>
+    <div style="display:flex;gap:24px;margin-top:16px;padding:16px 0;border-top:1px solid #eef0f3;border-bottom:1px solid #eef0f3;font-size:0.9rem;color:#1B2A41">
+      <span><b>${beds}</b> Bed</span><span><b>${baths}</b> Bath</span><span><b>${sqft}</b></span>
+    </div>
+    <div style="font-size:0.72rem;color:#9CA3AF;margin-top:12px">Listing Brokerage: ${broker}</div>
+    <a href="#contact" onclick="closeListingModal()" style="display:block;background:#1C3557;color:#fff;text-align:center;padding:13px;border-radius:10px;font-weight:600;font-size:0.92rem;text-decoration:none;margin-top:18px">Book a Showing</a>
+    ${remainNote}
+    <p style="font-size:0.66rem;color:#9CA3AF;margin-top:14px;line-height:1.5">Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Measurements approximate. The information herein must only be used by consumers with a bona fide interest in the purchase, sale, or lease of real estate.</p>`;
+  document.getElementById('listingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeListingModal() {
+  document.getElementById('listingModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Open the registration modal with a gate-specific message.
+function openVowGate(msg) {
+  const el = document.getElementById('vowGateMsg');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+  switchVowTab('register');
+  openVowModal();
+}
+
+// ============================================================
 // POWER OF SALE — gated lead capture + live filtered listings
 // ============================================================
 function posUnlock() {
@@ -2021,8 +2110,10 @@ function posUnlock() {
 }
 
 function posCheckUnlocked() {
-  const stored = localStorage.getItem('hooda_pos_lead');
-  if (stored) {
+  // Unlock if the visitor already submitted the POS form OR is a registered VOW
+  // member (read localStorage directly — this runs before initVow()).
+  const unlocked = localStorage.getItem('hooda_pos_lead') || localStorage.getItem('hooda_vow_user');
+  if (unlocked) {
     document.getElementById('posGate').style.display = 'none';
     document.getElementById('posResults').style.display = '';
     loadPowerOfSale();
@@ -2120,6 +2211,9 @@ window.addEventListener('scroll', () => {
 // ============================================================
 let allListings = [];
 let currentFilter = '';
+let listingsShown = 12;            // grid pagination
+const LISTINGS_PAGE = 12;
+const FREE_VIEW_LIMIT = 3;         // free property detail views before registration
 
 async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='') {
   const grid = document.getElementById('listingsGrid');
@@ -2143,6 +2237,7 @@ async function fetchListings(city='', propertyType='', maxPrice='', minPrice='',
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     allListings = json.value || [];
+    listingsShown = LISTINGS_PAGE;
     if (!allListings.length) {
       grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No listings found. Try different filters.</p>';
       return;
@@ -2157,7 +2252,7 @@ async function fetchListings(city='', propertyType='', maxPrice='', minPrice='',
 function renderListings(list) {
   const grid = document.getElementById('listingsGrid');
   const badges = [['badge-new','New Listing'],['badge-open','Open House'],['badge-featured','Featured']];
-  grid.innerHTML = list.slice(0,9).map((l,i) => {
+  grid.innerHTML = list.slice(0, listingsShown).map((l,i) => {
     const price  = l.ListPrice ? '\$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
     const addr   = [l.StreetNumber,l.StreetName,l.StreetSuffix].filter(Boolean).join(' ') + (l.City?', '+l.City:'');
     const beds   = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
@@ -2169,7 +2264,7 @@ function renderListings(list) {
       ? `<img src="${l.PhotoURL}" alt="${addr}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
       : '';
     return `
-      <div class="listing-card">
+      <div class="listing-card" onclick="openListingDetail('${l.ListingKey}')">
         <div class="listing-img">
           ${photo}
           <div class="listing-img-placeholder" style="display:${l.PhotoURL ? 'none' : 'flex'};flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
@@ -2190,6 +2285,18 @@ function renderListings(list) {
         </div>
       </div>`;
   }).join('');
+
+  const more = document.getElementById('listingsMore');
+  if (more) {
+    const remaining = list.length - listingsShown;
+    more.style.display = remaining > 0 ? '' : 'none';
+    more.textContent = remaining > 0 ? `Load More Properties (${remaining} more)` : '';
+  }
+}
+
+function loadMoreListings() {
+  listingsShown += LISTINGS_PAGE;
+  renderListings(allListings);
 }
 
 function filterListings(btn, type) {
@@ -2313,10 +2420,21 @@ const MAPS_KEY = 'AIzaSyDDsqASShU4BZECa0sVbc4WgfC1bl4Kt_M';
 // are cached and capped to limit Geocoding API calls.
 let markersByKey = {};
 let mapRenderToken = 0;
-const MAP_GEOCODE_LIMIT = 60;
+const MAP_GEOCODE_LIMIT = 100;
 const geoCache = {};
 const geoPending = {};
-let geoQueue = [], geoActive = false, _geocoder = null;
+let geoQueue = [], geoActiveCount = 0, _geocoder = null;
+const GEO_CONCURRENCY = 8;      // process several geocodes at once (single-flight was ~2.5/s)
+
+// Persist resolved coordinates so coverage accumulates across loads/visits.
+try { Object.assign(geoCache, JSON.parse(localStorage.getItem('hooda_geocache') || '{}')); } catch {}
+let _geoSaveTimer = null;
+function saveGeoCache() {
+  clearTimeout(_geoSaveTimer);
+  _geoSaveTimer = setTimeout(() => {
+    try { localStorage.setItem('hooda_geocache', JSON.stringify(geoCache)); } catch {}
+  }, 800);
+}
 
 function getGeocoder() { return _geocoder || (_geocoder = new google.maps.Geocoder()); }
 
@@ -2338,26 +2456,26 @@ function geocodeListing(l) {
 }
 
 function pumpGeoQueue() {
-  if (geoActive) return;
-  const job = geoQueue.shift();
-  if (!job) return;
-  geoActive = true;
-  getGeocoder().geocode({ address: job.query }, (results, status) => {
-    if (status === 'OK' && results && results[0]) {
-      const loc = results[0].geometry.location;
-      geoCache[job.key] = { lat: loc.lat(), lng: loc.lng() };
-    } else if (status === 'OVER_QUERY_LIMIT') {
-      geoQueue.unshift(job);              // requeue and back off
-      geoActive = false;
-      setTimeout(pumpGeoQueue, 1000);
-      return;
-    } else {
-      geoCache[job.key] = null;           // ZERO_RESULTS / denied -> no pin
-    }
-    job.resolve(geoCache[job.key]);
-    geoActive = false;
-    setTimeout(pumpGeoQueue, 100);
-  });
+  while (geoActiveCount < GEO_CONCURRENCY && geoQueue.length) {
+    const job = geoQueue.shift();
+    geoActiveCount++;
+    getGeocoder().geocode({ address: job.query }, (results, status) => {
+      geoActiveCount--;
+      if (status === 'OK' && results && results[0]) {
+        const loc = results[0].geometry.location;
+        geoCache[job.key] = { lat: loc.lat(), lng: loc.lng() };
+        saveGeoCache();
+      } else if (status === 'OVER_QUERY_LIMIT') {
+        geoQueue.push(job);                // requeue at end and back off briefly
+        setTimeout(pumpGeoQueue, 400);
+        return;
+      } else {
+        geoCache[job.key] = null;          // ZERO_RESULTS / denied -> no pin
+      }
+      job.resolve(geoCache[job.key]);
+      pumpGeoQueue();
+    });
+  }
 }
 
 function initMap() {
@@ -2415,8 +2533,11 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
     const data = await res.json();
     renderMapListings(data.value || []);
   } catch(e) {
-    // Demo mode with sample GTA coordinates
-    renderMapListings(getSampleListings());
+    // Never show fabricated listings (compliance: real MLS data only).
+    clearMapMarkers();
+    document.getElementById('mapResultCount').textContent = '0';
+    document.getElementById('mapResultsList').innerHTML =
+      '<div style="padding:32px 16px;text-align:center;color:var(--gray);font-size:0.85rem">Could not load listings right now — please try again.</div>';
   }
 }
 
@@ -2438,6 +2559,7 @@ function getSampleListings() {
 }
 
 function renderMapListings(listings) {
+  window._mapListings = listings;
   document.getElementById('mapResultCount').textContent = listings.length;
   clearMapMarkers();
   renderSidebarList(listings);
@@ -2591,22 +2713,35 @@ function applyMapFilters() {
   loadMapListings(city, type, minP, maxP, beds);
 }
 
-let mapSearchTimer;
+let mapSearchTimer, lastMapCity = '';
 function debounceMapSearch() {
   clearTimeout(mapSearchTimer);
   mapSearchTimer = setTimeout(() => {
     const q = document.getElementById('mapSearchInput').value.trim();
-    if (q.length > 2) {
-      // Geocode city/address and pan map
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: q + ', Ontario, Canada' }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          map.panTo(results[0].geometry.location);
-          map.setZoom(13);
-        }
-      });
-    }
-  }, 500);
+    if (q.length <= 2) return;
+    // Geocode the query, recenter the map, AND refetch listings for the matched
+    // municipality so the neighbourhood actually fills with properties (the API
+    // can only filter by City, so we resolve the typed area to its city).
+    getGeocoder().geocode({ address: q + ', Ontario, Canada' }, (results, status) => {
+      if (status !== 'OK' || !results[0]) return;
+      map.panTo(results[0].geometry.location);
+      map.setZoom(13);
+      const comps = results[0].address_components || [];
+      const locality = comps.find(c => c.types.includes('locality'))
+                    || comps.find(c => c.types.includes('sublocality'))
+                    || comps.find(c => c.types.includes('administrative_area_level_2'));
+      const city = locality ? locality.long_name : '';
+      if (city && city !== lastMapCity) {
+        lastMapCity = city;
+        // keep any active dropdown filters
+        const type = document.getElementById('mapType').value;
+        const minP = document.getElementById('mapMinPrice').value;
+        const maxP = document.getElementById('mapMaxPrice').value;
+        const beds = document.getElementById('mapBeds').value;
+        loadMapListings(city, type, minP, maxP, beds);
+      }
+    });
+  }, 600);
 }
 
 </script>
@@ -2616,6 +2751,13 @@ function debounceMapSearch() {
 
 
 <!-- VOW REGISTRATION MODAL -->
+<div class="vow-modal-overlay" id="listingModal">
+  <div class="vow-modal" style="max-width:560px;text-align:left">
+    <button class="vow-modal-close" onclick="closeListingModal()">&#x2715;</button>
+    <div id="listingModalBody"></div>
+  </div>
+</div>
+
 <div class="vow-modal-overlay" id="vowModal">
   <div class="vow-modal">
     <button class="vow-modal-close" onclick="closeVowModal()">&#x2715;</button>
@@ -2625,6 +2767,7 @@ function debounceMapSearch() {
     </div>
     <h2>Unlock Full GTA Data</h2>
     <p>Register free to access sold prices, days on market, price history and full listing details across the GTA.</p>
+    <div id="vowGateMsg" style="display:none;background:#FBF6EC;border:1px solid #E7D6B0;color:#8A6D2F;padding:12px 14px;border-radius:10px;font-size:0.85rem;font-weight:500;margin-bottom:8px"></div>
     <div class="vow-benefits">
       <div class="vow-benefit">
         <div class="vow-benefit-icon">
