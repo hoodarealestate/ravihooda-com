@@ -9,6 +9,11 @@ const nextConfig = {
         destination: '/ravihooda.html',
         permanent: false,
       },
+      {
+        source: '/112-nordic-road',
+        destination: '/112-nordic-road/index.html',
+        permanent: false,
+      },
     ]
   },
   images: {
