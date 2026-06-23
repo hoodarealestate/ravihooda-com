@@ -1223,6 +1223,44 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 }
 .pos-input:focus { border-color: #1C3557; }
 .badge-pos { background: #A8894A; color: #fff; border-radius: 6px; font-size: 0.65rem; }
+.badge-drop { background: #C0392B; color: #fff; border-radius: 6px; font-size: 0.65rem; }
+
+/* Price Drops section */
+.drop-amount { font-size: 0.78rem; font-weight: 700; color: #C0392B; background: #fef2f2; border-radius: 6px; padding: 3px 8px; display: inline-flex; align-items: center; gap: 4px; }
+.drop-orig { font-size: 0.82rem; color: #9CA3AF; text-decoration: line-through; }
+.drop-alert-box { margin-top: 28px; background: linear-gradient(135deg, #1C3557, #2a4d7a); border-radius: 16px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.drop-alert-box h3 { font-family: var(--font-head); color: #fff; font-size: 1.15rem; margin-bottom: 6px; }
+.drop-alert-box p { color: rgba(255,255,255,.75); font-size: 0.85rem; margin-bottom: 0; }
+.drop-alert-form { display: flex; gap: 10px; flex-wrap: wrap; }
+.drop-alert-input { padding: 10px 14px; border-radius: 8px; border: none; font-size: 0.9rem; font-family: var(--font-body); min-width: 220px; outline: none; }
+.drop-alert-btn { background: #A8894A; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .2s; }
+.drop-alert-btn:hover { background: #C9A84C; }
+
+/* Enhanced listing modal */
+.lm-gallery { position: relative; height: 280px; background: #eef2f7; border-radius: 12px; overflow: hidden; margin-bottom: 0; }
+.lm-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lm-gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.45); color: #fff; border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; z-index: 2; transition: background .2s; }
+.lm-gallery-nav:hover { background: rgba(0,0,0,.7); }
+.lm-gallery-nav.prev { left: 10px; }
+.lm-gallery-nav.next { right: 10px; }
+.lm-gallery-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+.lm-gallery-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.5); cursor: pointer; transition: background .2s; }
+.lm-gallery-dot.active { background: #fff; }
+.lm-photo-count { position: absolute; bottom: 8px; right: 10px; background: rgba(0,0,0,.5); color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 50px; }
+.lm-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
+.lm-stat { background: #f8f9fa; border-radius: 8px; padding: 10px; text-align: center; }
+.lm-stat-val { font-size: 1rem; font-weight: 700; color: var(--navy); }
+.lm-stat-label { font-size: 0.68rem; color: #9CA3AF; margin-top: 2px; }
+.lm-desc { font-size: 0.85rem; color: #374151; line-height: 1.6; margin: 14px 0; max-height: 100px; overflow: hidden; position: relative; transition: max-height .3s; }
+.lm-desc.expanded { max-height: 600px; }
+.lm-desc-toggle { font-size: 0.8rem; color: var(--navy); cursor: pointer; font-weight: 600; text-decoration: underline; margin-bottom: 12px; display: inline-block; }
+.lm-inquiry { background: #f8f9fa; border-radius: 12px; padding: 16px; margin-top: 14px; }
+.lm-inquiry h4 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+.lm-inquiry input { width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; font-family: var(--font-body); color: var(--navy); outline: none; margin-bottom: 8px; transition: border-color .2s; }
+.lm-inquiry input:focus { border-color: var(--navy); }
+.lm-inquiry-btn { width: 100%; padding: 12px; background: var(--navy); color: #fff; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+.lm-inquiry-btn:hover { background: #2a4d7a; }
+.lm-inquiry-btn:disabled { opacity: .6; cursor: default; }
 </style>
 </head>
 <body>
@@ -1241,6 +1279,8 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
       <a href="#services">Services</a>
       <a href="#team">About Us</a>
       <a href="#calculator">Calculator</a>
+      <a href="#pricedrops">Price Drops 🔥</a>
+      <a href="/home-value">Home Value</a>
       <button class="nav-vow-btn" id="navVowBtn" onclick="openVowModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Member Login</button>
       <div class="nav-user-pill" id="navUserPill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="navUserName">Member</span></div>
       <a href="#contact" class="nav-cta">Contact Us</a>
@@ -1261,6 +1301,8 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
   <a href="#services" onclick="toggleMenu()">Services</a>
   <a href="#team" onclick="toggleMenu()">About Us</a>
   <a href="#calculator" onclick="toggleMenu()">Calculator</a>
+  <a href="#pricedrops" onclick="toggleMenu()">Price Drops 🔥</a>
+  <a href="/home-value" onclick="toggleMenu()">Home Value</a>
   <a href="tel:4168255032" onclick="toggleMenu()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Ravi: 416-825-5032</a>
   <a href="tel:6477665040" onclick="toggleMenu()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Rashmi: 647-766-5040</a>
   <a href="#contact" onclick="toggleMenu()" style="background:var(--coral);color:var(--white);text-align:center;margin-top:8px;">Contact Us</a>
@@ -1421,6 +1463,119 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
     </div>
     <div class="listing-disclaimer">
       <strong>Data Disclaimer:</strong> Listing data is provided by PROPTX INNOVATIONS INC. and is deemed reliable but not guaranteed accurate. All measurements are approximate. Not intended to solicit properties already listed for sale. The information provided herein must only be used by consumers that have a bona fide interest in the purchase, sale, or lease of real estate.
+    </div>
+  </div>
+</section>
+
+<!-- POWER OF SALE — fold 2 for lead generation -->
+<section class="section" id="powerofsale" style="background:#F4F1EA">
+  <div class="section-inner">
+    <div class="section-label" style="color:#A8894A">Distressed &amp; Power of Sale</div>
+    <h2 class="section-title">Power of Sale Opportunities</h2>
+    <p class="section-sub">Below-market opportunities across the GTA — power of sale, court-ordered, and estate properties, pulled live from active MLS® listings. Register your email for full access and instant alerts when new properties match.</p>
+
+    <!-- Gate -->
+    <div id="posGate" class="pos-gate">
+      <div class="pos-gate-card">
+        <div class="pos-gate-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A8894A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h3 style="margin-bottom:8px">Unlock Power of Sale Listings</h3>
+        <p style="font-size:0.88rem;margin-bottom:20px">Enter your email to view all current power of sale and distressed properties across the GTA — updated live from MLS®.</p>
+        <div class="pos-gate-form">
+          <input type="text" id="posName" placeholder="Full Name" class="pos-input"/>
+          <input type="email" id="posEmail" placeholder="Email Address" class="pos-input"/>
+          <input type="tel" id="posPhone" placeholder="Phone (optional)" class="pos-input"/>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="posUnlock()">Unlock Listings →</button>
+        </div>
+        <p class="vow-legal" style="margin-top:14px">By registering you confirm a bona fide interest in the purchase, sale, or lease of real estate. Your information is protected under PIPEDA and never sold.</p>
+      </div>
+    </div>
+
+    <!-- Results (hidden until unlocked) -->
+    <div id="posResults" style="display:none">
+      <div class="map-filters" style="background:var(--white);border:1px solid var(--lgray);border-radius:12px;margin-bottom:20px">
+        <div class="map-filter-row three">
+          <select class="map-filter-select" id="posCity">
+            <option value="">All GTA Cities</option>
+            <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
+            <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
+            <option>Oakville</option><option>Burlington</option><option>Pickering</option>
+            <option>Ajax</option><option>Oshawa</option>
+          </select>
+          <select class="map-filter-select" id="posMinPrice">
+            <option value="">Min Price</option>
+            <option value="200000">$200K</option><option value="400000">$400K</option>
+            <option value="600000">$600K</option><option value="800000">$800K</option>
+            <option value="1000000">$1M</option>
+          </select>
+          <select class="map-filter-select" id="posMaxPrice">
+            <option value="">Max Price</option>
+            <option value="600000">$600K</option><option value="800000">$800K</option>
+            <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
+            <option value="2000000">$2M+</option>
+          </select>
+        </div>
+        <button class="map-filter-apply" onclick="loadPowerOfSale()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Apply Filters
+        </button>
+      </div>
+      <div class="listings-header">
+        <div style="font-size:0.85rem;color:var(--gray)">
+          <span id="posResultCount">—</span> power of sale properties found across the GTA
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="posResetFilters()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Reset &amp; Refresh
+        </button>
+      </div>
+      <div id="posGrid" class="listings-grid"></div>
+      <div class="listing-disclaimer">
+        <strong>Important:</strong> "Power of Sale" classification is generated automatically by scanning public listing remarks for relevant keywords and has not been independently verified. Always confirm property status directly with the listing brokerage. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE DROPS — buyer lead magnet -->
+<section class="section" id="pricedrops" style="background:var(--white)">
+  <div class="section-inner">
+    <div class="listings-header">
+      <div>
+        <div class="section-label" style="color:#C0392B">Price Reduced</div>
+        <h2 class="section-title" style="margin-bottom:0">Price Drop Properties 🔥</h2>
+      </div>
+      <div class="listings-filters">
+        <select class="map-filter-select" id="dropCity" style="min-width:140px" onchange="loadPriceDrops()">
+          <option value="">All GTA Cities</option>
+          <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
+          <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
+          <option>Oakville</option><option>Burlington</option><option>Pickering</option>
+          <option>Ajax</option><option>Oshawa</option>
+        </select>
+      </div>
+    </div>
+    <p class="section-sub" style="margin-top:-12px;margin-bottom:24px">Sellers who have reduced their asking price — motivated to move. Updated live from MLS® data.</p>
+    <div id="dropGrid" class="listings-grid">
+      <div class="listings-loading"><div class="spinner"></div><p>Loading price reduced listings…</p></div>
+    </div>
+    <div id="dropMore" style="text-align:center;margin-top:24px;display:none">
+      <button class="btn btn-primary" style="padding:12px 32px" onclick="showMoreDrops()">Show More</button>
+    </div>
+    <div class="listing-disclaimer" id="dropDisclaimer" style="display:none"></div>
+
+    <!-- Alert Signup -->
+    <div class="drop-alert-box">
+      <div>
+        <h3>Get Price Drop Alerts Instantly</h3>
+        <p>Be the first to know when a property in your city drops its price.</p>
+      </div>
+      <div class="drop-alert-form">
+        <input type="email" class="drop-alert-input" id="dropAlertEmail" placeholder="your@email.com"/>
+        <input type="tel" class="drop-alert-input" id="dropAlertPhone" placeholder="Phone (optional)" style="min-width:160px"/>
+        <button class="drop-alert-btn" onclick="dropAlertSignup()">Alert Me →</button>
+      </div>
     </div>
   </div>
 </section>
@@ -1597,36 +1752,36 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
         <div class="form-grid">
           <div class="form-group">
             <label>First Name</label>
-            <input type="text" placeholder="John"/>
+            <input type="text" id="cfFirstName" placeholder="John"/>
           </div>
           <div class="form-group">
             <label>Last Name</label>
-            <input type="text" placeholder="Smith"/>
+            <input type="text" id="cfLastName" placeholder="Smith"/>
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input type="email" placeholder="john@email.com"/>
+            <input type="email" id="cfEmail" placeholder="john@email.com"/>
           </div>
           <div class="form-group">
             <label>Phone</label>
-            <input type="tel" placeholder="647-000-0000"/>
+            <input type="tel" id="cfPhone" placeholder="647-000-0000"/>
           </div>
           <div class="form-group full">
             <label>I'm looking to…</label>
-            <select>
+            <select id="cfIntent">
               <option>Buy a home</option>
               <option>Sell my home</option>
-              <option>Buy & Sell</option>
+              <option>Buy &amp; Sell</option>
               <option>Invest in property</option>
               <option>Learn about the market</option>
             </select>
           </div>
           <div class="form-group full">
             <label>Message</label>
-            <textarea placeholder="Tell us about what you're looking for, your timeline, budget, or any questions…"></textarea>
+            <textarea id="cfMessage" placeholder="Tell us about what you're looking for, your timeline, budget, or any questions…"></textarea>
           </div>
         </div>
-        <button class="form-submit" onclick="submitForm()">Send Message</button>
+        <button class="form-submit" id="cfSubmitBtn" onclick="submitContactForm()">Send Message</button>
         <p class="form-note">Your information is kept private and used solely to respond to your inquiry, per PIPEDA.</p>
       </div>
     </div>
@@ -1737,89 +1892,6 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
         <p style="color:var(--gray);font-size:0.88rem">Loading GTA map…</p>
       </div>
       <div id="googleMap"></div>
-    </div>
-  </div>
-</section>
-
-
-<!-- POWER OF SALE -->
-<section class="section" id="powerofsale" style="background:#F4F1EA">
-  <div class="section-inner">
-    <div class="section-label" style="color:#A8894A">Distressed &amp; Power of Sale</div>
-    <h2 class="section-title">Power of Sale Opportunities</h2>
-    <p class="section-sub">Below-market opportunities across the GTA — power of sale, court-ordered, and estate properties, pulled live from active MLS® listings. Register your email for full access and instant alerts when new properties match.</p>
-
-    <!-- Gate -->
-    <div id="posGate" class="pos-gate">
-      <div class="pos-gate-card">
-        <div class="pos-gate-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A8894A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <h3 style="margin-bottom:8px">Unlock Power of Sale Listings</h3>
-        <p style="font-size:0.88rem;margin-bottom:20px">Enter your email to view all current power of sale and distressed properties across the GTA — updated live from MLS®.</p>
-        <div class="pos-gate-form">
-          <input type="text" id="posName" placeholder="Full Name" class="pos-input"/>
-          <input type="email" id="posEmail" placeholder="Email Address" class="pos-input"/>
-          <input type="tel" id="posPhone" placeholder="Phone (optional)" class="pos-input"/>
-          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="posUnlock()">Unlock Listings →</button>
-        </div>
-        <p class="vow-legal" style="margin-top:14px">By registering you confirm a bona fide interest in the purchase, sale, or lease of real estate. Your information is protected under PIPEDA and never sold.</p>
-      </div>
-    </div>
-
-    <!-- Results (hidden until unlocked) -->
-    <div id="posResults" style="display:none">
-      <div class="map-filters" style="background:var(--white);border:1px solid var(--lgray);border-radius:12px;margin-bottom:20px">
-        <div class="map-filter-row three">
-          <select class="map-filter-select" id="posCity">
-            <option value="">All GTA Cities</option>
-            <option>Toronto</option>
-            <option>Mississauga</option>
-            <option>Brampton</option>
-            <option>Vaughan</option>
-            <option>Markham</option>
-            <option>Richmond Hill</option>
-            <option>Oakville</option>
-            <option>Burlington</option>
-            <option>Pickering</option>
-            <option>Ajax</option>
-            <option>Oshawa</option>
-          </select>
-          <select class="map-filter-select" id="posMinPrice">
-            <option value="">Min Price</option>
-            <option value="200000">$200K</option>
-            <option value="400000">$400K</option>
-            <option value="600000">$600K</option>
-            <option value="800000">$800K</option>
-            <option value="1000000">$1M</option>
-          </select>
-          <select class="map-filter-select" id="posMaxPrice">
-            <option value="">Max Price</option>
-            <option value="600000">$600K</option>
-            <option value="800000">$800K</option>
-            <option value="1000000">$1M</option>
-            <option value="1500000">$1.5M</option>
-            <option value="2000000">$2M+</option>
-          </select>
-        </div>
-        <button class="map-filter-apply" onclick="loadPowerOfSale()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Apply Filters
-        </button>
-      </div>
-      <div class="listings-header">
-        <div style="font-size:0.85rem;color:var(--gray)">
-          <span id="posResultCount">—</span> power of sale properties found across the GTA
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="posResetFilters()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-          Reset &amp; Refresh
-        </button>
-      </div>
-      <div id="posGrid" class="listings-grid"></div>
-      <div class="listing-disclaimer">
-        <strong>Important:</strong> "Power of Sale" classification is generated automatically by scanning public listing remarks for relevant keywords and has not been independently verified. Always confirm property status directly with the listing brokerage. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. The information provided herein must only be used by consumers that have a bona fide interest in the purchase, sale, or lease of real estate.
-      </div>
     </div>
   </div>
 </section>
@@ -2014,53 +2086,153 @@ function findListing(key) {
       || (window._mapListings || []).find(x => x.ListingKey === key);
 }
 
+// Photo carousel state for listing modal
+let _lmPhotos = [];
+let _lmPhotoIdx = 0;
+
 function openListingDetail(key) {
-  const l = findListing(key);
-  if (!l) return;
-  if (!recordView(key)) {                        // limit reached -> registration wall
-    openVowGate('You’ve viewed your ' + FREE_VIEW_LIMIT + ' free properties. Register a free account to keep viewing full listing details across the GTA.');
+  if (!recordView(key)) {
+    openVowGate(‘You’ve viewed your ‘ + FREE_VIEW_LIMIT + ‘ free properties. Register a free account to keep viewing full listing details across the GTA.’);
     return;
   }
-  showListingDetail(l);
+  // Show loading state immediately
+  const body = document.getElementById(‘listingModalBody’);
+  body.innerHTML = ‘<div style="text-align:center;padding:60px 20px"><div class="spinner" style="margin:0 auto 16px"></div><p style="color:#9CA3AF;font-size:0.9rem">Loading listing details…</p></div>’;
+  document.getElementById(‘listingModal’).classList.add(‘open’);
+  document.body.style.overflow = ‘hidden’;
+
+  // Fetch full detail from API
+  fetch(‘/api/listing/’ + key)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.listing) {
+        showListingDetail(data.listing, data.photos || []);
+      } else {
+        // Fall back to cached listing data
+        const l = findListing(key);
+        if (l) showListingDetail(l, l.PhotoURL ? [l.PhotoURL] : []);
+        else body.innerHTML = ‘<p style="padding:40px;text-align:center;color:#9CA3AF">Could not load listing details.</p>’;
+      }
+    })
+    .catch(() => {
+      const l = findListing(key);
+      if (l) showListingDetail(l, l.PhotoURL ? [l.PhotoURL] : []);
+    });
 }
 
-function showListingDetail(l) {
-  const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
-  const addr   = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
-  const beds   = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
-  const baths  = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
-  const sqftV  = l.LivingArea || l.BuildingAreaTotal;
-  const sqft   = sqftV ? Number(sqftV).toLocaleString() + ' sqft' : '—';
-  const type   = l.PropertySubType || '';
-  const broker = l.ListOfficeName || 'Listing Brokerage';
-  const postal = l.PostalCode || '';
-  const remain = viewsRemaining();
-  const remainNote = isVowUser() ? ''
-    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:14px">${remain} free ${remain === 1 ? 'view' : 'views'} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
-  const img = l.PhotoURL
-    ? `<img src="${l.PhotoURL}" alt="${addr}" style="width:100%;height:280px;object-fit:cover;border-radius:12px;display:block">`
-    : `<div style="width:100%;height:280px;border-radius:12px;background:linear-gradient(135deg,#eef2f7,#d0dcea);display:flex;align-items:center;justify-content:center;color:#9CA3AF">Property Photo</div>`;
-  document.getElementById('listingModalBody').innerHTML = `
-    ${img}
-    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;gap:12px;flex-wrap:wrap">
-      <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#1B2A41">${price}</div>
-      ${type ? `<span style="font-size:0.8rem;color:#6B7280;background:#f3f4f6;padding:4px 12px;border-radius:50px">${type}</span>` : ''}
+function showListingDetail(l, photos) {
+  _lmPhotos = photos || [];
+  _lmPhotoIdx = 0;
+  const price    = l.ListPrice ? ‘$’ + Number(l.ListPrice).toLocaleString() : ‘Price on Request’;
+  const origP    = l.OriginalListPrice && Number(l.OriginalListPrice) > Number(l.ListPrice)
+    ? ‘<span class="drop-orig" style="margin-left:8px">Was $’ + Number(l.OriginalListPrice).toLocaleString() + ‘</span>’ : ‘’;
+  const addr     = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(‘ ‘) + (l.City ? ‘, ‘ + l.City : ‘’);
+  const postal   = l.PostalCode || ‘’;
+  const beds     = l.BedroomsTotal != null ? l.BedroomsTotal : ‘—‘;
+  const baths    = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : ‘—‘;
+  const sqftV    = l.LivingArea || l.BuildingAreaTotal;
+  const sqft     = sqftV ? Number(sqftV).toLocaleString() + ‘ sqft’ : ‘—‘;
+  const type     = l.PropertySubType || ‘’;
+  const broker   = l.ListOfficeName || ‘Listing Brokerage’;
+  const mlsNum   = l.ListingId ? ‘MLS® ‘ + l.ListingId : ‘’;
+  const dom      = l.DaysOnMarket != null ? l.DaysOnMarket + ‘ days on market’ : ‘’;
+  const yearB    = l.YearBuilt ? ‘Built ‘ + l.YearBuilt : ‘’;
+  const taxes    = l.TaxAnnualAmount ? ‘$’ + Number(l.TaxAnnualAmount).toLocaleString() + ‘/yr taxes’ : ‘’;
+  const lot      = l.LotFrontage && l.LotDepth ? l.LotFrontage + ‘ × ‘ + l.LotDepth + ‘ ft lot’ : ‘’;
+  const remain   = viewsRemaining();
+  const remainNote = isVowUser() ? ‘’
+    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:10px">${remain} free ${remain===1?’view’:’views’} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
+
+  // Photo gallery HTML
+  const galleryHtml = _lmPhotos.length
+    ? `<div class="lm-gallery" id="lmGallery">
+        <img id="lmGalleryImg" src="${_lmPhotos[0]}" alt="${addr}" loading="lazy"/>
+        ${_lmPhotos.length > 1 ? `
+          <button class="lm-gallery-nav prev" onclick="lmNavPhoto(-1)">&#8249;</button>
+          <button class="lm-gallery-nav next" onclick="lmNavPhoto(1)">&#8250;</button>
+          <div class="lm-gallery-dots" id="lmDots">${_lmPhotos.map((_,i)=>`<div class="lm-gallery-dot${i===0?’ active’:’’}" onclick="lmGoPhoto(${i})"></div>`).join(‘’)}</div>
+          <div class="lm-photo-count" id="lmCount">1 / ${_lmPhotos.length}</div>` : ‘’}
+      </div>`
+    : `<div style="height:200px;background:linear-gradient(135deg,#eef2f7,#d0dcea);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:0.9rem">No Photo Available</div>`;
+
+  const extraStats = [yearB, taxes, lot, dom].filter(Boolean);
+  const extraRow = extraStats.length
+    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">${extraStats.map(s=>`<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:4px 10px;border-radius:6px">${s}</span>`).join(‘’)}</div>` : ‘’;
+
+  const descHtml = l.PublicRemarks
+    ? `<div class="lm-desc" id="lmDesc">${l.PublicRemarks}</div>
+       <span class="lm-desc-toggle" onclick="document.getElementById(‘lmDesc’).classList.toggle(‘expanded’);this.textContent=this.textContent===’Show more ▾’?’Show less ▴’:’Show more ▾’">Show more ▾</span>`
+    : ‘’;
+
+  const mlsRow = mlsNum ? `<div style="font-size:0.72rem;color:#9CA3AF;margin-top:4px">${mlsNum}</div>` : ‘’;
+
+  document.getElementById(‘listingModalBody’).innerHTML = `
+    ${galleryHtml}
+    <div style="margin-top:16px">
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+        <div style="font-family:’Playfair Display’,serif;font-size:1.65rem;font-weight:700;color:#1B2A41">${price}</div>
+        ${origP}
+        ${type ? `<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:3px 10px;border-radius:50px;margin-left:auto">${type}</span>` : ‘’}
+      </div>
+      <div style="font-size:0.92rem;color:#374151;margin-top:4px;font-weight:500">${addr}${postal?’ ‘+postal:’’}</div>
+      ${mlsRow}
     </div>
-    <div style="font-size:0.95rem;color:#374151;margin-top:6px">${addr}${postal ? ' ' + postal : ''}</div>
-    <div style="display:flex;gap:24px;margin-top:16px;padding:16px 0;border-top:1px solid #eef0f3;border-bottom:1px solid #eef0f3;font-size:0.9rem;color:#1B2A41">
-      <span><b>${beds}</b> Bed</span><span><b>${baths}</b> Bath</span><span><b>${sqft}</b></span>
+    <div class="lm-stats-grid" style="margin-top:14px">
+      <div class="lm-stat"><div class="lm-stat-val">${beds}</div><div class="lm-stat-label">Bedrooms</div></div>
+      <div class="lm-stat"><div class="lm-stat-val">${baths}</div><div class="lm-stat-label">Bathrooms</div></div>
+      <div class="lm-stat"><div class="lm-stat-val">${sqft}</div><div class="lm-stat-label">Size</div></div>
     </div>
-    <div style="font-size:0.72rem;color:#9CA3AF;margin-top:12px">Listing Brokerage: ${broker}</div>
-    <a href="#contact" onclick="closeListingModal()" style="display:block;background:#1C3557;color:#fff;text-align:center;padding:13px;border-radius:10px;font-weight:600;font-size:0.92rem;text-decoration:none;margin-top:18px">Book a Showing</a>
+    ${extraRow}
+    ${descHtml}
+    <div class="lm-inquiry">
+      <h4>📅 Book a Showing or Inquire</h4>
+      <input type="text" id="lmInqName" placeholder="Your Name" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
+      <input type="tel" id="lmInqPhone" placeholder="Phone Number" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
+      <input type="email" id="lmInqEmail" placeholder="Email Address" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
+      <button id="lmInqBtn" class="lm-inquiry-btn" onclick="submitListingInquiry(‘${addr}’,’${l.ListingKey}’)">Send Inquiry</button>
+    </div>
     ${remainNote}
-    <p style="font-size:0.66rem;color:#9CA3AF;margin-top:14px;line-height:1.5">Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Measurements approximate. The information herein must only be used by consumers with a bona fide interest in the purchase, sale, or lease of real estate.</p>`;
-  document.getElementById('listingModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+    <div style="font-size:0.62rem;color:#9CA3AF;margin-top:12px;line-height:1.5">Listing Brokerage: ${broker}. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Measurements approximate. The information herein must only be used by consumers with a bona fide interest in the purchase, sale, or lease of real estate.</div>`;
+  document.getElementById(‘listingModal’).classList.add(‘open’);
+  document.body.style.overflow = ‘hidden’;
+}
+
+function lmNavPhoto(dir) {
+  lmGoPhoto((_lmPhotoIdx + dir + _lmPhotos.length) % _lmPhotos.length);
+}
+
+function lmGoPhoto(idx) {
+  _lmPhotoIdx = idx;
+  const img = document.getElementById(‘lmGalleryImg’);
+  if (img) img.src = _lmPhotos[idx];
+  document.querySelectorAll(‘.lm-gallery-dot’).forEach((d,i) => d.classList.toggle(‘active’, i===idx));
+  const cnt = document.getElementById(‘lmCount’);
+  if (cnt) cnt.textContent = (idx+1) + ‘ / ‘ + _lmPhotos.length;
+}
+
+async function submitListingInquiry(addr, key) {
+  const name  = document.getElementById(‘lmInqName’)?.value.trim();
+  const phone = document.getElementById(‘lmInqPhone’)?.value.trim();
+  const email = document.getElementById(‘lmInqEmail’)?.value.trim();
+  if (!name || !email) { alert(‘Please enter your name and email.’); return; }
+  if (!email.includes(‘@’)) { alert(‘Please enter a valid email.’); return; }
+  const btn = document.getElementById(‘lmInqBtn’);
+  if (btn) { btn.disabled = true; btn.textContent = ‘Sending…’; }
+  try {
+    await fetch(‘/api/lead’, {
+      method: ‘POST’,
+      headers: { ‘Content-Type’: ‘application/json’ },
+      body: JSON.stringify({ name, email, phone, type: ‘showing’, property: addr })
+    });
+    if (btn) { btn.textContent = ‘✓ Inquiry Sent! We\’ll be in touch shortly.’; btn.style.background = ‘#2d7a4f’; }
+  } catch {
+    if (btn) { btn.disabled = false; btn.textContent = ‘Send Inquiry’; alert(‘Could not send — please call 416-825-5032 directly.’); }
+  }
 }
 
 function closeListingModal() {
-  document.getElementById('listingModal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.getElementById(‘listingModal’).classList.remove(‘open’);
+  document.body.style.overflow = ‘’;
 }
 
 // Open the registration modal with a gate-specific message.
@@ -2091,17 +2263,11 @@ function posUnlock() {
       notes: 'Unlocked Power of Sale listings on website', date: new Date().toISOString() });
   }
 
-  // Notify office via contact API (best-effort, non-blocking)
-  fetch(window.location.origin + '/api/contact', {
+  // Notify Ravi via /api/lead (email + SMS)
+  fetch('/api/lead', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      firstName: name.split(' ')[0],
-      lastName: name.split(' ').slice(1).join(' '),
-      email, phone,
-      intent: 'Power of Sale Lead',
-      message: name + ' unlocked the Power of Sale listings page.'
-    })
+    body: JSON.stringify({ name, email, phone, type: 'pos', property: 'Power of Sale listings page' })
   }).catch(() => {});
 
   document.getElementById('posGate').style.display = 'none';
@@ -2153,7 +2319,7 @@ async function loadPowerOfSale() {
         ? `<img src="${l.PhotoURL}" alt="${addr}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
         : '';
       return `
-        <div class="listing-card">
+        <div class="listing-card" onclick="openListingDetail('${l.ListingKey}')" style="cursor:pointer">
           <div class="listing-img">
             ${photo}
             <div class="listing-img-placeholder" style="display:${l.PhotoURL ? 'none' : 'flex'};flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
@@ -2348,8 +2514,130 @@ function calcMortgage() {
 // ============================================================
 // CONTACT FORM
 // ============================================================
-function submitForm() {
-  alert('Thank you! Ravi or Rashmi will be in touch with you shortly.\n\nRavi: 416-825-5032\nRashmi: 647-766-5040');
+async function submitContactForm() {
+  const firstName = document.getElementById('cfFirstName')?.value.trim();
+  const lastName  = document.getElementById('cfLastName')?.value.trim();
+  const email     = document.getElementById('cfEmail')?.value.trim();
+  const phone     = document.getElementById('cfPhone')?.value.trim();
+  const intent    = document.getElementById('cfIntent')?.value;
+  const message   = document.getElementById('cfMessage')?.value.trim();
+  if (!firstName || !email || !message) { alert('Please fill in your name, email, and message.'); return; }
+  if (!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  const btn = document.getElementById('cfSubmitBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  try {
+    await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: firstName + ' ' + lastName, email, phone, type: 'inquiry', message, property: intent })
+    });
+    if (btn) { btn.textContent = '✓ Message Sent!'; btn.style.background = '#2d7a4f'; }
+    ['cfFirstName','cfLastName','cfEmail','cfPhone','cfMessage'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  } catch {
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Message'; alert('Could not send — please call 416-825-5032 directly.'); }
+  }
+}
+
+// ============================================================
+// PRICE DROPS
+// ============================================================
+let _allDrops = [];
+let _dropsShown = 9;
+
+async function loadPriceDrops() {
+  const grid = document.getElementById('dropGrid');
+  if (!grid) return;
+  _dropsShown = 9;
+  grid.className = 'listings-loading';
+  grid.innerHTML = '<div class="spinner"></div><p>Loading price reduced listings…</p>';
+  try {
+    const city = document.getElementById('dropCity')?.value || '';
+    const params = city ? '?city=' + encodeURIComponent(city) : '';
+    const res = await fetch('/api/price-drops' + params);
+    if (!res.ok) throw new Error();
+    const json = await res.json();
+    _allDrops = json.value || [];
+    const disc = document.getElementById('dropDisclaimer');
+    if (disc) { disc.style.display = _allDrops.length ? '' : 'none'; disc.textContent = json.disclaimer || ''; }
+    renderDrops();
+  } catch {
+    grid.className = 'listings-grid';
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">Could not load price drops right now — please refresh the page.</p>';
+  }
+}
+
+function renderDrops() {
+  const grid = document.getElementById('dropGrid');
+  const moreBtn = document.getElementById('dropMore');
+  if (!grid) return;
+  const slice = _allDrops.slice(0, _dropsShown);
+  if (!slice.length) {
+    grid.className = 'listings-grid';
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No price-reduced listings found in this area right now.</p>';
+    if (moreBtn) moreBtn.style.display = 'none';
+    return;
+  }
+  grid.className = 'listings-grid';
+  grid.innerHTML = slice.map(l => {
+    const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'N/A';
+    const orig   = l.OriginalListPrice ? '$' + Number(l.OriginalListPrice).toLocaleString() : '';
+    const drop   = l.DropAmount ? '-$' + Number(l.DropAmount).toLocaleString() : '';
+    const dropPct = l.DropPercent ? '(' + l.DropPercent + '% off)' : '';
+    const addr   = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+    const beds   = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+    const baths  = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+    const sqft   = l.LivingArea ? Number(l.LivingArea).toFixed(0) + ' sqft' : '—';
+    const broker = l.ListOfficeName || 'Listing Brokerage';
+    const photo  = l.PhotoURL
+      ? `<img src="${l.PhotoURL}" alt="${addr}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      : '';
+    return `
+      <div class="listing-card" onclick="openListingDetail('${l.ListingKey}')" style="cursor:pointer">
+        <div class="listing-img">
+          ${photo}
+          <div class="listing-img-placeholder" style="display:${l.PhotoURL ? 'none' : 'flex'};flex-direction:column;align-items:center;justify-content:center;height:100%;gap:0">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1-2h6l1 2"/></svg>
+            <span style="font-size:.75rem;color:#9CA3AF;margin-top:8px">Property Photo</span>
+          </div>
+          <span class="listing-badge badge-drop">Price Reduced</span>
+          <span class="listing-broker" title="${broker}">${broker}</span>
+        </div>
+        <div class="listing-body">
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <div class="listing-price">${price}</div>
+            ${orig ? `<span class="drop-orig">${orig}</span>` : ''}
+          </div>
+          ${drop ? `<div class="drop-amount" style="margin-bottom:6px">▼ ${drop} ${dropPct}</div>` : ''}
+          <div class="listing-address">${addr}</div>
+          <div class="listing-meta">
+            <span>${beds} bed</span><span>${baths} bath</span><span>${sqft}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  if (moreBtn) moreBtn.style.display = _allDrops.length > _dropsShown ? '' : 'none';
+}
+
+function showMoreDrops() {
+  _dropsShown += 9;
+  renderDrops();
+}
+
+async function dropAlertSignup() {
+  const email = document.getElementById('dropAlertEmail')?.value.trim();
+  const phone = document.getElementById('dropAlertPhone')?.value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  try {
+    await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: email, email, phone, type: 'price-drop', property: 'Price Drop Alert Signup' })
+    });
+    const btn = document.querySelector('.drop-alert-btn');
+    if (btn) { btn.textContent = '✓ You\'re on the list!'; btn.style.background = '#2d7a4f'; btn.disabled = true; }
+  } catch {
+    alert('Could not sign up right now — please try again.');
+  }
 }
 
 // ============================================================
@@ -2358,6 +2646,7 @@ function submitForm() {
 window.addEventListener('DOMContentLoaded', () => {
   fetchListings();
   calcMortgage();
+  loadPriceDrops();
 });
 </script>
 
