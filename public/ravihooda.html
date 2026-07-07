@@ -1204,26 +1204,160 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
    POWER OF SALE
    ============================================================ */
 .nav-pos-link { color: #A8894A !important; font-weight: 600 !important; }
+/* ── SCROLL REVEAL ─────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.65s cubic-bezier(.22,1,.36,1), transform 0.65s cubic-bezier(.22,1,.36,1); }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-left { opacity: 0; transform: translateX(-32px); transition: opacity 0.6s cubic-bezier(.22,1,.36,1), transform 0.6s cubic-bezier(.22,1,.36,1); }
+.reveal-left.visible { opacity: 1; transform: none; }
+
+/* ── FLOATING CTA ───────────────────────────────────────────── */
+.float-cta {
+  position: fixed; bottom: 28px; right: 28px; z-index: 900;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.4s, transform 0.4s; pointer-events: none;
+}
+.float-cta.visible { opacity: 1; transform: none; pointer-events: all; }
+.float-cta-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 22px; border-radius: 50px; border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.88rem; font-weight: 700;
+  box-shadow: 0 6px 24px rgba(0,0,0,.25); transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap; text-decoration: none;
+}
+.float-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,0,0,.3); }
+.float-cta-call { background: #1C3557; color: #fff; }
+.float-cta-home { background: linear-gradient(135deg,#A8894A,#C9A84C); color: #fff; }
+
+/* ── SHIMMER BUTTON ─────────────────────────────────────────── */
+.btn-shimmer {
+  position: relative; overflow: hidden;
+}
+.btn-shimmer::after {
+  content: ''; position: absolute; top: -50%; left: -75%; width: 50%; height: 200%;
+  background: linear-gradient(120deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);
+  animation: shimmer 2.8s infinite;
+}
+@keyframes shimmer { 0%{left:-75%} 100%{left:125%} }
+
+/* ── PULSE BADGE ────────────────────────────────────────────── */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(168,137,74,.6); }
+  70%  { box-shadow: 0 0 0 10px rgba(168,137,74,0); }
+  100% { box-shadow: 0 0 0 0 rgba(168,137,74,0); }
+}
+@keyframes pulse-red {
+  0%   { box-shadow: 0 0 0 0 rgba(192,57,43,.6); }
+  70%  { box-shadow: 0 0 0 10px rgba(192,57,43,0); }
+  100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
+}
+.badge-pulse { animation: pulse-ring 2s infinite; }
+.badge-pulse-red { animation: pulse-red 2s infinite; }
+
+/* ── STAGGER GRID ───────────────────────────────────────────── */
+.stagger-grid .listing-card { opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s; }
+.stagger-grid.loaded .listing-card { opacity: 1; transform: none; }
+.stagger-grid.loaded .listing-card:nth-child(1)  { transition-delay: 0.04s; }
+.stagger-grid.loaded .listing-card:nth-child(2)  { transition-delay: 0.10s; }
+.stagger-grid.loaded .listing-card:nth-child(3)  { transition-delay: 0.16s; }
+.stagger-grid.loaded .listing-card:nth-child(4)  { transition-delay: 0.22s; }
+.stagger-grid.loaded .listing-card:nth-child(5)  { transition-delay: 0.28s; }
+.stagger-grid.loaded .listing-card:nth-child(6)  { transition-delay: 0.34s; }
+.stagger-grid.loaded .listing-card:nth-child(7)  { transition-delay: 0.04s; }
+.stagger-grid.loaded .listing-card:nth-child(8)  { transition-delay: 0.10s; }
+.stagger-grid.loaded .listing-card:nth-child(9)  { transition-delay: 0.16s; }
+
+/* ── POS SECTION ────────────────────────────────────────────── */
+#powerofsale { background: linear-gradient(160deg, #0d1f14 0%, #132b1c 60%, #1B3A2A 100%) !important; position: relative; overflow: hidden; }
+#powerofsale::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+#powerofsale .section-label { color: #C9A84C !important; letter-spacing: 0.2em; }
+#powerofsale .section-title { color: #fff; }
+#powerofsale .section-sub { color: rgba(255,255,255,.65); }
+
+.pos-urgency-bar {
+  display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px;
+}
+.pos-urgency-pill {
+  display: flex; align-items: center; gap: 8px; background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.3); border-radius: 50px;
+  padding: 8px 18px; color: #C9A84C; font-size: 0.82rem; font-weight: 600;
+}
+.pos-urgency-dot { width: 8px; height: 8px; border-radius: 50%; background: #C9A84C; animation: pulse-ring 1.5s infinite; flex-shrink:0; }
+
 .pos-gate { display: flex; justify-content: center; padding: 20px 0 40px; }
 .pos-gate-card {
-  background: var(--white); border-radius: 16px; padding: 40px;
-  max-width: 460px; width: 100%; box-shadow: var(--shadow-lg);
-  border-top: 3px solid #A8894A; text-align: center;
+  background: rgba(255,255,255,.06); backdrop-filter: blur(16px);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 20px; padding: 44px 40px;
+  max-width: 500px; width: 100%;
+  box-shadow: 0 24px 80px rgba(0,0,0,.4);
+  text-align: center; position: relative;
+}
+.pos-gate-card::before {
+  content: ''; position: absolute; inset: -1px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(201,168,76,.3), transparent 50%, rgba(201,168,76,.1));
+  z-index: -1;
 }
 .pos-gate-icon {
-  width: 56px; height: 56px; border-radius: 14px; background: #F5EDD8;
+  width: 64px; height: 64px; border-radius: 16px;
+  background: linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.05));
+  border: 1px solid rgba(201,168,76,.3);
   display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 18px;
+  margin: 0 auto 20px;
 }
+.pos-gate-card h3 { color: #fff; font-size: 1.4rem; }
+.pos-gate-card p { color: rgba(255,255,255,.6); }
 .pos-gate-form { display: flex; flex-direction: column; gap: 10px; text-align: left; }
 .pos-input {
-  padding: 12px 14px; border: 1.5px solid var(--lgray); border-radius: 8px;
-  font-family: var(--font-body); font-size: 0.9rem; color: var(--navy);
+  padding: 13px 16px; border: 1.5px solid rgba(255,255,255,.15);
+  border-radius: 10px; background: rgba(255,255,255,.07);
+  font-family: var(--font-body); font-size: 0.9rem; color: #fff;
   outline: none; transition: border-color 0.2s; width: 100%;
 }
-.pos-input:focus { border-color: #1C3557; }
+.pos-input::placeholder { color: rgba(255,255,255,.35); }
+.pos-input:focus { border-color: #C9A84C; background: rgba(255,255,255,.1); }
+.pos-benefits { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 16px 0; }
+.pos-benefit { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,.6); font-size: 0.78rem; }
+.pos-benefit svg { flex-shrink: 0; }
+
+/* ── PRICE DROPS SECTION ─────────────────────────────────────── */
+#pricedrops { background: #fafafa !important; }
+.drop-hero {
+  background: linear-gradient(135deg, #1C3557 0%, #2a4d7a 100%);
+  border-radius: 20px; padding: 40px; margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.drop-hero::after { content: ''; position: absolute; top: -60%; right: -10%; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(201,168,76,.15) 0%, transparent 70%); }
+.drop-hero-content { position: relative; z-index: 1; }
+.drop-stat-row { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 20px; }
+.drop-stat { text-align: center; }
+.drop-stat-num { font-family: var(--font-head); font-size: 2rem; font-weight: 700; color: #C9A84C; line-height: 1; }
+.drop-stat-label { font-size: 0.72rem; color: rgba(255,255,255,.6); margin-top: 4px; }
+.drop-counter { display: inline-block; }
+
 .badge-pos { background: #A8894A; color: #fff; border-radius: 6px; font-size: 0.65rem; }
 .badge-drop { background: #C0392B; color: #fff; border-radius: 6px; font-size: 0.65rem; }
+
+/* ── CARD HOVER ─────────────────────────────────────────────── */
+.listing-card { transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s; }
+.listing-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(27,42,65,.18); }
+.listing-img { overflow: hidden; }
+.listing-img img { transition: transform 0.5s cubic-bezier(.22,1,.36,1); }
+.listing-card:hover .listing-img img { transform: scale(1.06); }
+
+/* ── POS RESULTS SECTION ────────────────────────────────────── */
+#posResults .listings-header { color: rgba(255,255,255,.7); }
+#posResults .listing-disclaimer { color: rgba(255,255,255,.4); border-color: rgba(255,255,255,.1); }
+.pos-cta-strip { margin-top: 32px; text-align: center; }
+.pos-cta-strip p { color: rgba(255,255,255,.55); font-size: 0.88rem; margin-bottom: 14px; }
+
+/* ── DROP ALERT BOX ─────────────────────────────────────────── */
+.drop-alert-box { margin-top: 36px; background: linear-gradient(135deg, #1C3557, #2a4d7a); border-radius: 20px; padding: 32px 36px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; box-shadow: 0 8px 40px rgba(28,53,87,.2); }
+.drop-alert-box h3 { font-family: var(--font-head); color: #fff; font-size: 1.2rem; margin-bottom: 6px; }
+.drop-alert-box p { color: rgba(255,255,255,.7); font-size: 0.88rem; margin-bottom: 0; }
+.drop-alert-form { display: flex; gap: 10px; flex-wrap: wrap; }
+.drop-alert-input { padding: 12px 16px; border-radius: 10px; border: none; font-size: 0.9rem; font-family: var(--font-body); min-width: 220px; outline: none; }
+.drop-alert-btn { background: linear-gradient(135deg,#A8894A,#C9A84C); color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-size: 0.9rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 0.2s, transform 0.2s; }
+.drop-alert-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
 /* Price Drops section */
 .drop-amount { font-size: 0.78rem; font-weight: 700; color: #C0392B; background: #fef2f2; border-radius: 6px; padding: 3px 8px; display: inline-flex; align-items: center; gap: 4px; }
@@ -1468,115 +1602,158 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 </section>
 
 <!-- POWER OF SALE — fold 2 for lead generation -->
-<section class="section" id="powerofsale" style="background:#F4F1EA">
+<section class="section" id="powerofsale">
   <div class="section-inner">
-    <div class="section-label" style="color:#A8894A">Distressed &amp; Power of Sale</div>
-    <h2 class="section-title">Power of Sale Opportunities</h2>
-    <p class="section-sub">Below-market opportunities across the GTA — power of sale, court-ordered, and estate properties, pulled live from active MLS® listings. Register your email for full access and instant alerts when new properties match.</p>
+
+    <!-- Header -->
+    <div class="section-label reveal">Exclusive Access &mdash; GTA</div>
+    <h2 class="section-title reveal" style="color:#fff">Power of Sale Properties</h2>
+    <p class="section-sub reveal" style="color:rgba(255,255,255,.65)">Below-market opportunities banks want sold fast. These court-ordered and estate sales trade at a discount — but windows close quickly.</p>
+
+    <!-- Urgency pills -->
+    <div class="pos-urgency-bar reveal">
+      <div class="pos-urgency-pill"><span class="pos-urgency-dot"></span>Updated live from MLS®</div>
+      <div class="pos-urgency-pill"><span class="pos-urgency-dot"></span>Below-market prices</div>
+      <div class="pos-urgency-pill"><span class="pos-urgency-dot"></span>GTA-wide coverage</div>
+      <div class="pos-urgency-pill"><span class="pos-urgency-dot"></span>Free access — no obligation</div>
+    </div>
 
     <!-- Gate -->
-    <div id="posGate" class="pos-gate">
+    <div id="posGate" class="pos-gate reveal">
       <div class="pos-gate-card">
         <div class="pos-gate-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A8894A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         </div>
-        <h3 style="margin-bottom:8px">Unlock Power of Sale Listings</h3>
-        <p style="font-size:0.88rem;margin-bottom:20px">Enter your email to view all current power of sale and distressed properties across the GTA — updated live from MLS®.</p>
+        <h3 style="margin-bottom:6px">Unlock Full Access</h3>
+        <p style="font-size:0.88rem;margin-bottom:22px;color:rgba(255,255,255,.6)">Register once to view all current power of sale, court-ordered, and estate properties across the GTA — updated live.</p>
+
+        <div class="pos-benefits">
+          <span class="pos-benefit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Instant full list
+          </span>
+          <span class="pos-benefit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Email alerts on new listings
+          </span>
+          <span class="pos-benefit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            100% free
+          </span>
+        </div>
+
         <div class="pos-gate-form">
-          <input type="text" id="posName" placeholder="Full Name" class="pos-input"/>
-          <input type="email" id="posEmail" placeholder="Email Address" class="pos-input"/>
-          <input type="tel" id="posPhone" placeholder="Phone (optional)" class="pos-input"/>
-          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="posUnlock()">Unlock Listings →</button>
+          <input type="text"  id="posName"  placeholder="Your Full Name"    class="pos-input"/>
+          <input type="email" id="posEmail" placeholder="Email Address"      class="pos-input"/>
+          <input type="tel"   id="posPhone" placeholder="Phone (get SMS alerts)" class="pos-input"/>
+          <button class="btn btn-shimmer" style="background:linear-gradient(135deg,#A8894A,#C9A84C);color:#fff;border:none;width:100%;justify-content:center;padding:14px;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;letter-spacing:0.03em" onclick="posUnlock()">
+            Show Me Power of Sale Listings &rarr;
+          </button>
         </div>
-        <p class="vow-legal" style="margin-top:14px">By registering you confirm a bona fide interest in the purchase, sale, or lease of real estate. Your information is protected under PIPEDA and never sold.</p>
+        <p class="vow-legal" style="margin-top:14px;color:rgba(255,255,255,.35)">Your information is protected under PIPEDA and never sold. You confirm a bona fide interest in real estate.</p>
       </div>
     </div>
 
     <!-- Results (hidden until unlocked) -->
     <div id="posResults" style="display:none">
-      <div class="map-filters" style="background:var(--white);border:1px solid var(--lgray);border-radius:12px;margin-bottom:20px">
+      <div class="map-filters" style="background:rgba(255,255,255,.08);border:1px solid rgba(201,168,76,.2);border-radius:12px;margin-bottom:20px">
         <div class="map-filter-row three">
-          <select class="map-filter-select" id="posCity">
+          <select class="map-filter-select" id="posCity" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.15)">
             <option value="">All GTA Cities</option>
             <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
             <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
             <option>Oakville</option><option>Burlington</option><option>Pickering</option>
             <option>Ajax</option><option>Oshawa</option>
           </select>
-          <select class="map-filter-select" id="posMinPrice">
+          <select class="map-filter-select" id="posMinPrice" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.15)">
             <option value="">Min Price</option>
             <option value="200000">$200K</option><option value="400000">$400K</option>
             <option value="600000">$600K</option><option value="800000">$800K</option>
             <option value="1000000">$1M</option>
           </select>
-          <select class="map-filter-select" id="posMaxPrice">
+          <select class="map-filter-select" id="posMaxPrice" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.15)">
             <option value="">Max Price</option>
             <option value="600000">$600K</option><option value="800000">$800K</option>
             <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
             <option value="2000000">$2M+</option>
           </select>
         </div>
-        <button class="map-filter-apply" onclick="loadPowerOfSale()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Apply Filters
-        </button>
+        <button class="map-filter-apply" style="background:linear-gradient(135deg,#A8894A,#C9A84C)" onclick="loadPowerOfSale()">Apply Filters</button>
       </div>
-      <div class="listings-header">
-        <div style="font-size:0.85rem;color:var(--gray)">
-          <span id="posResultCount">—</span> power of sale properties found across the GTA
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="posResetFilters()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-          Reset &amp; Refresh
-        </button>
+      <div class="listings-header" style="color:rgba(255,255,255,.7)">
+        <div style="font-size:0.85rem"><span id="posResultCount">—</span> power of sale properties found across the GTA</div>
+        <button class="btn btn-secondary btn-sm" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7)" onclick="posResetFilters()">Reset &amp; Refresh</button>
       </div>
-      <div id="posGrid" class="listings-grid"></div>
-      <div class="listing-disclaimer">
+      <div id="posGrid" class="listings-grid stagger-grid"></div>
+      <div class="pos-cta-strip">
+        <p>Ready to make an offer on a power of sale property?</p>
+        <a href="#contact" class="btn btn-shimmer" style="background:linear-gradient(135deg,#A8894A,#C9A84C);color:#fff;border:none;display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-weight:700;text-decoration:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.95 13a19.79 19.79 0 01-3.07-8.67A2 2 0 012.88 2H6a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L7 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Call Ravi Now — 416-825-5032
+        </a>
+      </div>
+      <div class="listing-disclaimer" style="color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.1)">
         <strong>Important:</strong> "Power of Sale" classification is generated automatically by scanning public listing remarks for relevant keywords and has not been independently verified. Always confirm property status directly with the listing brokerage. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.
       </div>
     </div>
+
   </div>
 </section>
 
 <!-- PRICE DROPS — buyer lead magnet -->
-<section class="section" id="pricedrops" style="background:var(--white)">
+<section class="section" id="pricedrops">
   <div class="section-inner">
-    <div class="listings-header">
-      <div>
-        <div class="section-label" style="color:#C0392B">Price Reduced</div>
-        <h2 class="section-title" style="margin-bottom:0">Price Drop Properties 🔥</h2>
-      </div>
-      <div class="listings-filters">
-        <select class="map-filter-select" id="dropCity" style="min-width:140px" onchange="loadPriceDrops()">
-          <option value="">All GTA Cities</option>
-          <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
-          <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
-          <option>Oakville</option><option>Burlington</option><option>Pickering</option>
-          <option>Ajax</option><option>Oshawa</option>
-        </select>
+
+    <!-- Hero stats bar -->
+    <div class="drop-hero reveal">
+      <div class="drop-hero-content">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <span style="background:rgba(192,57,43,.2);border:1px solid rgba(192,57,43,.4);color:#ff6b5b;border-radius:50px;padding:5px 16px;font-size:0.75rem;font-weight:700;letter-spacing:0.1em">PRICE REDUCED</span>
+          <span style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:#C9A84C;border-radius:50px;padding:5px 16px;font-size:0.75rem;font-weight:700">UPDATED LIVE</span>
+        </div>
+        <h2 style="font-family:var(--font-head);font-size:clamp(1.6rem,3.5vw,2.4rem);color:#fff;margin:0 0 8px">Price Drop Listings &mdash; GTA</h2>
+        <p style="color:rgba(255,255,255,.6);font-size:0.9rem;max-width:520px;margin:0 0 24px">Sellers who dropped their price are motivated to close. These are your best negotiating opportunities right now.</p>
+        <div class="drop-stat-row">
+          <div class="drop-stat"><div class="drop-stat-num" id="dropCountStat">—</div><div class="drop-stat-label">Active Price Drops</div></div>
+          <div class="drop-stat"><div class="drop-stat-num">$5K+</div><div class="drop-stat-label">Minimum Reduction</div></div>
+          <div class="drop-stat"><div class="drop-stat-num">Live</div><div class="drop-stat-label">MLS® Data</div></div>
+        </div>
       </div>
     </div>
-    <p class="section-sub" style="margin-top:-12px;margin-bottom:24px">Sellers who have reduced their asking price — motivated to move. Updated live from MLS® data.</p>
-    <div id="dropGrid" class="listings-grid">
+
+    <!-- Filters -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px" class="reveal">
+      <div style="font-size:0.85rem;color:var(--gray)">Showing <span id="dropShownCount">—</span> properties</div>
+      <select class="map-filter-select" id="dropCity" style="min-width:160px" onchange="loadPriceDrops()">
+        <option value="">All GTA Cities</option>
+        <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
+        <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
+        <option>Oakville</option><option>Burlington</option><option>Pickering</option>
+        <option>Ajax</option><option>Oshawa</option>
+      </select>
+    </div>
+
+    <div id="dropGrid" class="listings-grid stagger-grid">
       <div class="listings-loading"><div class="spinner"></div><p>Loading price reduced listings…</p></div>
     </div>
-    <div id="dropMore" style="text-align:center;margin-top:24px;display:none">
-      <button class="btn btn-primary" style="padding:12px 32px" onclick="showMoreDrops()">Show More</button>
+    <div id="dropMore" style="text-align:center;margin-top:28px;display:none">
+      <button class="btn btn-primary btn-shimmer" style="padding:13px 36px;border-radius:10px" onclick="showMoreDrops()">Show More Deals</button>
     </div>
     <div class="listing-disclaimer" id="dropDisclaimer" style="display:none"></div>
 
     <!-- Alert Signup -->
-    <div class="drop-alert-box">
+    <div class="drop-alert-box reveal">
       <div>
         <h3>Get Price Drop Alerts Instantly</h3>
-        <p>Be the first to know when a property in your city drops its price.</p>
+        <p>Be the first to know when a property drops its price — before other buyers see it.</p>
       </div>
       <div class="drop-alert-form">
         <input type="email" class="drop-alert-input" id="dropAlertEmail" placeholder="your@email.com"/>
-        <input type="tel" class="drop-alert-input" id="dropAlertPhone" placeholder="Phone (optional)" style="min-width:160px"/>
-        <button class="drop-alert-btn" onclick="dropAlertSignup()">Alert Me →</button>
+        <input type="tel" class="drop-alert-input" id="dropAlertPhone" placeholder="Phone for SMS alerts" style="min-width:180px"/>
+        <button class="drop-alert-btn btn-shimmer" onclick="dropAlertSignup()">Alert Me &rarr;</button>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -1896,6 +2073,18 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
   </div>
 </section>
 
+
+<!-- FLOATING CTA -->
+<div class="float-cta" id="floatCta">
+  <a href="tel:4168255032" class="float-cta-btn float-cta-call">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.95 13a19.79 19.79 0 01-3.07-8.67A2 2 0 012.88 2H6a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L7 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>
+    Call Ravi
+  </a>
+  <a href="/home-value" class="float-cta-btn float-cta-home btn-shimmer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg>
+    Free Home Value
+  </a>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -2308,6 +2497,7 @@ async function loadPowerOfSale() {
       grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No power of sale properties found for these filters. <a href="#contact" style="color:#1C3557">Contact us</a> and we will alert you the moment one appears.</p>';
       return;
     }
+    grid.className = 'listings-grid stagger-grid';
     grid.innerHTML = list.slice(0, 24).map(l => {
       const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
       const addr   = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
@@ -2340,6 +2530,8 @@ async function loadPowerOfSale() {
           </div>
         </div>`;
     }).join('');
+    requestAnimationFrame(() => { grid.classList.add('loaded'); });
+    if (typeof revealNewCards === 'function') revealNewCards();
   } catch (err) {
     console.error('Power of Sale fetch error:', err);
     grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">Could not load listings right now — please refresh.</p>';
@@ -2571,13 +2763,18 @@ function renderDrops() {
   const moreBtn = document.getElementById('dropMore');
   if (!grid) return;
   const slice = _allDrops.slice(0, _dropsShown);
+  // Update stat counters
+  const countStat  = document.getElementById('dropCountStat');
+  const shownCount = document.getElementById('dropShownCount');
+  if (countStat)  countStat.textContent  = _allDrops.length || '—';
+  if (shownCount) shownCount.textContent = slice.length || '—';
   if (!slice.length) {
     grid.className = 'listings-grid';
     grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">No price-reduced listings found in this area right now.</p>';
     if (moreBtn) moreBtn.style.display = 'none';
     return;
   }
-  grid.className = 'listings-grid';
+  grid.className = 'listings-grid stagger-grid';
   grid.innerHTML = slice.map(l => {
     const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'N/A';
     const orig   = l.OriginalListPrice ? '$' + Number(l.OriginalListPrice).toLocaleString() : '';
@@ -2616,6 +2813,9 @@ function renderDrops() {
       </div>`;
   }).join('');
   if (moreBtn) moreBtn.style.display = _allDrops.length > _dropsShown ? '' : 'none';
+  // Trigger stagger entrance
+  requestAnimationFrame(() => { grid.classList.add('loaded'); });
+  if (typeof revealNewCards === 'function') revealNewCards();
 }
 
 function showMoreDrops() {
@@ -2647,7 +2847,52 @@ window.addEventListener('DOMContentLoaded', () => {
   fetchListings();
   calcMortgage();
   loadPriceDrops();
+  initScrollReveal();
+  initFloatingCta();
 });
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────
+function initScrollReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left').forEach(el => obs.observe(el));
+}
+
+// Call again after dynamic content renders (listings, drops)
+function revealNewCards() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal:not(.visible), .reveal-left:not(.visible)').forEach(el => obs.observe(el));
+}
+
+// ── FLOATING CTA ──────────────────────────────────────────────
+function initFloatingCta() {
+  const cta = document.getElementById('floatCta');
+  if (!cta) return;
+  let shown = false;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400 && !shown) {
+      shown = true;
+      cta.classList.add('visible');
+    } else if (window.scrollY <= 400 && shown) {
+      shown = false;
+      cta.classList.remove('visible');
+    }
+  }, { passive: true });
+}
 </script>
 
 <script>
