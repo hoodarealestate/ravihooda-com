@@ -2092,17 +2092,17 @@ let _lmPhotoIdx = 0;
 
 function openListingDetail(key) {
   if (!recordView(key)) {
-    openVowGate(‘You’ve viewed your ‘ + FREE_VIEW_LIMIT + ‘ free properties. Register a free account to keep viewing full listing details across the GTA.’);
+    openVowGate('You\'ve viewed your ' + FREE_VIEW_LIMIT + ' free properties. Register a free account to keep viewing full listing details across the GTA.');
     return;
   }
   // Show loading state immediately
-  const body = document.getElementById(‘listingModalBody’);
-  body.innerHTML = ‘<div style="text-align:center;padding:60px 20px"><div class="spinner" style="margin:0 auto 16px"></div><p style="color:#9CA3AF;font-size:0.9rem">Loading listing details…</p></div>’;
-  document.getElementById(‘listingModal’).classList.add(‘open’);
-  document.body.style.overflow = ‘hidden’;
+  const body = document.getElementById('listingModalBody');
+  body.innerHTML = '<div style="text-align:center;padding:60px 20px"><div class="spinner" style="margin:0 auto 16px"></div><p style="color:#9CA3AF;font-size:0.9rem">Loading listing details…</p></div>';
+  document.getElementById('listingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 
   // Fetch full detail from API
-  fetch(‘/api/listing/’ + key)
+  fetch('/api/listing/' + key)
     .then(r => r.ok ? r.json() : null)
     .then(data => {
       if (data && data.listing) {
@@ -2111,7 +2111,7 @@ function openListingDetail(key) {
         // Fall back to cached listing data
         const l = findListing(key);
         if (l) showListingDetail(l, l.PhotoURL ? [l.PhotoURL] : []);
-        else body.innerHTML = ‘<p style="padding:40px;text-align:center;color:#9CA3AF">Could not load listing details.</p>’;
+        else body.innerHTML = '<p style="padding:40px;text-align:center;color:#9CA3AF">Could not load listing details.</p>';
       }
     })
     .catch(() => {
@@ -2123,25 +2123,25 @@ function openListingDetail(key) {
 function showListingDetail(l, photos) {
   _lmPhotos = photos || [];
   _lmPhotoIdx = 0;
-  const price    = l.ListPrice ? ‘$’ + Number(l.ListPrice).toLocaleString() : ‘Price on Request’;
+  const price    = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
   const origP    = l.OriginalListPrice && Number(l.OriginalListPrice) > Number(l.ListPrice)
-    ? ‘<span class="drop-orig" style="margin-left:8px">Was $’ + Number(l.OriginalListPrice).toLocaleString() + ‘</span>’ : ‘’;
-  const addr     = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(‘ ‘) + (l.City ? ‘, ‘ + l.City : ‘’);
-  const postal   = l.PostalCode || ‘’;
-  const beds     = l.BedroomsTotal != null ? l.BedroomsTotal : ‘—‘;
-  const baths    = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : ‘—‘;
+    ? '<span class="drop-orig" style="margin-left:8px">Was $' + Number(l.OriginalListPrice).toLocaleString() + '</span>' : '';
+  const addr     = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
+  const postal   = l.PostalCode || '';
+  const beds     = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+  const baths    = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
   const sqftV    = l.LivingArea || l.BuildingAreaTotal;
-  const sqft     = sqftV ? Number(sqftV).toLocaleString() + ‘ sqft’ : ‘—‘;
-  const type     = l.PropertySubType || ‘’;
-  const broker   = l.ListOfficeName || ‘Listing Brokerage’;
-  const mlsNum   = l.ListingId ? ‘MLS® ‘ + l.ListingId : ‘’;
-  const dom      = l.DaysOnMarket != null ? l.DaysOnMarket + ‘ days on market’ : ‘’;
-  const yearB    = l.YearBuilt ? ‘Built ‘ + l.YearBuilt : ‘’;
-  const taxes    = l.TaxAnnualAmount ? ‘$’ + Number(l.TaxAnnualAmount).toLocaleString() + ‘/yr taxes’ : ‘’;
-  const lot      = l.LotFrontage && l.LotDepth ? l.LotFrontage + ‘ × ‘ + l.LotDepth + ‘ ft lot’ : ‘’;
+  const sqft     = sqftV ? Number(sqftV).toLocaleString() + ' sqft' : '—';
+  const type     = l.PropertySubType || '';
+  const broker   = l.ListOfficeName || 'Listing Brokerage';
+  const mlsNum   = l.ListingId ? 'MLS® ' + l.ListingId : '';
+  const dom      = l.DaysOnMarket != null ? l.DaysOnMarket + ' days on market' : '';
+  const yearB    = l.YearBuilt ? 'Built ' + l.YearBuilt : '';
+  const taxes    = l.TaxAnnualAmount ? '$' + Number(l.TaxAnnualAmount).toLocaleString() + '/yr taxes' : '';
+  const lot      = l.LotFrontage && l.LotDepth ? l.LotFrontage + ' × ' + l.LotDepth + ' ft lot' : '';
   const remain   = viewsRemaining();
-  const remainNote = isVowUser() ? ‘’
-    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:10px">${remain} free ${remain===1?’view’:’views’} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
+  const remainNote = isVowUser() ? ''
+    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:10px">${remain} free ${remain===1?'view':'views'} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
 
   // Photo gallery HTML
   const galleryHtml = _lmPhotos.length
@@ -2150,31 +2150,31 @@ function showListingDetail(l, photos) {
         ${_lmPhotos.length > 1 ? `
           <button class="lm-gallery-nav prev" onclick="lmNavPhoto(-1)">&#8249;</button>
           <button class="lm-gallery-nav next" onclick="lmNavPhoto(1)">&#8250;</button>
-          <div class="lm-gallery-dots" id="lmDots">${_lmPhotos.map((_,i)=>`<div class="lm-gallery-dot${i===0?’ active’:’’}" onclick="lmGoPhoto(${i})"></div>`).join(‘’)}</div>
-          <div class="lm-photo-count" id="lmCount">1 / ${_lmPhotos.length}</div>` : ‘’}
+          <div class="lm-gallery-dots" id="lmDots">${_lmPhotos.map((_,i)=>`<div class="lm-gallery-dot${i===0?' active':''}" onclick="lmGoPhoto(${i})"></div>`).join('')}</div>
+          <div class="lm-photo-count" id="lmCount">1 / ${_lmPhotos.length}</div>` : ''}
       </div>`
     : `<div style="height:200px;background:linear-gradient(135deg,#eef2f7,#d0dcea);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:0.9rem">No Photo Available</div>`;
 
   const extraStats = [yearB, taxes, lot, dom].filter(Boolean);
   const extraRow = extraStats.length
-    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">${extraStats.map(s=>`<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:4px 10px;border-radius:6px">${s}</span>`).join(‘’)}</div>` : ‘’;
+    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">${extraStats.map(s=>`<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:4px 10px;border-radius:6px">${s}</span>`).join('')}</div>` : '';
 
   const descHtml = l.PublicRemarks
     ? `<div class="lm-desc" id="lmDesc">${l.PublicRemarks}</div>
-       <span class="lm-desc-toggle" onclick="document.getElementById(‘lmDesc’).classList.toggle(‘expanded’);this.textContent=this.textContent===’Show more ▾’?’Show less ▴’:’Show more ▾’">Show more ▾</span>`
-    : ‘’;
+       <span class="lm-desc-toggle" onclick="document.getElementById('lmDesc').classList.toggle('expanded');this.textContent=this.textContent==='Show more ▾'?'Show less ▴':'Show more ▾'">Show more ▾</span>`
+    : '';
 
-  const mlsRow = mlsNum ? `<div style="font-size:0.72rem;color:#9CA3AF;margin-top:4px">${mlsNum}</div>` : ‘’;
+  const mlsRow = mlsNum ? `<div style="font-size:0.72rem;color:#9CA3AF;margin-top:4px">${mlsNum}</div>` : '';
 
-  document.getElementById(‘listingModalBody’).innerHTML = `
+  document.getElementById('listingModalBody').innerHTML = `
     ${galleryHtml}
     <div style="margin-top:16px">
       <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-        <div style="font-family:’Playfair Display’,serif;font-size:1.65rem;font-weight:700;color:#1B2A41">${price}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:#1B2A41">${price}</div>
         ${origP}
-        ${type ? `<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:3px 10px;border-radius:50px;margin-left:auto">${type}</span>` : ‘’}
+        ${type ? `<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:3px 10px;border-radius:50px;margin-left:auto">${type}</span>` : ''}
       </div>
-      <div style="font-size:0.92rem;color:#374151;margin-top:4px;font-weight:500">${addr}${postal?’ ‘+postal:’’}</div>
+      <div style="font-size:0.92rem;color:#374151;margin-top:4px;font-weight:500">${addr}${postal?' '+postal:''}</div>
       ${mlsRow}
     </div>
     <div class="lm-stats-grid" style="margin-top:14px">
@@ -2189,12 +2189,12 @@ function showListingDetail(l, photos) {
       <input type="text" id="lmInqName" placeholder="Your Name" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
       <input type="tel" id="lmInqPhone" placeholder="Phone Number" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
       <input type="email" id="lmInqEmail" placeholder="Email Address" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
-      <button id="lmInqBtn" class="lm-inquiry-btn" onclick="submitListingInquiry(‘${addr}’,’${l.ListingKey}’)">Send Inquiry</button>
+      <button id="lmInqBtn" class="lm-inquiry-btn" onclick="submitListingInquiry('${addr}','${l.ListingKey}')">Send Inquiry</button>
     </div>
     ${remainNote}
     <div style="font-size:0.62rem;color:#9CA3AF;margin-top:12px;line-height:1.5">Listing Brokerage: ${broker}. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Measurements approximate. The information herein must only be used by consumers with a bona fide interest in the purchase, sale, or lease of real estate.</div>`;
-  document.getElementById(‘listingModal’).classList.add(‘open’);
-  document.body.style.overflow = ‘hidden’;
+  document.getElementById('listingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function lmNavPhoto(dir) {
@@ -2203,36 +2203,36 @@ function lmNavPhoto(dir) {
 
 function lmGoPhoto(idx) {
   _lmPhotoIdx = idx;
-  const img = document.getElementById(‘lmGalleryImg’);
+  const img = document.getElementById('lmGalleryImg');
   if (img) img.src = _lmPhotos[idx];
-  document.querySelectorAll(‘.lm-gallery-dot’).forEach((d,i) => d.classList.toggle(‘active’, i===idx));
-  const cnt = document.getElementById(‘lmCount’);
-  if (cnt) cnt.textContent = (idx+1) + ‘ / ‘ + _lmPhotos.length;
+  document.querySelectorAll('.lm-gallery-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+  const cnt = document.getElementById('lmCount');
+  if (cnt) cnt.textContent = (idx+1) + ' / ' + _lmPhotos.length;
 }
 
 async function submitListingInquiry(addr, key) {
-  const name  = document.getElementById(‘lmInqName’)?.value.trim();
-  const phone = document.getElementById(‘lmInqPhone’)?.value.trim();
-  const email = document.getElementById(‘lmInqEmail’)?.value.trim();
-  if (!name || !email) { alert(‘Please enter your name and email.’); return; }
-  if (!email.includes(‘@’)) { alert(‘Please enter a valid email.’); return; }
-  const btn = document.getElementById(‘lmInqBtn’);
-  if (btn) { btn.disabled = true; btn.textContent = ‘Sending…’; }
+  const name  = document.getElementById('lmInqName')?.value.trim();
+  const phone = document.getElementById('lmInqPhone')?.value.trim();
+  const email = document.getElementById('lmInqEmail')?.value.trim();
+  if (!name || !email) { alert('Please enter your name and email.'); return; }
+  if (!email.includes('@')) { alert('Please enter a valid email.'); return; }
+  const btn = document.getElementById('lmInqBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
   try {
-    await fetch(‘/api/lead’, {
-      method: ‘POST’,
-      headers: { ‘Content-Type’: ‘application/json’ },
-      body: JSON.stringify({ name, email, phone, type: ‘showing’, property: addr })
+    await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, type: 'showing', property: addr })
     });
-    if (btn) { btn.textContent = ‘✓ Inquiry Sent! We\’ll be in touch shortly.’; btn.style.background = ‘#2d7a4f’; }
+    if (btn) { btn.textContent = '✓ Inquiry Sent! We\'ll be in touch shortly.'; btn.style.background = '#2d7a4f'; }
   } catch {
-    if (btn) { btn.disabled = false; btn.textContent = ‘Send Inquiry’; alert(‘Could not send — please call 416-825-5032 directly.’); }
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Inquiry'; alert('Could not send — please call 416-825-5032 directly.'); }
   }
 }
 
 function closeListingModal() {
-  document.getElementById(‘listingModal’).classList.remove(‘open’);
-  document.body.style.overflow = ‘’;
+  document.getElementById('listingModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // Open the registration modal with a gate-specific message.
