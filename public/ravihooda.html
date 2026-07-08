@@ -776,8 +776,10 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 .map-container {
   flex: 1;
   position: relative;
+  min-height: 400px;
 }
-#googleMap { width: 100%; height: 100%; }
+/* absolute fill avoids height:100% not resolving in flex children */
+#googleMap { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* INFO WINDOW custom */
 .map-info-window {
   font-family: var(--font-body);
@@ -3064,6 +3066,7 @@ function initMap() {
     center: GTA_CENTER,
     zoom: 11,
     restriction: { latLngBounds: GTA_BOUNDS, strictBounds: false },
+    gestureHandling: 'greedy',
     styles: [
       { featureType:'poi',elementType:'labels',stylers:[{visibility:'off'}] },
       { featureType:'transit',elementType:'labels',stylers:[{visibility:'off'}] },
@@ -3231,7 +3234,8 @@ function showInfoWindow(marker, l) {
   const type = l.PropertySubType || '';
 
   const content = `
-    <div class="map-info-window" style="font-family:'DM Sans',sans-serif;min-width:230px;padding:4px">
+    <div class="map-info-window" style="font-family:'DM Sans',sans-serif;min-width:240px;padding:4px">
+      ${l.PhotoURL ? `<img src="${l.PhotoURL}" alt="${addr}" style="width:100%;height:130px;object-fit:cover;border-radius:8px;margin-bottom:10px;display:block">` : ''}
       <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#1B2A41;margin-bottom:3px">${price}</div>
       <div style="font-size:0.82rem;color:#374151;margin-bottom:8px">${addr}</div>
       <div style="display:flex;gap:14px;font-size:0.78rem;color:#6B7280;margin-bottom:8px;flex-wrap:wrap">
@@ -3241,10 +3245,10 @@ function showInfoWindow(marker, l) {
         ${type ? `<span>${type}</span>` : ''}
       </div>
       <div style="font-size:0.68rem;color:#9CA3AF;padding:6px 0;border-top:1px solid #f3f4f6;margin-bottom:8px">${broker}</div>
-      <a href="#contact" onclick="document.getElementById('googleMap').scrollIntoView()" 
-         style="display:block;background:#1C3557;color:white;text-align:center;padding:9px;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none">
-        Book a Showing
-      </a>
+      <button onclick="openListingDetail('${l.ListingKey}')"
+         style="display:block;width:100%;background:#1C3557;color:white;text-align:center;padding:10px;border-radius:8px;font-weight:700;font-size:0.85rem;border:none;cursor:pointer;font-family:inherit">
+        View Full Details &amp; Photos
+      </button>
     </div>`;
 
   infoWindow.setContent(content);
@@ -3274,7 +3278,7 @@ function renderSidebarList(listings) {
     const sqft = sqftVal ? Number(sqftVal).toLocaleString() : '—';
     const broker = l.ListOfficeName || 'Listing Brokerage';
     return `
-      <div class="map-result-card" id="map-card-${l.ListingKey}" onclick="focusMarker(${i}, '${l.ListingKey}')">
+      <div class="map-result-card" id="map-card-${l.ListingKey}" onclick="openListingDetail('${l.ListingKey}')" style="cursor:pointer">
         <div class="map-result-img">
           ${l.PhotoURL
             ? `<img src="${l.PhotoURL}" alt="${addr}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.remove()">`
