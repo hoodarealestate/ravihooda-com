@@ -566,7 +566,7 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-@media (max-width: 1200px) {
+@media (max-width: 1430px) {
   .nav-links { display: none; }
   .nav-phones { display: none; }
   .hamburger { display: flex; }
@@ -1432,7 +1432,6 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
       <a href="/home-value">Home Value</a>
       <button class="nav-vow-btn" id="navVowBtn" onclick="openVowModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Member Login</button>
       <div class="nav-user-pill" id="navUserPill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="navUserName">Member</span></div>
-      <a href="#contact" class="nav-cta">Contact Us</a>
     </div>
     <div class="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
@@ -3001,7 +3000,7 @@ const MAPS_KEY = 'AIzaSyDDsqASShU4BZECa0sVbc4WgfC1bl4Kt_M';
 // are cached and capped to limit Geocoding API calls.
 let markersByKey = {};
 let mapRenderToken = 0;
-const MAP_GEOCODE_LIMIT = 100;
+const MAP_GEOCODE_LIMIT = 30; // only pin first 30; sidebar shows all 100
 const geoCache = {};
 const geoPending = {};
 let geoQueue = [], geoActiveCount = 0, _geocoder = null;
@@ -3098,6 +3097,32 @@ function initMap() {
   loadMapListings('', '', '', '', '', true); // fitView=true only on initial load
 }
 
+// Map Google geocoder city names → PropTx city names used in the IDX feed
+const GTA_CITY_MAP = {
+  'etobicoke': 'Toronto', 'north york': 'Toronto', 'scarborough': 'Toronto',
+  'york': 'Toronto', 'east york': 'Toronto', 'downtown toronto': 'Toronto',
+  'toronto': 'Toronto',
+  'mississauga': 'Mississauga', 'brampton': 'Brampton', 'vaughan': 'Vaughan',
+  'markham': 'Markham', 'richmond hill': 'Richmond Hill', 'oakville': 'Oakville',
+  'burlington': 'Burlington', 'ajax': 'Ajax', 'pickering': 'Pickering',
+  'whitby': 'Whitby', 'oshawa': 'Oshawa', 'newmarket': 'Newmarket',
+  'aurora': 'Aurora', 'milton': 'Milton', 'halton hills': 'Halton Hills',
+  'caledon': 'Caledon', 'king': 'King', 'east gwillimbury': 'East Gwillimbury',
+  'georgina': 'Georgina', 'stouffville': 'Stouffville',
+};
+
+function resolveGtaCity(comps) {
+  const types = ['locality', 'sublocality_level_1', 'administrative_area_level_3', 'neighborhood'];
+  for (const t of types) {
+    const c = comps.find(c => c.types.includes(t));
+    if (c) {
+      const mapped = GTA_CITY_MAP[c.long_name.toLowerCase()];
+      if (mapped) return mapped;
+    }
+  }
+  return '';
+}
+
 function searchThisArea() {
   const btn = document.getElementById('mapSearchAreaBtn');
   if (btn) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
@@ -3110,9 +3135,7 @@ function searchThisArea() {
   const beds = document.getElementById('mapBeds')?.value || '';
   getGeocoder().geocode({ location: center }, (results, status) => {
     const comps = (status === 'OK' && results?.[0]?.address_components) || [];
-    const locality = comps.find(c => c.types.includes('locality'))
-                  || comps.find(c => c.types.includes('sublocality_level_1'));
-    const city = locality ? locality.long_name : '';
+    const city = resolveGtaCity(comps);
     loadMapListings(city, type, minP, maxP, beds);
   });
 }
