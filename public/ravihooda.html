@@ -566,6 +566,11 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+@media (max-width: 1200px) {
+  .nav-links { display: none; }
+  .nav-phones { display: none; }
+  .hamburger { display: flex; }
+}
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; }
   .hero-visual { display: none; }
@@ -574,9 +579,6 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
   .contact-wrap { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .stats-bar-inner { grid-template-columns: repeat(2, 1fr); }
-  .nav-links { display: none; }
-  .nav-phones { display: none; }
-  .hamburger { display: flex; }
 }
 @media (max-width: 600px) {
   .section { padding: 56px 16px; }
@@ -3086,16 +3088,14 @@ function initMap() {
   infoWindow = new google.maps.InfoWindow();
   document.getElementById('mapLoadingOverlay').style.display = 'none';
 
-  // Show "Search this area" button after user manually pans/zooms
-  // (no idle listener — it causes fitBounds→idle infinite loops)
-  let _userMoved = false;
+  // Show "Search this area" button on user pan/zoom.
+  // _suppressAreaBtn is set during programmatic fitBounds so it doesn't trigger.
+  window._suppressAreaBtn = false;
   ['dragend', 'zoom_changed'].forEach(evt => {
     map.addListener(evt, () => {
-      if (!_userMoved) {
-        _userMoved = true;
-        const btn = document.getElementById('mapSearchAreaBtn');
-        if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
-      }
+      if (window._suppressAreaBtn) return;
+      const btn = document.getElementById('mapSearchAreaBtn');
+      if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
     });
   });
 
@@ -3178,7 +3178,11 @@ function renderMapListings(listings) {
 
   const fitOnce = () => {
     if (myToken !== mapRenderToken) return;
-    if (placed > 0) map.fitBounds(bounds);
+    if (placed > 0) {
+      window._suppressAreaBtn = true;
+      map.fitBounds(bounds);
+      setTimeout(() => { window._suppressAreaBtn = false; }, 1500);
+    }
   };
 
   const place = (l, i, pos) => {
