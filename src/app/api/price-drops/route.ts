@@ -15,6 +15,25 @@ const AUTH = {
 
 const RESIDENTIAL = "(PropertyType eq 'Residential Freehold' or PropertyType eq 'Residential Condo & Other')"
 
+// Keywords in PublicRemarks that indicate a price reduction or motivated seller
+const PRICE_DROP_KEYWORDS = [
+  'price reduced', 'price reduction', 'price drop', 'reduced price',
+  'motivated seller', 'motivated vendor', 'bring all offers', 'bring offers',
+  'below market', 'below assessed', 'priced to sell', 'priced below',
+  'drastically reduced', 'significantly reduced', 'must sell',
+  'vendor motivated', 'seller motivated', 'adjusted price',
+  'new price', 'improved price', 'price improvement',
+  'quick sale', 'sell fast', 'submit all offers',
+  'won\'t last', 'wont last', 'act fast', 'act now',
+  'reduced for quick', 'reduction', 'motivated',
+]
+
+function isPriceDrop(remarks: string): boolean {
+  if (!remarks) return false
+  const lower = remarks.toLowerCase()
+  return PRICE_DROP_KEYWORDS.some(kw => lower.includes(kw))
+}
+
 function cityFilter(city: string): string {
   return city === 'Toronto'
     ? "startswith(City,'Toronto')"
@@ -49,64 +68,50 @@ async function fetchPrimaryPhotos(keys: string[]): Promise<Record<string, string
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
-    const city = searchParams.get('city')
+    const city     = searchParams.get('city')
     const maxPrice = searchParams.get('maxPrice')
     const minPrice = searchParams.get('minPrice')
 
     const filters: string[] = [
       "StandardStatus eq 'Active'",
       "TransactionType eq 'For Sale'",
-      // Only fetch listings that have an OriginalListPrice set
-      'OriginalListPrice gt 0',
-      RESIDENTIAL
+      RESIDENTIAL,
     ]
-    if (city) filters.push(cityFilter(city))
+    if (city)     filters.push(cityFilter(city))
     if (maxPrice) filters.push(`ListPrice le ${maxPrice}`)
     if (minPrice) filters.push(`ListPrice ge ${minPrice}`)
 
     const select = [
-      'ListingKey', 'ListPrice', 'OriginalListPrice',
+      'ListingKey', 'ListPrice',
       'StreetNumber', 'StreetName', 'StreetSuffix',
       'City', 'StateOrProvince', 'PostalCode',
       'BedroomsTotal', 'BathroomsTotalInteger', 'BuildingAreaTotal',
-      'PropertySubType', 'ListOfficeName', 'ListingContractDate', 'DaysOnMarket'
+      'PropertySubType', 'ListOfficeName',
+      'OriginalEntryTimestamp', 'ModificationTimestamp',
+      'PublicRemarks', 'DaysOnMarket',
     ].join(',')
 
-    const url = `${ENDPOINT}Property?$filter=${encodeURIComponent(filters.join(' and '))}&$top=200&$orderby=ModificationTimestamp desc&$select=${select}`
+    // Fetch 300 most recently modified to maximise chances of finding price-drop language
+    const url = `${ENDPOINT}Property?$filter=${encodeURIComponent(filters.join(' and '))}&$top=300&$orderby=ModificationTimestamp desc&$select=${select}`
 
     const res = await fetch(url, { headers: AUTH, next: { revalidate: REVALIDATE } })
     if (!res.ok) {
+      const detail = await res.text().catch(() => '')
+      console.error('Price drops PropTx error:', res.status, detail.substring(0, 300))
       return NextResponse.json({ error: `PropTx ${res.status}`, value: [] }, { status: 500 })
     }
 
     const data = await res.json()
     const raw = (data.value || []) as any[]
 
-    // Filter in code: only listings where price was genuinely reduced (not just data quirks)
-    // Minimum $5,000 drop and minimum 0.5% reduction to avoid noise
-    const dropped = raw
-      .filter((l: any) => {
-        const orig = Number(l.OriginalListPrice)
-        const curr = Number(l.ListPrice)
-        if (!orig || !curr || orig <= curr) return false
-        const drop = orig - curr
-        const pct = (drop / orig) * 100
-        return drop >= 5000 && pct >= 0.5
-      })
-      .sort((a: any, b: any) => {
-        const dropA = (Number(a.OriginalListPrice) - Number(a.ListPrice)) / Number(a.OriginalListPrice)
-        const dropB = (Number(b.OriginalListPrice) - Number(b.ListPrice)) / Number(b.OriginalListPrice)
-        return dropB - dropA  // highest % drop first
-      })
+    // Filter: remarks contain price-drop / motivated-seller keywords
+    const dropped = raw.filter((l: any) => isPriceDrop(l.PublicRemarks || ''))
 
     const photos = await fetchPrimaryPhotos(dropped.map((l: any) => l.ListingKey).filter(Boolean))
 
     const value = dropped.map((l: any) => ({
       ListingKey:        l.ListingKey,
       ListPrice:         l.ListPrice,
-      OriginalListPrice: l.OriginalListPrice,
-      DropAmount:        Number(l.OriginalListPrice) - Number(l.ListPrice),
-      DropPercent:       Math.round(((Number(l.OriginalListPrice) - Number(l.ListPrice)) / Number(l.OriginalListPrice)) * 100 * 10) / 10,
       StreetNumber:      l.StreetNumber,
       StreetName:        l.StreetName,
       StreetSuffix:      l.StreetSuffix,
@@ -118,15 +123,16 @@ export async function GET(req: NextRequest) {
       LivingArea:        l.BuildingAreaTotal,
       PropertySubType:   l.PropertySubType,
       ListOfficeName:    l.ListOfficeName,
-      ListingContractDate: l.ListingContractDate,
       DaysOnMarket:      l.DaysOnMarket,
+      // Surface the matched keyword so the card can show a reason label
+      DropReason:        PRICE_DROP_KEYWORDS.find(kw => (l.PublicRemarks || '').toLowerCase().includes(kw)) || 'Motivated Seller',
       PhotoURL:          photos[l.ListingKey] || null
     }))
 
     return NextResponse.json({
       value,
       count: value.length,
-      disclaimer: 'Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Price reduction information is based on MLS® data and should be independently verified.'
+      disclaimer: 'Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. "Motivated seller" classification is based on public listing remarks and has not been independently verified.'
     }, { headers: { 'Access-Control-Allow-Origin': '*' } })
   } catch (err: any) {
     console.error('Price drops API error:', err)
