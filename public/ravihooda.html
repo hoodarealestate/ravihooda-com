@@ -3049,18 +3049,28 @@ function initMap() {
 
 function loadMapFromBounds() {
   if (!map) return;
-  const bounds = map.getBounds();
-  if (!bounds) return;
-  const sw = bounds.getSouthWest();
-  const ne = bounds.getNorthEast();
-  const type  = document.getElementById('mapType')?.value || '';
-  const minP  = document.getElementById('mapMinPrice')?.value || '';
-  const maxP  = document.getElementById('mapMaxPrice')?.value || '';
-  const beds  = document.getElementById('mapBeds')?.value || '';
-  loadMapListings('', type, minP, maxP, beds, sw.lat(), sw.lng(), ne.lat(), ne.lng());
+  const center = map.getCenter();
+  if (!center) return;
+  const type = document.getElementById('mapType')?.value || '';
+  const minP = document.getElementById('mapMinPrice')?.value || '';
+  const maxP = document.getElementById('mapMaxPrice')?.value || '';
+  const beds = document.getElementById('mapBeds')?.value || '';
+  // Reverse-geocode the map center to get the city, then fetch listings for it
+  getGeocoder().geocode({ location: center }, (results, status) => {
+    if (status !== 'OK' || !results?.[0]) {
+      loadMapListings('', type, minP, maxP, beds);
+      return;
+    }
+    const comps = results[0].address_components || [];
+    const locality = comps.find(c => c.types.includes('locality'))
+                  || comps.find(c => c.types.includes('sublocality_level_1'))
+                  || comps.find(c => c.types.includes('administrative_area_level_2'));
+    const city = locality ? locality.long_name : '';
+    loadMapListings(city, type, minP, maxP, beds);
+  });
 }
 
-async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', swLat='', swLng='', neLat='', neLng='') {
+async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='') {
   document.getElementById('mapResultsList').innerHTML =
     '<div style="padding:32px 16px;text-align:center;color:var(--gray)"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading listings…</p></div>';
   document.getElementById('mapResultCount').textContent = '—';
@@ -3073,10 +3083,6 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
     if (minPrice) mapParams.set('minPrice', minPrice);
     if (maxPrice) mapParams.set('maxPrice', maxPrice);
     if (beds)     mapParams.set('beds', beds);
-    if (swLat)    mapParams.set('swLat', swLat);
-    if (swLng)    mapParams.set('swLng', swLng);
-    if (neLat)    mapParams.set('neLat', neLat);
-    if (neLng)    mapParams.set('neLng', neLng);
     const res = await fetch(window.location.origin + '/api/listings?' + mapParams.toString());
 
     if (!res.ok) throw new Error('API');

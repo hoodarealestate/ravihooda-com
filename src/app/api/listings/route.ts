@@ -86,11 +86,6 @@ export async function GET(req: NextRequest) {
     const maxPrice     = searchParams.get('maxPrice')
     const minPrice     = searchParams.get('minPrice')
     const beds         = searchParams.get('beds')
-    const swLat        = searchParams.get('swLat')
-    const swLng        = searchParams.get('swLng')
-    const neLat        = searchParams.get('neLat')
-    const neLng        = searchParams.get('neLng')
-
     const filters: string[] = [
       "StandardStatus eq 'Active'",
       "TransactionType eq 'For Sale'"
@@ -101,11 +96,6 @@ export async function GET(req: NextRequest) {
     if (maxPrice)     filters.push(`ListPrice le ${maxPrice}`)
     if (minPrice)     filters.push(`ListPrice ge ${minPrice}`)
     if (beds)         filters.push(`BedroomsTotal ge ${beds}`)
-    // Bounding box filter for map pan/zoom queries
-    if (swLat && swLng && neLat && neLng) {
-      filters.push(`Latitude ge ${swLat} and Latitude le ${neLat}`)
-      filters.push(`Longitude ge ${swLng} and Longitude le ${neLng}`)
-    }
 
     const select = [
       'ListingKey', 'ListPrice', 'StreetNumber', 'StreetName', 'StreetSuffix',
