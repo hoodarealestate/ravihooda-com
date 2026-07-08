@@ -9,18 +9,26 @@ const AUTH = {
   'OData-Version': '4.0'
 }
 
+// Only fields confirmed present in the TRREB IDX feed (301-field debug verified)
 const SELECT = [
-  'ListingKey', 'ListingId', 'ListPrice', 'OriginalListPrice',
-  'StreetNumber', 'StreetName', 'StreetSuffix', 'City', 'StateOrProvince', 'PostalCode',
-  'Latitude', 'Longitude',
-  'BedroomsTotal', 'BathroomsTotalInteger', 'BuildingAreaTotal',
+  'ListingKey',
+  'ListPrice',
+  'StreetNumber', 'StreetName', 'StreetSuffix',
+  'City', 'StateOrProvince', 'PostalCode',
+  'BedroomsTotal', 'BedroomsAboveGrade', 'BedroomsBelowGrade',
+  'BathroomsTotalInteger', 'KitchensTotal',
+  'BuildingAreaTotal', 'LotDepth', 'LotWidth',
   'PropertySubType', 'PropertyType', 'TransactionType',
-  'ListOfficeName', 'ListAgentFullName',
-  'ListingContractDate', 'StandardStatus',
-  'PublicRemarks',
-  'YearBuilt', 'TaxAnnualAmount', 'TaxYear',
-  'LotFrontage', 'LotDepth', 'LotSizeArea',
-  'DaysOnMarket', 'CumulativeDaysOnMarket',
+  'ListOfficeName',
+  'OriginalEntryTimestamp', 'ModificationTimestamp',
+  'StandardStatus',
+  'PublicRemarks', 'PublicRemarksExtras',
+  'TaxAnnualAmount', 'TaxYear',
+  'ParkingTotal', 'GarageType',
+  'Basement', 'Cooling', 'HeatType', 'HeatSource',
+  'ApproximateAge',
+  'AssociationFee', 'AssociationFeeIncludes',
+  'Exposure', 'BalconyType',
 ].join(',')
 
 export async function GET(
@@ -35,13 +43,15 @@ export async function GET(
     const propUrl = `${ENDPOINT}Property?$filter=${encodeURIComponent(`ListingKey eq '${key}'`)}&$select=${SELECT}&$top=1`
     const propRes = await fetch(propUrl, { headers: AUTH, cache: 'no-store' })
     if (!propRes.ok) {
-      return NextResponse.json({ error: `PropTx error ${propRes.status}` }, { status: 502 })
+      const detail = await propRes.text().catch(() => '')
+      console.error('PropTx listing detail error:', propRes.status, detail.substring(0, 200))
+      return NextResponse.json({ error: `PropTx error ${propRes.status}`, detail: detail.substring(0,200) }, { status: 502 })
     }
     const propData = await propRes.json()
-    const listing = (propData.value || [])[0]
-    if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 })
+    const l = (propData.value || [])[0]
+    if (!l) return NextResponse.json({ error: 'Listing not found' }, { status: 404 })
 
-    // Fetch all Medium watermarked photos — Medium MUST precede Order in filter (PropTx quirk)
+    // Fetch all Medium watermarked photos ordered by position
     const photoFilter = `ResourceRecordKey eq '${key}' and MediaCategory eq 'Photo' and ImageSizeDescription eq 'Medium'`
     const photoUrl = `${ENDPOINT}Media?$filter=${encodeURIComponent(photoFilter)}&$select=ResourceRecordKey,MediaURL,ImageSizeDescription,Order&$orderby=Order asc&$top=50`
     const photoRes = await fetch(photoUrl, { headers: AUTH, cache: 'no-store' })
@@ -57,34 +67,42 @@ export async function GET(
 
     return NextResponse.json({
       listing: {
-        ListingKey:           listing.ListingKey,
-        ListingId:            listing.ListingId,
-        ListPrice:            listing.ListPrice,
-        OriginalListPrice:    listing.OriginalListPrice,
-        StreetNumber:         listing.StreetNumber,
-        StreetName:           listing.StreetName,
-        StreetSuffix:         listing.StreetSuffix,
-        City:                 listing.City,
-        StateOrProvince:      listing.StateOrProvince,
-        PostalCode:           listing.PostalCode,
-        Latitude:             listing.Latitude,
-        Longitude:            listing.Longitude,
-        BedroomsTotal:        listing.BedroomsTotal,
-        BathroomsTotalInteger:listing.BathroomsTotalInteger,
-        BuildingAreaTotal:    listing.BuildingAreaTotal,
-        PropertySubType:      listing.PropertySubType,
-        PropertyType:         listing.PropertyType,
-        ListOfficeName:       listing.ListOfficeName,
-        ListAgentFullName:    listing.ListAgentFullName,
-        ListingContractDate:  listing.ListingContractDate,
-        PublicRemarks:        listing.PublicRemarks,
-        YearBuilt:            listing.YearBuilt,
-        TaxAnnualAmount:      listing.TaxAnnualAmount,
-        TaxYear:              listing.TaxYear,
-        LotFrontage:          listing.LotFrontage,
-        LotDepth:             listing.LotDepth,
-        LotSizeArea:          listing.LotSizeArea,
-        DaysOnMarket:         listing.DaysOnMarket ?? listing.CumulativeDaysOnMarket,
+        ListingKey:            l.ListingKey,
+        ListPrice:             l.ListPrice,
+        StreetNumber:          l.StreetNumber,
+        StreetName:            l.StreetName,
+        StreetSuffix:          l.StreetSuffix,
+        City:                  l.City,
+        StateOrProvince:       l.StateOrProvince,
+        PostalCode:            l.PostalCode,
+        BedroomsTotal:         l.BedroomsTotal,
+        BedroomsAboveGrade:    l.BedroomsAboveGrade,
+        BedroomsBelowGrade:    l.BedroomsBelowGrade,
+        BathroomsTotalInteger: l.BathroomsTotalInteger,
+        KitchensTotal:         l.KitchensTotal,
+        BuildingAreaTotal:     l.BuildingAreaTotal,
+        LotDepth:              l.LotDepth,
+        LotWidth:              l.LotWidth,
+        LotSizeArea:           l.LotSizeArea,
+        PropertySubType:       l.PropertySubType,
+        PropertyType:          l.PropertyType,
+        ListOfficeName:        l.ListOfficeName,
+        ListingDate:           l.OriginalEntryTimestamp,
+        PublicRemarks:         l.PublicRemarks,
+        PublicRemarksExtras:   l.PublicRemarksExtras,
+        TaxAnnualAmount:       l.TaxAnnualAmount,
+        TaxYear:               l.TaxYear,
+        ParkingTotal:          l.ParkingTotal,
+        GarageType:            l.GarageType,
+        Basement:              l.Basement,
+        Cooling:               l.Cooling,
+        HeatType:              l.HeatType,
+        HeatSource:            l.HeatSource,
+        ApproximateAge:        l.ApproximateAge,
+        AssociationFee:        l.AssociationFee,
+        AssociationFeeIncludes:l.AssociationFeeIncludes,
+        Exposure:              l.Exposure,
+        BalconyType:           l.BalconyType,
       },
       photos,
       disclaimer: 'Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.'

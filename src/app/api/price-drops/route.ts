@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
       'BedroomsTotal', 'BathroomsTotalInteger', 'BuildingAreaTotal',
       'PropertySubType', 'ListOfficeName',
       'OriginalEntryTimestamp', 'ModificationTimestamp',
-      'PublicRemarks', 'DaysOnMarket',
+      'PublicRemarks',
     ].join(',')
 
     // Fetch 300 most recently modified to maximise chances of finding price-drop language

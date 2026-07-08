@@ -1103,12 +1103,13 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 }
 .vow-modal-close {
   position: absolute;
-  top: 16px; right: 16px;
-  background: none; border: none; cursor: pointer;
-  color: var(--gray); font-size: 1.2rem; line-height: 1;
-  padding: 4px; border-radius: 4px; transition: color 0.2s;
+  top: 14px; right: 14px;
+  background: rgba(0,0,0,.45); border: none; cursor: pointer;
+  color: #fff; font-size: 1.1rem; line-height: 1;
+  padding: 6px 8px; border-radius: 50%; transition: background 0.2s;
+  z-index: 10; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
 }
-.vow-modal-close:hover { color: var(--navy); }
+.vow-modal-close:hover { background: rgba(0,0,0,.7); }
 .vow-modal-badge {
   display: inline-flex; align-items: center; gap: 8px;
   background: #F5EDD8; border-radius: 50px;
@@ -1371,30 +1372,40 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 .drop-alert-btn:hover { background: #C9A84C; }
 
 /* Enhanced listing modal */
-.lm-gallery { position: relative; height: 280px; background: #eef2f7; border-radius: 12px; overflow: hidden; margin-bottom: 0; }
-.lm-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.lm-gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.45); color: #fff; border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; z-index: 2; transition: background .2s; }
-.lm-gallery-nav:hover { background: rgba(0,0,0,.7); }
-.lm-gallery-nav.prev { left: 10px; }
-.lm-gallery-nav.next { right: 10px; }
-.lm-gallery-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
-.lm-gallery-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.5); cursor: pointer; transition: background .2s; }
-.lm-gallery-dot.active { background: #fff; }
-.lm-photo-count { position: absolute; bottom: 8px; right: 10px; background: rgba(0,0,0,.5); color: #fff; font-size: 0.88rem; padding: 2px 8px; border-radius: 50px; }
+/* ── Listing Detail Modal ── */
+.lm-gallery { position: relative; height: 360px; background: #0a1628; border-radius: 12px 12px 0 0; overflow: hidden; margin: -40px -40px 0; }
+@media (max-width: 600px) { .lm-gallery { height: 220px; margin: -20px -20px 0; } }
+.lm-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .25s; }
+.lm-gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.52); color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; z-index: 2; transition: background .2s; }
+.lm-gallery-nav:hover { background: rgba(0,0,0,.8); }
+.lm-gallery-nav.prev { left: 14px; }
+.lm-gallery-nav.next { right: 14px; }
+.lm-gallery-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; max-width: 80%; flex-wrap: wrap; justify-content: center; }
+.lm-gallery-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.4); cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.lm-gallery-dot.active { background: #fff; transform: scale(1.25); }
+.lm-photo-count { position: absolute; bottom: 12px; right: 14px; background: rgba(0,0,0,.6); color: #fff; font-size: 0.82rem; padding: 4px 10px; border-radius: 50px; font-weight: 600; }
+.lm-body { padding: 20px 0 0; }
 .lm-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
-.lm-stat { background: #f8f9fa; border-radius: 8px; padding: 10px; text-align: center; }
-.lm-stat-val { font-size: 1rem; font-weight: 700; color: var(--navy); }
-.lm-stat-label { font-size: 0.88rem; color: #9CA3AF; margin-top: 2px; }
-.lm-desc { font-size: 0.94rem; color: #374151; line-height: 1.6; margin: 14px 0; max-height: 100px; overflow: hidden; position: relative; transition: max-height .3s; }
-.lm-desc.expanded { max-height: 600px; }
-.lm-desc-toggle { font-size: 0.94rem; color: var(--navy); cursor: pointer; font-weight: 600; text-decoration: underline; margin-bottom: 12px; display: inline-block; }
-.lm-inquiry { background: #f8f9fa; border-radius: 12px; padding: 16px; margin-top: 14px; }
-.lm-inquiry h4 { font-size: 0.97rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
-.lm-inquiry input { width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.94rem; font-family: var(--font-body); color: var(--navy); outline: none; margin-bottom: 8px; transition: border-color .2s; }
+.lm-stats-grid.has6 { grid-template-columns: repeat(3, 1fr); }
+.lm-stat { background: #f3f6fb; border-radius: 10px; padding: 12px 8px; text-align: center; }
+.lm-stat-val { font-size: 1.05rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
+.lm-stat-label { font-size: 0.76rem; color: #9CA3AF; margin-top: 3px; text-transform: uppercase; letter-spacing: .03em; }
+.lm-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid #eef2f7; border-left: 1px solid #eef2f7; margin: 16px 0 0; border-radius: 10px; overflow: hidden; }
+.lm-detail-item { padding: 10px 14px; border-bottom: 1px solid #eef2f7; border-right: 1px solid #eef2f7; }
+.lm-detail-label { font-size: 0.72rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+.lm-detail-val { font-size: 0.88rem; color: #1B2A41; font-weight: 600; }
+.lm-desc { font-size: 0.91rem; color: #374151; line-height: 1.7; margin: 16px 0 4px; max-height: 92px; overflow: hidden; transition: max-height .35s ease; }
+.lm-desc.expanded { max-height: 900px; }
+.lm-desc-toggle { font-size: 0.88rem; color: var(--navy); cursor: pointer; font-weight: 600; text-decoration: underline; margin-bottom: 14px; display: inline-block; }
+.lm-inquiry { background: linear-gradient(135deg, #f0f4f9, #e8eef5); border-radius: 12px; padding: 18px; margin-top: 18px; border: 1px solid #d8e3ef; }
+.lm-inquiry h4 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+.lm-inquiry input { width: 100%; padding: 10px 14px; border: 1.5px solid #d0dcea; border-radius: 8px; font-size: 0.91rem; font-family: var(--font-body); color: var(--navy); outline: none; margin-bottom: 8px; transition: border-color .2s; background: #fff; box-sizing: border-box; }
 .lm-inquiry input:focus { border-color: var(--navy); }
-.lm-inquiry-btn { width: 100%; padding: 12px; background: var(--navy); color: #fff; border: none; border-radius: 8px; font-size: 0.97rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+.lm-inquiry-btn { width: 100%; padding: 13px; background: var(--navy); color: #fff; border: none; border-radius: 8px; font-size: 0.97rem; font-weight: 700; cursor: pointer; transition: background .2s; letter-spacing: .02em; }
 .lm-inquiry-btn:hover { background: #2a4d7a; }
 .lm-inquiry-btn:disabled { opacity: .6; cursor: default; }
+.lm-call-cta { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-size: 0.85rem; color: #6B7280; }
+.lm-call-cta a { color: var(--gold); font-weight: 700; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -2316,76 +2327,111 @@ function openListingDetail(key) {
 function showListingDetail(l, photos) {
   _lmPhotos = photos || [];
   _lmPhotoIdx = 0;
-  const price    = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
-  const origP    = l.OriginalListPrice && Number(l.OriginalListPrice) > Number(l.ListPrice)
-    ? '<span class="drop-orig" style="margin-left:8px">Was $' + Number(l.OriginalListPrice).toLocaleString() + '</span>' : '';
-  const addr     = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ') + (l.City ? ', ' + l.City : '');
-  const postal   = l.PostalCode || '';
-  const beds     = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
-  const baths    = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
-  const sqftV    = l.LivingArea || l.BuildingAreaTotal;
-  const sqft     = sqftV ? Number(sqftV).toLocaleString() + ' sqft' : '—';
-  const type     = l.PropertySubType || '';
-  const broker   = l.ListOfficeName || 'Listing Brokerage';
-  const mlsNum   = l.ListingId ? 'MLS® ' + l.ListingId : '';
-  const dom      = l.DaysOnMarket != null ? l.DaysOnMarket + ' days on market' : '';
-  const yearB    = l.YearBuilt ? 'Built ' + l.YearBuilt : '';
-  const taxes    = l.TaxAnnualAmount ? '$' + Number(l.TaxAnnualAmount).toLocaleString() + '/yr taxes' : '';
-  const lot      = l.LotFrontage && l.LotDepth ? l.LotFrontage + ' × ' + l.LotDepth + ' ft lot' : '';
-  const remain   = viewsRemaining();
-  const remainNote = isVowUser() ? ''
-    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:10px">${remain} free ${remain===1?'view':'views'} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
 
-  // Photo gallery HTML
+  const price  = l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : 'Price on Request';
+  const addr   = [l.StreetNumber, l.StreetName, l.StreetSuffix].filter(Boolean).join(' ');
+  const cityLine = [l.City, l.StateOrProvince, l.PostalCode].filter(Boolean).join(', ');
+  const type   = l.PropertySubType || l.PropertyType || '';
+  const broker = l.ListOfficeName || 'Listing Brokerage';
+
+  // Core stats
+  const beds  = l.BedroomsTotal != null ? l.BedroomsTotal : '—';
+  const baths = l.BathroomsTotalInteger != null ? l.BathroomsTotalInteger : '—';
+  const kitchens = l.KitchensTotal != null ? l.KitchensTotal : null;
+  const sqftV = l.LivingArea || l.BuildingAreaTotal;
+  const sqft  = sqftV ? Number(sqftV).toLocaleString() + ' sqft' : '—';
+  const parking = l.ParkingTotal != null ? l.ParkingTotal : null;
+
+  // Bed breakdown
+  const bedAbove = l.BedroomsAboveGrade != null ? l.BedroomsAboveGrade : null;
+  const bedBelow = l.BedroomsBelowGrade != null && l.BedroomsBelowGrade > 0 ? l.BedroomsBelowGrade : null;
+  const bedsLabel = bedAbove != null
+    ? (bedBelow ? `${bedAbove}+${bedBelow}` : `${bedAbove}`)
+    : beds;
+
+  // Lot
+  const lotStr = l.LotWidth && l.LotDepth ? `${l.LotWidth} × ${l.LotDepth} ft` : (l.LotSizeArea ? l.LotSizeArea + ' sqft' : null);
+
+  // Details grid items
+  const details = [
+    l.HeatType     ? { label: 'Heat Type',   val: l.HeatType }                         : null,
+    l.HeatSource   ? { label: 'Heat Source', val: l.HeatSource }                       : null,
+    l.Cooling?.length ? { label: 'Cooling',  val: Array.isArray(l.Cooling) ? l.Cooling.join(', ') : l.Cooling } : null,
+    l.GarageType   ? { label: 'Garage',      val: l.GarageType }                       : null,
+    l.Basement?.length ? { label: 'Basement', val: Array.isArray(l.Basement) ? l.Basement.join(', ') : l.Basement } : null,
+    l.ApproximateAge ? { label: 'Age',       val: l.ApproximateAge + ' yrs' }          : null,
+    l.TaxAnnualAmount ? { label: 'Taxes',    val: '$' + Number(l.TaxAnnualAmount).toLocaleString() + (l.TaxYear ? ' (' + l.TaxYear + ')' : '') } : null,
+    lotStr         ? { label: 'Lot Size',    val: lotStr }                              : null,
+    l.AssociationFee ? { label: 'Condo Fee', val: '$' + Number(l.AssociationFee).toLocaleString() + '/mo' } : null,
+    l.Exposure     ? { label: 'Exposure',    val: l.Exposure }                         : null,
+    l.BalconyType  ? { label: 'Balcony',     val: l.BalconyType }                      : null,
+    l.ListingDate  ? { label: 'Listed',      val: new Date(l.ListingDate).toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}) } : null,
+  ].filter(Boolean);
+
+  // Gallery HTML
   const galleryHtml = _lmPhotos.length
     ? `<div class="lm-gallery" id="lmGallery">
         <img id="lmGalleryImg" src="${_lmPhotos[0]}" alt="${addr}" loading="lazy"/>
         ${_lmPhotos.length > 1 ? `
           <button class="lm-gallery-nav prev" onclick="lmNavPhoto(-1)">&#8249;</button>
           <button class="lm-gallery-nav next" onclick="lmNavPhoto(1)">&#8250;</button>
-          <div class="lm-gallery-dots" id="lmDots">${_lmPhotos.map((_,i)=>`<div class="lm-gallery-dot${i===0?' active':''}" onclick="lmGoPhoto(${i})"></div>`).join('')}</div>
+          <div class="lm-gallery-dots" id="lmDots">${_lmPhotos.slice(0,20).map((_,i)=>`<div class="lm-gallery-dot${i===0?' active':''}" onclick="lmGoPhoto(${i})"></div>`).join('')}</div>
           <div class="lm-photo-count" id="lmCount">1 / ${_lmPhotos.length}</div>` : ''}
       </div>`
-    : `<div style="height:200px;background:linear-gradient(135deg,#eef2f7,#d0dcea);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:0.9rem">No Photo Available</div>`;
+    : `<div class="lm-gallery" style="display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:0.9rem;border-radius:12px 12px 0 0">No Photos Available</div>`;
 
-  const extraStats = [yearB, taxes, lot, dom].filter(Boolean);
-  const extraRow = extraStats.length
-    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">${extraStats.map(s=>`<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:4px 10px;border-radius:6px">${s}</span>`).join('')}</div>` : '';
+  // Details grid
+  const detailGridHtml = details.length
+    ? `<div class="lm-detail-grid">${details.map(d=>`<div class="lm-detail-item"><div class="lm-detail-label">${d.label}</div><div class="lm-detail-val">${d.val}</div></div>`).join('')}</div>` : '';
 
-  const descHtml = l.PublicRemarks
-    ? `<div class="lm-desc" id="lmDesc">${l.PublicRemarks}</div>
-       <span class="lm-desc-toggle" onclick="document.getElementById('lmDesc').classList.toggle('expanded');this.textContent=this.textContent==='Show more ▾'?'Show less ▴':'Show more ▾'">Show more ▾</span>`
-    : '';
+  // Description
+  const remarks = (l.PublicRemarks || '') + (l.PublicRemarksExtras ? '\n\n' + l.PublicRemarksExtras : '');
+  const descHtml = remarks.trim()
+    ? `<div class="lm-desc" id="lmDesc">${remarks.replace(/\n/g,'<br>')}</div>
+       <span class="lm-desc-toggle" onclick="document.getElementById('lmDesc').classList.toggle('expanded');this.textContent=this.textContent==='Show more ▾'?'Show less ▴':'Show more ▾'">Show more ▾</span>` : '';
 
-  const mlsRow = mlsNum ? `<div style="font-size:0.72rem;color:#9CA3AF;margin-top:4px">${mlsNum}</div>` : '';
+  const remain = viewsRemaining();
+  const remainNote = isVowUser() ? ''
+    : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:8px">${remain} free ${remain===1?'view':'views'} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
+
+  const safeAddr = addr.replace(/'/g, "\\'");
 
   document.getElementById('listingModalBody').innerHTML = `
     ${galleryHtml}
-    <div style="margin-top:16px">
-      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-        <div style="font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:#1B2A41">${price}</div>
-        ${origP}
-        ${type ? `<span style="font-size:0.78rem;color:#6B7280;background:#f3f4f6;padding:3px 10px;border-radius:50px;margin-left:auto">${type}</span>` : ''}
+    <div class="lm-body">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#1B2A41;line-height:1.1">${price}</div>
+          <div style="font-size:0.97rem;color:#374151;margin-top:5px;font-weight:600">${addr}</div>
+          <div style="font-size:0.85rem;color:#6B7280;margin-top:1px">${cityLine}</div>
+        </div>
+        ${type ? `<span style="font-size:0.75rem;color:#1C3557;background:#e8eef5;padding:5px 12px;border-radius:50px;font-weight:600;white-space:nowrap;align-self:flex-start;margin-top:6px">${type}</span>` : ''}
       </div>
-      <div style="font-size:0.92rem;color:#374151;margin-top:4px;font-weight:500">${addr}${postal?' '+postal:''}</div>
-      ${mlsRow}
-    </div>
-    <div class="lm-stats-grid" style="margin-top:14px">
-      <div class="lm-stat"><div class="lm-stat-val">${beds}</div><div class="lm-stat-label">Bedrooms</div></div>
-      <div class="lm-stat"><div class="lm-stat-val">${baths}</div><div class="lm-stat-label">Bathrooms</div></div>
-      <div class="lm-stat"><div class="lm-stat-val">${sqft}</div><div class="lm-stat-label">Size</div></div>
-    </div>
-    ${extraRow}
-    ${descHtml}
-    <div class="lm-inquiry">
-      <h4>📅 Book a Showing or Inquire</h4>
-      <input type="text" id="lmInqName" placeholder="Your Name" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
-      <input type="tel" id="lmInqPhone" placeholder="Phone Number" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
-      <input type="email" id="lmInqEmail" placeholder="Email Address" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:0.85rem;font-family:inherit;margin-bottom:8px;outline:none"/>
-      <button id="lmInqBtn" class="lm-inquiry-btn" onclick="submitListingInquiry('${addr}','${l.ListingKey}')">Send Inquiry</button>
-    </div>
-    ${remainNote}
-    <div style="font-size:0.62rem;color:#9CA3AF;margin-top:12px;line-height:1.5">Listing Brokerage: ${broker}. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Measurements approximate. The information herein must only be used by consumers with a bona fide interest in the purchase, sale, or lease of real estate.</div>`;
+
+      <div class="lm-stats-grid has6" style="margin-top:16px;grid-template-columns:repeat(3,1fr)">
+        <div class="lm-stat"><div class="lm-stat-val">${bedsLabel}</div><div class="lm-stat-label">Bedrooms</div></div>
+        <div class="lm-stat"><div class="lm-stat-val">${baths}</div><div class="lm-stat-label">Bathrooms</div></div>
+        <div class="lm-stat"><div class="lm-stat-val">${kitchens != null ? kitchens : '—'}</div><div class="lm-stat-label">Kitchens</div></div>
+        <div class="lm-stat"><div class="lm-stat-val">${sqft}</div><div class="lm-stat-label">Size</div></div>
+        <div class="lm-stat"><div class="lm-stat-val">${parking != null ? parking : '—'}</div><div class="lm-stat-label">Parking</div></div>
+        <div class="lm-stat"><div class="lm-stat-val">${l.TaxAnnualAmount ? '$'+Math.round(l.TaxAnnualAmount/12).toLocaleString() : '—'}</div><div class="lm-stat-label">Tax/mo</div></div>
+      </div>
+
+      ${detailGridHtml}
+      ${descHtml}
+
+      <div class="lm-inquiry">
+        <h4>Book a Showing or Ask a Question</h4>
+        <input type="text" id="lmInqName" placeholder="Your Name"/>
+        <input type="tel" id="lmInqPhone" placeholder="Phone Number"/>
+        <input type="email" id="lmInqEmail" placeholder="Email Address"/>
+        <button id="lmInqBtn" class="lm-inquiry-btn" onclick="submitListingInquiry('${safeAddr}','${l.ListingKey}')">Send Inquiry — We'll Respond Fast</button>
+        <div class="lm-call-cta">or call directly <a href="tel:4168255032">416-825-5032</a></div>
+      </div>
+      ${remainNote}
+      <div style="font-size:0.62rem;color:#9CA3AF;margin-top:14px;line-height:1.6">Listing Brokerage: ${broker}. Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC. Measurements are approximate. This information is for consumers with a bona fide interest in the purchase, sale, or lease of real estate and may not be used for any commercial purpose or any other purpose.</div>
+    </div>`;
+
   document.getElementById('listingModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -3331,9 +3377,9 @@ function debounceMapSearch() {
 
 
 <!-- VOW REGISTRATION MODAL -->
-<div class="vow-modal-overlay" id="listingModal">
-  <div class="vow-modal" style="max-width:560px;text-align:left">
-    <button class="vow-modal-close" onclick="closeListingModal()">&#x2715;</button>
+<div class="vow-modal-overlay" id="listingModal" style="align-items:flex-start;padding:16px;overflow-y:auto">
+  <div class="vow-modal" style="max-width:680px;text-align:left;padding:40px;overflow:hidden;margin:auto">
+    <button class="vow-modal-close" onclick="closeListingModal()" style="z-index:10">&#x2715;</button>
     <div id="listingModalBody"></div>
   </div>
 </div>
