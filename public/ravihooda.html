@@ -1434,10 +1434,6 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
       <div class="nav-user-pill" id="navUserPill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="navUserName">Member</span></div>
       <a href="#contact" class="nav-cta">Contact Us</a>
     </div>
-    <div class="nav-phones">
-      <a href="tel:4168255032">Ravi: 416-825-5032</a>
-      <a href="tel:6477665040">Rashmi: 647-766-5040</a>
-    </div>
     <div class="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
@@ -3099,7 +3095,7 @@ function initMap() {
     });
   });
 
-  loadMapListings();
+  loadMapListings('', '', '', '', '', true); // fitView=true only on initial load
 }
 
 function searchThisArea() {
@@ -3121,7 +3117,7 @@ function searchThisArea() {
   });
 }
 
-async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='') {
+async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false) {
   document.getElementById('mapResultsList').innerHTML =
     '<div style="padding:32px 16px;text-align:center;color:var(--gray)"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading listings…</p></div>';
   document.getElementById('mapResultCount').textContent = '—';
@@ -3138,9 +3134,8 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
 
     if (!res.ok) throw new Error('API');
     const data = await res.json();
-    renderMapListings(data.value || []);
+    renderMapListings(data.value || [], fitView);
   } catch(e) {
-    // Never show fabricated listings (compliance: real MLS data only).
     clearMapMarkers();
     document.getElementById('mapResultCount').textContent = '0';
     document.getElementById('mapResultsList').innerHTML =
@@ -3165,7 +3160,7 @@ function getSampleListings() {
   ];
 }
 
-function renderMapListings(listings) {
+function renderMapListings(listings, fitView=false) {
   window._mapListings = listings;
   document.getElementById('mapResultCount').textContent = listings.length;
   clearMapMarkers();
@@ -3178,7 +3173,7 @@ function renderMapListings(listings) {
 
   const fitOnce = () => {
     if (myToken !== mapRenderToken) return;
-    if (placed > 0) {
+    if (placed > 0 && fitView) {
       window._suppressAreaBtn = true;
       map.fitBounds(bounds);
       setTimeout(() => { window._suppressAreaBtn = false; }, 1500);
