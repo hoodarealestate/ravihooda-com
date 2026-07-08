@@ -2068,6 +2068,10 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
         <div class="spinner"></div>
         <p style="color:var(--gray);font-size:0.88rem">Loading GTA map…</p>
       </div>
+      <!-- Search-this-area button: appears after user pans, hidden initially -->
+      <button id="mapSearchAreaBtn" onclick="searchThisArea()" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:10;background:#fff;border:none;border-radius:24px;padding:10px 20px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;color:#1C3557;box-shadow:0 2px 12px rgba(0,0,0,.2);cursor:pointer;opacity:0;pointer-events:none;transition:opacity 0.25s;white-space:nowrap">
+        🔍 Search this area
+      </button>
       <div id="googleMap"></div>
     </div>
   </div>
@@ -3033,21 +3037,25 @@ function initMap() {
   infoWindow = new google.maps.InfoWindow();
   document.getElementById('mapLoadingOverlay').style.display = 'none';
 
-  // Reload listings whenever the user pans or zooms (debounced 700ms)
-  let _idleTimer;
-  map.addListener('idle', () => {
-    clearTimeout(_idleTimer);
-    _idleTimer = setTimeout(() => {
-      // Only auto-reload from bounds if no city filter is active
-      const cityVal = document.getElementById('mapCity')?.value;
-      if (!cityVal) loadMapFromBounds();
-    }, 700);
+  // Show "Search this area" button after user manually pans/zooms
+  // (no idle listener — it causes fitBounds→idle infinite loops)
+  let _userMoved = false;
+  ['dragend', 'zoom_changed'].forEach(evt => {
+    map.addListener(evt, () => {
+      if (!_userMoved) {
+        _userMoved = true;
+        const btn = document.getElementById('mapSearchAreaBtn');
+        if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+      }
+    });
   });
 
   loadMapListings();
 }
 
-function loadMapFromBounds() {
+function searchThisArea() {
+  const btn = document.getElementById('mapSearchAreaBtn');
+  if (btn) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
   if (!map) return;
   const center = map.getCenter();
   if (!center) return;
@@ -3055,16 +3063,10 @@ function loadMapFromBounds() {
   const minP = document.getElementById('mapMinPrice')?.value || '';
   const maxP = document.getElementById('mapMaxPrice')?.value || '';
   const beds = document.getElementById('mapBeds')?.value || '';
-  // Reverse-geocode the map center to get the city, then fetch listings for it
   getGeocoder().geocode({ location: center }, (results, status) => {
-    if (status !== 'OK' || !results?.[0]) {
-      loadMapListings('', type, minP, maxP, beds);
-      return;
-    }
-    const comps = results[0].address_components || [];
+    const comps = (status === 'OK' && results?.[0]?.address_components) || [];
     const locality = comps.find(c => c.types.includes('locality'))
-                  || comps.find(c => c.types.includes('sublocality_level_1'))
-                  || comps.find(c => c.types.includes('administrative_area_level_2'));
+                  || comps.find(c => c.types.includes('sublocality_level_1'));
     const city = locality ? locality.long_name : '';
     loadMapListings(city, type, minP, maxP, beds);
   });
@@ -3123,9 +3125,15 @@ function renderMapListings(listings) {
   const myToken = ++mapRenderToken;
   const bounds = new google.maps.LatLngBounds();
   let placed = 0;
+  let geocodePending = 0;
+
+  const fitOnce = () => {
+    if (myToken !== mapRenderToken) return;
+    if (placed > 0) map.fitBounds(bounds);
+  };
 
   const place = (l, i, pos) => {
-    if (myToken !== mapRenderToken) return;          // a newer search superseded this
+    if (myToken !== mapRenderToken) return;
     if (!pos || markersByKey[l.ListingKey]) return;
 
     const price = l.ListPrice ? '$' + formatPrice(l.ListPrice) : '—';
@@ -3142,18 +3150,28 @@ function renderMapListings(listings) {
     const marker = new google.maps.Marker({ position: pos, map, icon: markerIcon, title: price, zIndex: listings.length - i });
     marker.addListener('click', () => showInfoWindow(marker, l));
     markersByKey[l.ListingKey] = marker;
-
     bounds.extend(pos);
     placed++;
-    if (placed <= 60) map.fitBounds(bounds);          // refit as pins arrive
+    // Check if all geocodes are done then fit once
+    if (geocodePending === 0) fitOnce();
   };
 
   listings.forEach((l, i) => {
     const lat = parseFloat(l.Latitude), lng = parseFloat(l.Longitude);
     if (lat && lng) { place(l, i, { lat, lng }); return; }
-    // No coords from PropTx — geocode (capped to limit Geocoding API usage).
-    if (i < MAP_GEOCODE_LIMIT) geocodeListing(l).then(pos => place(l, i, pos));
+    if (i < MAP_GEOCODE_LIMIT) {
+      geocodePending++;
+      geocodeListing(l).then(pos => {
+        geocodePending--;
+        place(l, i, pos);
+        // After last geocode resolves, fit if not done yet
+        if (geocodePending === 0) fitOnce();
+      });
+    }
   });
+
+  // Fit immediately for listings that already had coords (no geocoding needed)
+  if (geocodePending === 0 && placed > 0) fitOnce();
 }
 
 function showInfoWindow(marker, l) {
