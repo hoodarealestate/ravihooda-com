@@ -4,13 +4,27 @@
   "installCommand": "npm install",
   "redirects": [
     {
-      "source": "/landing/whats-my-home-worth",
-      "destination": "/home-value",
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "home-sale.ca" }],
+      "destination": "https://ravihooda.com/:path*",
       "permanent": true
     },
     {
-      "source": "/landing/:path*",
-      "destination": "/home-value",
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.home-sale.ca" }],
+      "destination": "https://ravihooda.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "mlssale.ca" }],
+      "destination": "https://ravihooda.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.mlssale.ca" }],
+      "destination": "https://ravihooda.com/:path*",
       "permanent": true
     },
     {
@@ -19,8 +33,28 @@
       "permanent": true
     },
     {
+      "source": "/node/add/dream_home/:path*",
+      "destination": "/dream-home",
+      "permanent": true
+    },
+    {
+      "source": "/node/add/:path*",
+      "destination": "/dream-home",
+      "permanent": true
+    },
+    {
       "source": "/node/:path*",
       "destination": "/dream-home",
+      "permanent": true
+    },
+    {
+      "source": "/landing/whats-my-home-worth",
+      "destination": "/home-value",
+      "permanent": true
+    },
+    {
+      "source": "/landing/:path*",
+      "destination": "/home-value",
       "permanent": true
     },
     {
