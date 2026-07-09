@@ -263,7 +263,7 @@
 
     <div class="comps-header">
       <div class="comps-title">Active Comparables Near You</div>
-      <div class="comps-sub" id="compsCity"></div>
+      <div class="comps-sub" id="compsCity">Finding nearby properties...</div>
     </div>
     <div id="compsGrid" class="comps-loading">
       <div class="spinner"></div>
@@ -369,7 +369,7 @@ async function submitHV() {
 
   if (hvData.city) {
     document.getElementById('compsCity').textContent = 'Active listings in ' + hvData.city;
-    loadComps(hvData.city, hvData.type);
+    loadComps(hvData.city, hvData.type, hvData.address);
   }
 }
 
@@ -391,11 +391,43 @@ function typeToFilter(t) {
   return map[t] || '';
 }
 
-async function loadComps(city, propType) {
+async function geocodeAddress(address, city) {
+  const apiKey = 'AIzaSyDDsqASShU4BZECa0sVbc4WgfC1bl4Kt_M';
+  const fullAddress = address + ', ' + city + ', Ontario, Canada';
+  const url = 'https://maps.googleapis.com/maps/api/geocode/json?address='
+    + encodeURIComponent(fullAddress) + '&key=' + apiKey;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === 'OK' && data.results[0]) {
+      const loc = data.results[0].geometry.location;
+      return { lat: loc.lat, lng: loc.lng };
+    }
+  } catch (e) {}
+  return null;
+}
+
+async function loadComps(city, propType, address) {
   const grid = document.getElementById('compsGrid');
   try {
+    // Step 1: Geocode the address to get lat/lng
+    let proximityParams = '';
+    if (address) {
+      const coords = await geocodeAddress(address, city);
+      if (coords) {
+        proximityParams = '&lat=' + coords.lat + '&lng=' + coords.lng + '&radiusKm=1.5';
+        document.getElementById('compsCity').textContent = 'Within ~1.5km of ' + address;
+      }
+    }
+    // Step 2: If geocoding failed, fall back to city-wide but note it
+    if (!proximityParams) {
+      document.getElementById('compsCity').textContent = city + ' area';
+    }
+
     const typeParam = propType ? '&type=' + encodeURIComponent(typeToFilter(propType)) : '';
-    const res = await fetch('/api/listings?city=' + encodeURIComponent(city) + typeParam);
+    const cityParam = proximityParams ? '' : '&city=' + encodeURIComponent(city);
+    const url = '/api/listings?' + 'limit=9' + cityParam + typeParam + proximityParams;
+    const res = await fetch(url);
     if (!res.ok) throw new Error();
     const data = await res.json();
     const listings = (data.value || []).slice(0, 9);
