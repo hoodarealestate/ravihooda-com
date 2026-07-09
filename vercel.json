@@ -1,5 +1,32 @@
 {
   "framework": "nextjs",
   "buildCommand": "npm run build",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "redirects": [
+    {
+      "source": "/landing/whats-my-home-worth",
+      "destination": "/home-value",
+      "permanent": true
+    },
+    {
+      "source": "/landing/:path*",
+      "destination": "/home-value",
+      "permanent": true
+    },
+    {
+      "source": "/node/add/dream_home/lead_form_view",
+      "destination": "/dream-home",
+      "permanent": true
+    },
+    {
+      "source": "/node/:path*",
+      "destination": "/dream-home",
+      "permanent": true
+    },
+    {
+      "source": "/home-evaluation",
+      "destination": "/home-value",
+      "permanent": true
+    }
+  ]
 }

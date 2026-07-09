@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Find Your Dream Home in the GTA | The Hooda Team — Century 21</title>
+  <meta name="description" content="Tell us what you're looking for and The Hooda Team will find it. Access exclusive GTA listings, off-market properties, and power of sale opportunities."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --navy:#1C3557;--navy-light:#2a4d7a;--gold:#A8894A;--gold-light:#C9A84C;
+      --white:#fff;--off-white:#F8F7F4;--lgray:#E8ECF1;--gray:#6B7280;
+      --text:#1B2A41;--radius:14px;--shadow:0 4px 24px rgba(28,53,87,.10);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--off-white);color:var(--text);min-height:100vh}
+
+    /* NAV */
+    .nav{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{color:#fff;font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;text-decoration:none}
+    .nav-logo span{color:var(--gold-light)}
+    .nav-phone{color:rgba(255,255,255,.85);font-size:0.85rem;text-decoration:none}
+    .nav-phone:hover{color:#fff}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--navy) 0%,#162a44 100%);padding:56px 24px 48px;text-align:center;color:#fff}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.18);border:1px solid rgba(168,137,74,.4);border-radius:50px;padding:6px 18px;font-size:0.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:14px}
+    .hero h1 em{color:var(--gold-light);font-style:italic}
+    .hero p{font-size:1rem;color:rgba(255,255,255,.75);max-width:540px;margin:0 auto 0}
+
+    /* STEPS */
+    .steps-bar{display:flex;justify-content:center;gap:0;margin:32px auto 0;max-width:400px}
+    .step-dot{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+    .step-dot:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:rgba(255,255,255,.2);z-index:0}
+    .step-dot.done::after,.step-dot.active::after{background:var(--gold)}
+    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,.5);position:relative;z-index:1;background:var(--navy);transition:all .3s}
+    .step-dot.active .step-num{border-color:var(--gold-light);color:#fff;background:var(--gold)}
+    .step-dot.done .step-num{border-color:var(--gold);background:var(--gold);color:#fff}
+    .step-label{font-size:0.68rem;color:rgba(255,255,255,.5);margin-top:6px;font-weight:500}
+    .step-dot.active .step-label,.step-dot.done .step-label{color:rgba(255,255,255,.85)}
+
+    /* FORM */
+    .form-wrap{max-width:660px;margin:0 auto;padding:32px 20px 60px}
+    .form-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:32px 28px}
+    .form-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+    .form-sub{font-size:0.88rem;color:var(--gray);margin-bottom:24px}
+    .form-row{display:grid;gap:16px;margin-bottom:16px}
+    .form-row.two{grid-template-columns:1fr 1fr}
+    .form-row.three{grid-template-columns:1fr 1fr 1fr}
+    @media(max-width:540px){.form-row.two,.form-row.three{grid-template-columns:1fr}}
+    .form-group label{display:block;font-size:0.8rem;font-weight:600;color:var(--navy);margin-bottom:6px;letter-spacing:.02em}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--lgray);border-radius:9px;font-size:0.9rem;font-family:'Inter',sans-serif;color:var(--text);background:#fff;transition:border .2s,box-shadow .2s;outline:none}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,53,87,.09)}
+    .form-group textarea{resize:vertical;min-height:80px}
+
+    /* CHECKBOXES */
+    .checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:6px}
+    .checkbox-item{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .checkbox-item input[type="checkbox"]{width:16px;height:16px;accent-color:var(--navy);cursor:pointer;flex-shrink:0}
+    .checkbox-item span{font-size:0.85rem;color:var(--text)}
+
+    /* RADIO BUTTONS */
+    .radio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:6px}
+    .radio-card{position:relative}
+    .radio-card input{position:absolute;opacity:0;width:0;height:0}
+    .radio-card label{display:block;padding:10px 14px;border:1.5px solid var(--lgray);border-radius:9px;font-size:0.85rem;cursor:pointer;transition:all .2s;text-align:center;color:var(--text)}
+    .radio-card input:checked + label{border-color:var(--navy);background:#EEF4FA;color:var(--navy);font-weight:600}
+    .radio-card label:hover{border-color:var(--gold)}
+
+    /* BUTTONS */
+    .btn-next{width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;margin-top:8px;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-next:hover{background:var(--navy-light)}
+    .btn-back{background:none;border:1.5px solid var(--lgray);color:var(--gray);border-radius:10px;padding:10px 22px;font-size:0.88rem;font-weight:600;cursor:pointer;margin-bottom:16px;transition:border-color .2s,color .2s;display:inline-block}
+    .btn-back:hover{border-color:var(--navy);color:var(--navy)}
+    .legal{font-size:0.72rem;color:var(--gray);margin-top:14px;line-height:1.5}
+
+    /* STEPS */
+    .step-section{display:none}
+    .step-section.active{display:block}
+
+    /* SUCCESS */
+    .success-wrap{text-align:center;padding:40px 20px}
+    .success-icon-wrap{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1a4a2e,#1C3557);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+    .success-wrap h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--navy);margin-bottom:10px}
+    .success-wrap p{color:var(--gray);font-size:0.95rem;line-height:1.7;margin-bottom:24px;max-width:420px;margin-left:auto;margin-right:auto}
+    .success-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn-call{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--navy);color:#fff;border-radius:50px;font-weight:600;font-size:0.9rem;text-decoration:none;transition:background .2s}
+    .btn-call:hover{background:var(--navy-light)}
+    .btn-browse{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#fff;color:var(--navy);border:1.5px solid var(--lgray);border-radius:50px;font-weight:600;font-size:0.9rem;text-decoration:none;transition:all .2s}
+    .btn-browse:hover{border-color:var(--navy)}
+
+    /* TRUST BAR */
+    .trust-bar{background:var(--navy);padding:28px 24px}
+    .trust-inner{max-width:660px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+    @media(max-width:540px){.trust-inner{grid-template-columns:repeat(2,1fr)}}
+    .trust-stat strong{display:block;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold-light);line-height:1}
+    .trust-stat span{font-size:0.75rem;color:rgba(255,255,255,.6);margin-top:4px;display:block}
+
+    /* AGENT STRIP */
+    .agent-strip{background:#fff;border-top:1px solid var(--lgray);padding:24px}
+    .agent-inner{max-width:660px;margin:0 auto;display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center}
+    .agent-item{display:flex;align-items:center;gap:12px}
+    .agent-avatar{width:48px;height:48px;border-radius:50%;background:var(--lgray);overflow:hidden;flex-shrink:0;border:2px solid var(--gold)}
+    .agent-avatar img{width:100%;height:100%;object-fit:cover;object-position:top center}
+    .agent-name{font-weight:700;font-size:0.9rem;color:var(--navy)}
+    .agent-cred{font-size:0.75rem;color:var(--gray)}
+    .agent-divider{width:1px;height:40px;background:var(--lgray)}
+    @media(max-width:500px){.agent-divider{display:none}}
+
+    /* FOOTER */
+    .footer{background:var(--navy);padding:20px 24px;text-align:center}
+    .footer p{font-size:0.72rem;color:rgba(255,255,255,.4);line-height:1.7}
+    .footer a{color:rgba(255,255,255,.5);text-decoration:underline}
+
+    /* ERROR */
+    .field-error{font-size:0.75rem;color:#dc2626;margin-top:4px;display:none}
+    .field-error.show{display:block}
+    .spinner{display:none;width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">The <span>Hooda</span> Team</a>
+  <a href="tel:4168255032" class="nav-phone">📞 416-825-5032</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🏡 Free Home Search Service</div>
+  <h1>Find Your <em>Dream Home</em><br/>in the GTA</h1>
+  <p>Tell us what you're looking for and The Hooda Team will find it — including exclusive, off-market, and power of sale opportunities.</p>
+  <div class="steps-bar">
+    <div class="step-dot active" id="dot-1"><div class="step-num">1</div><div class="step-label">Location</div></div>
+    <div class="step-dot" id="dot-2"><div class="step-num">2</div><div class="step-label">Property</div></div>
+    <div class="step-dot" id="dot-3"><div class="step-num">3</div><div class="step-label">Budget</div></div>
+    <div class="step-dot" id="dot-4"><div class="step-num">4</div><div class="step-label">Contact</div></div>
+  </div>
+</div>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-stat"><strong>20+</strong><span>Years — Ravi</span></div>
+    <div class="trust-stat"><strong>15+</strong><span>Years — Rashmi</span></div>
+    <div class="trust-stat"><strong>4</strong><span>Languages</span></div>
+    <div class="trust-stat"><strong>GTA</strong><span>Wide Coverage</span></div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+  <div class="form-card">
+
+    <!-- STEP 1: Location -->
+    <div class="step-section active" id="step-1">
+      <div class="form-title">Where are you looking?</div>
+      <div class="form-sub">Select all GTA cities or areas you're interested in.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preferred Cities / Areas <span style="color:#dc2626">*</span></label>
+          <div class="checkbox-grid" id="cityCheckboxes">
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Toronto"/> <span>Toronto</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Mississauga"/> <span>Mississauga</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Brampton"/> <span>Brampton</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Vaughan"/> <span>Vaughan</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Markham"/> <span>Markham</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Richmond Hill"/> <span>Richmond Hill</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Oakville"/> <span>Oakville</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Burlington"/> <span>Burlington</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Pickering"/> <span>Pickering</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Ajax"/> <span>Ajax</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Oshawa"/> <span>Oshawa</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="cities" value="Anywhere in GTA"/> <span>Anywhere in GTA</span></label>
+          </div>
+          <div class="field-error" id="err-cities">Please select at least one area.</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Specific Neighbourhood or Street (optional)</label>
+          <input type="text" id="neighbourhood" placeholder="e.g. Unionville, Lakeshore, Lawrence Park"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Timeline</label>
+          <div class="radio-grid">
+            <div class="radio-card"><input type="radio" name="timeline" id="t1" value="Ready now" checked/><label for="t1">Ready now</label></div>
+            <div class="radio-card"><input type="radio" name="timeline" id="t2" value="1-3 months"/><label for="t2">1–3 months</label></div>
+            <div class="radio-card"><input type="radio" name="timeline" id="t3" value="3-6 months"/><label for="t3">3–6 months</label></div>
+            <div class="radio-card"><input type="radio" name="timeline" id="t4" value="6-12 months"/><label for="t4">6–12 months</label></div>
+            <div class="radio-card"><input type="radio" name="timeline" id="t5" value="Just exploring"/><label for="t5">Just exploring</label></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-next" onclick="goStep(2)">
+        Next: Property Type
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <div class="spinner" id="sp1"></div>
+      </button>
+    </div>
+
+    <!-- STEP 2: Property -->
+    <div class="step-section" id="step-2">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <div class="form-title">What type of property?</div>
+      <div class="form-sub">Tell us about the home you have in mind.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Property Type</label>
+          <div class="radio-grid">
+            <div class="radio-card"><input type="radio" name="propType" id="pt1" value="Detached" checked/><label for="pt1">Detached</label></div>
+            <div class="radio-card"><input type="radio" name="propType" id="pt2" value="Semi-Detached"/><label for="pt2">Semi-Detached</label></div>
+            <div class="radio-card"><input type="radio" name="propType" id="pt3" value="Townhouse"/><label for="pt3">Townhouse</label></div>
+            <div class="radio-card"><input type="radio" name="propType" id="pt4" value="Condo"/><label for="pt4">Condo</label></div>
+            <div class="radio-card"><input type="radio" name="propType" id="pt5" value="Any"/><label for="pt5">Any / Open</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row two">
+        <div class="form-group">
+          <label>Minimum Bedrooms</label>
+          <select id="bedrooms">
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3" selected>3+</option>
+            <option value="4">4+</option>
+            <option value="5">5+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Minimum Bathrooms</label>
+          <select id="bathrooms">
+            <option value="1">1+</option>
+            <option value="2" selected>2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Must-Have Features (optional)</label>
+          <div class="checkbox-grid">
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Garage"/> <span>Garage</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Basement"/> <span>Basement</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Pool"/> <span>Pool</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Main floor laundry"/> <span>Main floor laundry</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Open concept"/> <span>Open concept</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Corner lot"/> <span>Corner lot</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="New build"/> <span>New build</span></label>
+            <label class="checkbox-item"><input type="checkbox" name="features" value="Investment property"/> <span>Investment</span></label>
+          </div>
+        </div>
+      </div>
+      <button class="btn-next" onclick="goStep(3)">
+        Next: Budget
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- STEP 3: Budget -->
+    <div class="step-section" id="step-3">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <div class="form-title">What's your budget?</div>
+      <div class="form-sub">Give us a range so we can find the right opportunities for you.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Budget Range <span style="color:#dc2626">*</span></label>
+          <div class="radio-grid">
+            <div class="radio-card"><input type="radio" name="budget" id="b1" value="Under $500K"/><label for="b1">Under $500K</label></div>
+            <div class="radio-card"><input type="radio" name="budget" id="b2" value="$500K–$750K"/><label for="b2">$500K–$750K</label></div>
+            <div class="radio-card"><input type="radio" name="budget" id="b3" value="$750K–$1M" checked/><label for="b3">$750K–$1M</label></div>
+            <div class="radio-card"><input type="radio" name="budget" id="b4" value="$1M–$1.5M"/><label for="b4">$1M–$1.5M</label></div>
+            <div class="radio-card"><input type="radio" name="budget" id="b5" value="$1.5M–$2M"/><label for="b5">$1.5M–$2M</label></div>
+            <div class="radio-card"><input type="radio" name="budget" id="b6" value="$2M+"/><label for="b6">$2M+</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row two">
+        <div class="form-group">
+          <label>First-time buyer?</label>
+          <select id="firstTime">
+            <option value="Yes">Yes — first-time buyer</option>
+            <option value="No" selected>No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pre-approved for financing?</label>
+          <select id="preApproved">
+            <option value="Yes">Yes, I'm pre-approved</option>
+            <option value="No" selected>Not yet</option>
+            <option value="Help">I need help with this</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Anything else we should know? (optional)</label>
+          <textarea id="extraNotes" placeholder="e.g. Need to sell current home first, looking near specific school, open to power of sale deals..."></textarea>
+        </div>
+      </div>
+      <button class="btn-next" onclick="goStep(4)">
+        Next: Your Contact Info
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- STEP 4: Contact -->
+    <div class="step-section" id="step-4">
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
+      <div class="form-title">Almost there!</div>
+      <div class="form-sub">We'll reach out within 24 hours with matching properties — including exclusive and off-market listings.</div>
+      <div class="form-row two">
+        <div class="form-group">
+          <label>First Name <span style="color:#dc2626">*</span></label>
+          <input type="text" id="firstName" placeholder="John"/>
+          <div class="field-error" id="err-firstName">Please enter your first name.</div>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Smith"/>
+        </div>
+      </div>
+      <div class="form-row two">
+        <div class="form-group">
+          <label>Email <span style="color:#dc2626">*</span></label>
+          <input type="email" id="email" placeholder="john@email.com"/>
+          <div class="field-error" id="err-email">Please enter a valid email address.</div>
+        </div>
+        <div class="form-group">
+          <label>Phone <span style="color:#dc2626">*</span></label>
+          <input type="tel" id="phone" placeholder="647-000-0000"/>
+          <div class="field-error" id="err-phone">Please enter your phone number.</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Best time to call</label>
+          <select id="callTime">
+            <option value="Morning (9am–12pm)">Morning (9am–12pm)</option>
+            <option value="Afternoon (12pm–5pm)" selected>Afternoon (12pm–5pm)</option>
+            <option value="Evening (5pm–8pm)">Evening (5pm–8pm)</option>
+            <option value="Anytime">Anytime</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-next" id="submitBtn" onclick="submitForm()">
+        <span id="submitLabel">Start My Home Search</span>
+        <div class="spinner" id="submitSpinner"></div>
+      </button>
+      <p class="legal">By submitting this form you confirm a bona fide interest in the purchase of real estate. Your information is protected under PIPEDA and will never be sold or shared. You may unsubscribe at any time.</p>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="step-section" id="step-success">
+      <div class="success-wrap">
+        <div class="success-icon-wrap">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4B97A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>Your Search is Underway!</h2>
+        <p id="successMsg">Thank you! Ravi or Rashmi will be in touch within 24 hours with properties that match your criteria — including exclusive listings you won't find anywhere else.</p>
+        <div class="success-ctas">
+          <a href="tel:4168255032" class="btn-call">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Call Ravi Now
+          </a>
+          <a href="/" class="btn-browse">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+            Browse Live Listings
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-card -->
+</div><!-- /form-wrap -->
+
+<!-- AGENT STRIP -->
+<div class="agent-strip">
+  <div class="agent-inner">
+    <div class="agent-item">
+      <div class="agent-avatar">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A8894A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div class="agent-name">Ravi Hooda</div>
+        <div class="agent-cred">Broker · LUXE · ACP · 20+ years · 416-825-5032</div>
+      </div>
+    </div>
+    <div class="agent-divider"></div>
+    <div class="agent-item">
+      <div class="agent-avatar">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A8894A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div class="agent-name">Rashmi Hooda</div>
+        <div class="agent-cred">Broker · BSc · FDIT · BCA · 15+ years · 647-766-5040</div>
+      </div>
+    </div>
+    <div class="agent-divider"></div>
+    <div style="font-size:0.82rem;color:var(--gray);text-align:center">
+      <div style="font-weight:600;color:var(--navy);margin-bottom:2px">English · Hindi · Punjabi · Haryanvi</div>
+      <div>"Service You Deserve. People You Can Trust."</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>
+    Century 21 Red Star Realty Inc., Brokerage · 239 Queen St E, Unit 27, Brampton ON L6W<br/>
+    hoodarealestate@gmail.com · ravihooda.com · @prohomelist<br/>
+    The information provided herein must only be used by consumers that have a bona fide interest in the purchase, sale, or lease of real estate and may not be used for any commercial purpose.<br/>
+    <a href="/">Back to ravihooda.com</a>
+  </p>
+</footer>
+
+<script>
+let currentStep = 1;
+
+function goStep(n) {
+  // Validate before advancing
+  if (n > currentStep && !validateStep(currentStep)) return;
+
+  // Update step dots
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('dot-' + i);
+    if (!dot) continue;
+    dot.classList.remove('active', 'done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  }
+
+  // Show/hide sections
+  document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+
+  // Scroll to top of form
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    const checked = document.querySelectorAll('input[name="cities"]:checked');
+    const err = document.getElementById('err-cities');
+    if (checked.length === 0) {
+      err.classList.add('show');
+      return false;
+    }
+    err.classList.remove('show');
+  }
+  if (step === 4) {
+    let valid = true;
+    const firstName = document.getElementById('firstName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    const errFn = document.getElementById('err-firstName');
+    const errEm = document.getElementById('err-email');
+    const errPh = document.getElementById('err-phone');
+
+    if (!firstName) { errFn.classList.add('show'); valid = false; } else errFn.classList.remove('show');
+    if (!email || !email.includes('@')) { errEm.classList.add('show'); valid = false; } else errEm.classList.remove('show');
+    if (!phone) { errPh.classList.add('show'); valid = false; } else errPh.classList.remove('show');
+    return valid;
+  }
+  return true;
+}
+
+async function submitForm() {
+  if (!validateStep(4)) return;
+
+  // Gather all data
+  const cities = [...document.querySelectorAll('input[name="cities"]:checked')].map(c => c.value).join(', ');
+  const timeline = document.querySelector('input[name="timeline"]:checked')?.value || '';
+  const propType = document.querySelector('input[name="propType"]:checked')?.value || '';
+  const features = [...document.querySelectorAll('input[name="features"]:checked')].map(f => f.value).join(', ');
+  const budget = document.querySelector('input[name="budget"]:checked')?.value || '';
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const callTime = document.getElementById('callTime').value;
+  const bedrooms = document.getElementById('bedrooms').value;
+  const bathrooms = document.getElementById('bathrooms').value;
+  const firstTime = document.getElementById('firstTime').value;
+  const preApproved = document.getElementById('preApproved').value;
+  const neighbourhood = document.getElementById('neighbourhood').value.trim();
+  const extraNotes = document.getElementById('extraNotes').value.trim();
+
+  const message = [
+    neighbourhood ? 'Neighbourhood: ' + neighbourhood : '',
+    'Cities: ' + cities,
+    'Timeline: ' + timeline,
+    'Property Type: ' + propType,
+    'Bedrooms: ' + bedrooms + '+',
+    'Bathrooms: ' + bathrooms + '+',
+    features ? 'Must-haves: ' + features : '',
+    'Budget: ' + budget,
+    'First-time buyer: ' + firstTime,
+    'Pre-approved: ' + preApproved,
+    'Best time to call: ' + callTime,
+    extraNotes ? 'Notes: ' + extraNotes : ''
+  ].filter(Boolean).join('\n');
+
+  // Show spinner
+  document.getElementById('submitLabel').textContent = 'Sending...';
+  document.getElementById('submitSpinner').style.display = 'block';
+  document.getElementById('submitBtn').disabled = true;
+
+  try {
+    const res = await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: firstName + (lastName ? ' ' + lastName : ''),
+        email,
+        phone,
+        type: 'inquiry',
+        message,
+        timeline,
+        property: 'Dream Home Search — ' + cities
+      })
+    });
+
+    // Show success regardless of API result (don't penalize user for backend issues)
+    document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-success').classList.add('active');
+    document.getElementById('successMsg').textContent =
+      'Thank you, ' + firstName + '! Ravi or Rashmi will be in touch within 24 hours with matching properties — including exclusive listings and off-market deals not found anywhere else.';
+
+    // Mark all steps done
+    for (let i = 1; i <= 4; i++) {
+      const d = document.getElementById('dot-' + i);
+      if (d) { d.classList.remove('active'); d.classList.add('done'); }
+    }
+
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    document.getElementById('submitLabel').textContent = 'Start My Home Search';
+    document.getElementById('submitSpinner').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    alert('Something went wrong. Please call us directly at 416-825-5032.');
+  }
+}
+</script>
+</body>
+</html>
