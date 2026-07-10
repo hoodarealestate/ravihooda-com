@@ -593,8 +593,9 @@ export default function CRMDashboard() {
               </div>
               <div style={{display:'flex',gap:8,paddingTop:4}}>
                 <button style={S.btn('#A8894A')} onClick={saveContact} disabled={saving}>{saving?'Saving…':'Save Changes'}</button>
-                <a href={`mailto:${detail.email}`} style={{...S.btn(),textDecoration:'none'}}>Email</a>
-                {detail.phone&&<a href={`tel:${detail.phone}`} style={{...S.btn('#059669'),textDecoration:'none'}}>Call</a>}
+                <button style={S.btn()} onClick={()=>window.open('https://mail.google.com/mail/?view=cm&to='+encodeURIComponent(detail.email)+'&su=&body=Hi '+encodeURIComponent(detail.name.split(' ')[0])+',','_blank')}>✉ Gmail</button>
+                {detail.phone&&<a href={`tel:${detail.phone}`} style={{...S.btn('#059669'),textDecoration:'none'}}>📞 Call</a>}
+              {detail.phone&&<button style={S.btn('#25D366')} onClick={()=>window.open('https://wa.me/1'+detail.phone.replace(/\D/g,''),'_blank')}>💬 WhatsApp</button>}
               </div>
               <div style={{fontSize:11,color:'#D1D5DB',marginTop:4}}>
                 Added {new Date(detail.created_at).toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'})}
