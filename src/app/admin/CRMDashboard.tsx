@@ -490,11 +490,12 @@ export default function CRMDashboard() {
                   )}
                 </div>
                 <div style={{padding:'12px 18px',borderTop:'1px solid #E2E4E8',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
-                  <div style={{fontSize:12,color:'#9CA3AF'}}>Unsubscribe link + office address auto-added (CASL compliant) · {{"{{"}}firstName{{"}}"}}, {{"{{"}}fullName{{"}}"}}, {{"{{"}}month{{"}}"}}, {{"{{"}}year{{"}}"}} supported</div>
+                  <div style={{fontSize:12,color:'#9CA3AF'}}>Unsubscribe link + office address auto-added (CASL compliant) · Use tokens: firstName, fullName, month, year</div>
                   <div style={{display:'flex',gap:8}}>
                     <button style={S.btnOut()} onClick={()=>{
                       const w=window.open('','_blank','width=640,height=700')
-                      w?.document.write(`<html><body style="font-family:Arial;padding:24px;max-width:600px;margin:auto"><h2>${compSubj}</h2>${compImg?`<img src="${compImg}" style="max-width:100%;margin:12px 0;border-radius:8px"/>`:'`'}<pre style="white-space:pre-wrap;line-height:1.7">${compBody.replace(/{{firstName}}/g,'[First Name]').replace(/{{fullName}}/g,'[Full Name]')}</pre></body></html>`)
+                      const imgHtml = compImg ? '<img src="'+compImg+'" style="max-width:100%;margin:12px 0;border-radius:8px"/>' : ''
+                      w?.document.write('<html><body style="font-family:Arial;padding:24px;max-width:600px;margin:auto"><h2>'+compSubj+'</h2>'+imgHtml+'<pre style="white-space:pre-wrap;line-height:1.7">'+compBody.replace(/\{\{firstName\}\}/g,'[First Name]').replace(/\{\{fullName\}\}/g,'[Full Name]')+'</pre></body></html>')
                     }}>Preview</button>
                     <button style={S.btn('#A8894A')} onClick={sendCampaign} disabled={sending}>{sending?'Sending…':'Send Campaign ✉'}</button>
                   </div>
