@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { supabase } from '@/lib/supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 
@@ -34,6 +35,23 @@ export async function POST(req: NextRequest) {
 <p style="font-size:11px;color:#999">Century 21 Red Star Realty Inc., 239 Queen St E Unit 27, Brampton ON.<br/>
 <a href="${process.env.NEXT_PUBLIC_SITE_URL}/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a></p>`
     })
+
+    // Auto-save to CRM contacts database
+    try {
+      const existing = await supabase.from('contacts').select('id').eq('email', email.toLowerCase().trim()).single()
+      if (!existing.data) {
+        await supabase.from('contacts').insert({
+          name: `${firstName} ${lastName}`.trim(),
+          email: email.toLowerCase().trim(),
+          phone: phone?.trim() || null,
+          status: 'Lead',
+          source: `Contact Form — ${intent || 'General'}`,
+          notes: message?.trim() || null,
+        })
+      }
+    } catch (dbErr) {
+      console.error('CRM save error (non-fatal):', dbErr)
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

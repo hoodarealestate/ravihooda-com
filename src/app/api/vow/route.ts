@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SignJWT } from 'jose'
 import { Resend } from 'resend'
+import { supabase } from '@/lib/supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 const VOW_SECRET = new TextEncoder().encode(process.env.VOW_JWT_SECRET || 'hooda-vow-jwt-secret-2026')
@@ -33,6 +34,25 @@ export async function POST(req: NextRequest) {
       subject: `New VOW Registration: ${name}`,
       html: `<p><strong>Name:</strong> ${name}<br/><strong>Email:</strong> ${email}<br/><strong>Phone:</strong> ${phone}</p>`
     })
+
+    // Auto-save VOW registrant to CRM
+    try {
+      const existing = await supabase.from('contacts').select('id').eq('email', email.toLowerCase().trim()).single()
+      if (!existing.data) {
+        await supabase.from('contacts').insert({
+          name:   name.trim(),
+          email:  email.toLowerCase().trim(),
+          phone:  phone?.trim() || null,
+          status: 'VOW Lead',
+          source: 'VOW Registration',
+          notes:  'Registered for VOW access on ravihooda.com',
+        })
+      } else {
+        await supabase.from('contacts').update({ status: 'VOW Lead', source: 'VOW Registration' }).eq('id', existing.data.id)
+      }
+    } catch (dbErr) {
+      console.error('CRM VOW save (non-fatal):', dbErr)
+    }
 
     const response = NextResponse.json({ success: true })
     response.cookies.set('vow_token', token, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 31536000, path: '/' })
