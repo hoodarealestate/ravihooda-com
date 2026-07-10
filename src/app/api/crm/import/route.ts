@@ -10,83 +10,161 @@ async function authCheck(req: NextRequest) {
   try { await jwtVerify(token, CRM_SECRET); return true } catch { return false }
 }
 
-// Smart column name detector
-function detectField(headers: string[], ...candidates: string[]): number {
-  const lower = headers.map(h => h.toLowerCase().trim())
-  for (const c of candidates) {
-    const idx = lower.findIndex(h => h.includes(c.toLowerCase()))
-    if (idx >= 0) return idx
+// Smart field finder — checks multiple possible column name variants
+function getField(row: Record<string, string>, ...keys: string[]): string {
+  const rowLower: Record<string, string> = {}
+  for (const k of Object.keys(row)) {
+    rowLower[k.toLowerCase().trim().replace(/[\s_-]+/g, ' ')] = row[k]
   }
-  return -1
+  for (const key of keys) {
+    const val = rowLower[key.toLowerCase().trim()]
+    if (val && val.trim()) return val.trim()
+  }
+  return ''
+}
+
+// Map Lead Category / Lead Status to our system values
+function mapCategory(val: string): string {
+  const v = val.toLowerCase()
+  if (v.includes('buyer') || v.includes('buy'))         return 'Buyer'
+  if (v.includes('seller') || v.includes('sell'))       return 'Seller'
+  if (v.includes('invest'))                             return 'Investor'
+  if (v.includes('rent') || v.includes('tenant'))       return 'Renter'
+  if (v.includes('referral') || v.includes('partner'))  return 'Referral Partner'
+  if (val.trim())                                       return 'Prospect'
+  return 'Prospect'
+}
+
+function mapStatus(val: string): string {
+  const v = val.toLowerCase()
+  if (v.includes('client') || v.includes('active'))     return 'Client'
+  if (v.includes('past') || v.includes('closed'))       return 'Past Client'
+  if (v.includes('lead'))                               return 'Lead'
+  if (v.includes('prospect'))                           return 'Prospect'
+  if (v.includes('vow'))                               return 'VOW Lead'
+  if (v.includes('unsubscrib') || v.includes('opt out'))return 'Unsubscribed'
+  if (val.trim())                                       return 'Lead'
+  return 'Lead'
+}
+
+function mapTemperature(val: string): string {
+  const v = val.toLowerCase()
+  if (v.includes('hot') || v.includes('urgent') || v.includes('high')) return 'Hot'
+  if (v.includes('cold') || v.includes('low') || v.includes('inactive')) return 'Cold'
+  return 'Warm'
 }
 
 export async function POST(req: NextRequest) {
   if (!await authCheck(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { contacts, preview } = await req.json()
 
+  const { contacts } = await req.json()
   if (!Array.isArray(contacts) || !contacts.length) return NextResponse.json({ error: 'No contacts provided' }, { status: 400 })
   if (contacts.length > 2000) return NextResponse.json({ error: 'Maximum 2000 contacts per import' }, { status: 400 })
 
-  // If preview mode — just return detected mapping and stats
-  if (preview) {
-    const valid = contacts.filter((c: any) => c.email && c.email.includes('@')).length
-    return NextResponse.json({ total: contacts.length, valid, invalid: contacts.length - valid, sample: contacts.slice(0, 3) })
-  }
-
-  // Normalize rows
+  // Map every row to our contact schema
+  // Handles your exact columns: First Name, Last Name, Email, Phone, Cell, Fax,
+  // Address, City, Postal Code, Province, Country, Company, Birthdate,
+  // Lead Category, User Submissions, Source, Lead Status, Important Dates
   const rows = contacts
-    .filter((c: any) => c.email && String(c.email).includes('@'))
-    .map((c: any) => {
-      const get = (...keys: string[]) => {
-        for (const k of keys) {
-          const found = Object.keys(c).find(key => key.toLowerCase().trim() === k.toLowerCase())
-          if (found && c[found]) return String(c[found]).trim()
+    .map((c: Record<string, string>) => {
+      const firstName  = getField(c, 'first name', 'firstname', 'first')
+      const lastName   = getField(c, 'last name', 'lastname', 'last')
+      const email      = getField(c, 'email', 'email address', 'e-mail', 'e mail')
+      const phone      = getField(c, 'phone', 'phone number', 'telephone', 'home phone', 'work phone') ||
+                         getField(c, 'cell', 'cell phone', 'mobile', 'mobile number')
+      const address    = [
+        getField(c, 'address', 'street', 'street address'),
+        getField(c, 'city'),
+        getField(c, 'province', 'state'),
+        getField(c, 'postal code', 'postalcode', 'zip', 'postal'),
+        getField(c, 'country'),
+      ].filter(Boolean).join(', ')
+
+      const leadCategory = getField(c, 'lead category', 'category', 'client type', 'buyer/seller', 'type')
+      const leadStatus   = getField(c, 'lead status', 'status', 'client status')
+      const source       = getField(c, 'source', 'lead source', 'how did you hear', 'referred by', 'user submissions')
+      const birthday     = getField(c, 'birthdate', 'birthday', 'dob', 'date of birth', 'birth date')
+      const company      = getField(c, 'company', 'company name', 'organization', 'brokerage')
+      const importantDates = getField(c, 'important dates', 'important date', 'key dates', 'anniversary')
+      const notes = [
+        company      ? `Company: ${company}` : '',
+        importantDates ? `Important Dates: ${importantDates}` : '',
+        getField(c, 'notes', 'note', 'comments', 'description', 'user submissions'),
+      ].filter(Boolean).join('\n')
+
+      const name = [firstName, lastName].filter(Boolean).join(' ') || (email ? email.split('@')[0] : '')
+
+      // Parse birthday — handle formats: YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY
+      let birthdayParsed: string | null = null
+      if (birthday) {
+        const clean = birthday.trim()
+        if (/^\d{4}-\d{2}-\d{2}/.test(clean)) {
+          birthdayParsed = clean.substring(0, 10)
+        } else if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(clean)) {
+          const [m, d, y] = clean.split('/')
+          birthdayParsed = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
+        } else if (/^\d{1,2}-\d{1,2}-\d{4}/.test(clean)) {
+          const [m, d, y] = clean.split('-')
+          birthdayParsed = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
         }
-        return null
       }
+
       return {
-        name:        get('name','full name','fullname','contact name','client name') || get('email','e-mail')!.split('@')[0],
-        email:       String(c.email || c.Email || c['E-mail'] || c['e-mail'] || '').toLowerCase().trim(),
-        phone:       get('phone','mobile','cell','telephone','tel','phone number','mobile number'),
-        status:      get('status','type','lead type') || 'Lead',
-        category:    get('category','client type','buyer/seller') || 'Prospect',
-        temperature: get('temperature','temp','priority','urgency') || 'Warm',
-        source:      get('source','lead source','referred by','how did you hear') || 'CSV Import',
-        notes:       get('notes','note','comment','comments','description'),
-        tags:        get('tags','tag','keywords'),
-        address:     get('address','street','location','property address'),
-        birthday:    get('birthday','dob','date of birth'),
-        referred_by: get('referred by','referral','referred','referrer'),
+        name,
+        email:       email.toLowerCase().trim(),
+        phone:       phone || null,
+        address:     address || null,
+        category:    mapCategory(leadCategory),
+        status:      mapStatus(leadStatus),
+        temperature: 'Warm',
+        source:      source || 'CSV Import',
+        notes:       notes || null,
+        birthday:    birthdayParsed,
+        tags:        company ? company : null,
       }
     })
+    .filter((r: any) => r.email && r.email.includes('@') && r.name)
 
-  if (!rows.length) return NextResponse.json({ error: 'No valid contacts with emails found' }, { status: 400 })
+  if (!rows.length) return NextResponse.json({ error: 'No valid contacts found. Make sure your file has Email and First Name/Last Name columns.' }, { status: 400 })
 
-  // Check for duplicates in DB
+  // Split into new vs existing (dedup on email)
   const emails = rows.map((r: any) => r.email)
   const { data: existing } = await supabase.from('contacts').select('email').in('email', emails)
-  const existingEmails = new Set((existing || []).map((e: any) => e.email))
+  const existingSet = new Set((existing || []).map((e: any) => e.email))
 
-  const toInsert = rows.filter((r: any) => !existingEmails.has(r.email))
-  const toUpdate = rows.filter((r: any) => existingEmails.has(r.email))
+  const toInsert = rows.filter((r: any) => !existingSet.has(r.email))
+  const toUpdate = rows.filter((r: any) =>  existingSet.has(r.email))
 
   let inserted = 0, updated = 0, failed = 0
   const BATCH = 100
 
-  // Insert new contacts
   for (let i = 0; i < toInsert.length; i += BATCH) {
     const { error } = await supabase.from('contacts').insert(toInsert.slice(i, i + BATCH))
-    if (error) { failed += Math.min(BATCH, toInsert.length - i); console.error(error) }
+    if (error) { failed += Math.min(BATCH, toInsert.length - i); console.error('Insert error:', error.message) }
     else inserted += Math.min(BATCH, toInsert.length - i)
   }
 
-  // Update existing contacts (merge notes, keep existing status unless blank)
   for (const contact of toUpdate) {
     const { error } = await supabase.from('contacts')
-      .update({ phone: contact.phone, notes: contact.notes, tags: contact.tags, updated_at: new Date().toISOString() })
+      .update({
+        phone:    contact.phone    || undefined,
+        address:  contact.address  || undefined,
+        notes:    contact.notes    || undefined,
+        birthday: contact.birthday || undefined,
+        tags:     contact.tags     || undefined,
+        updated_at: new Date().toISOString(),
+      })
       .eq('email', contact.email)
     if (error) failed++; else updated++
   }
 
-  return NextResponse.json({ success: true, inserted, updated, failed, duplicates: toUpdate.length, total: rows.length, skipped: contacts.length - rows.length })
+  return NextResponse.json({
+    success: true,
+    inserted,
+    updated,
+    failed,
+    duplicates: toUpdate.length,
+    total: rows.length,
+    skipped: contacts.length - rows.length,
+  })
 }
