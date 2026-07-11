@@ -1,4 +1,5 @@
 'use client'
+// Build: newsletter-fix-v3
 import { useState, useEffect, useCallback, useRef } from 'react'
 
 type Contact = {
