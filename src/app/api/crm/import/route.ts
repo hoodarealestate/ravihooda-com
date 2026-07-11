@@ -57,9 +57,18 @@ function mapTemperature(val: string): string {
 export async function POST(req: NextRequest) {
   if (!await authCheck(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { contacts } = await req.json()
-  if (!Array.isArray(contacts) || !contacts.length) return NextResponse.json({ error: 'No contacts provided' }, { status: 400 })
-  if (contacts.length > 2000) return NextResponse.json({ error: 'Maximum 2000 contacts per import' }, { status: 400 })
+  const { contacts: rawContacts } = await req.json()
+  if (!Array.isArray(rawContacts) || !rawContacts.length) return NextResponse.json({ error: 'No contacts provided' }, { status: 400 })
+
+  // Pre-filter: remove completely empty rows before limit check
+  // (Excel files often have thousands of blank rows that inflate the count)
+  const contacts = rawContacts.filter((c: any) => {
+    const vals = Object.values(c).filter((v: any) => String(v).trim())
+    return vals.length > 0
+  })
+
+  if (!contacts.length) return NextResponse.json({ error: 'No data rows found. Check that your file has content.' }, { status: 400 })
+  if (contacts.length > 5000) return NextResponse.json({ error: `Too many rows (${contacts.length}). Please split into batches of 5,000.` }, { status: 400 })
 
   // Map every row to our contact schema
   // Handles your exact columns: First Name, Last Name, Email, Phone, Cell, Fax,

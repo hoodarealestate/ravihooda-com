@@ -69,9 +69,15 @@ export async function POST(req: NextRequest) {
 
     if (!allRows.length) return NextResponse.json({ error: 'File appears to be empty' }, { status: 400 })
 
+    // Remove completely empty rows first (Excel often has thousands of blank rows)
+    const nonEmpty = allRows.filter(row => {
+      const vals = Object.values(row).filter(v => String(v).trim())
+      return vals.length > 1  // at least 2 non-empty fields
+    })
+
     // Deduplicate by email across sheets (keep first occurrence)
     const seen = new Set<string>()
-    const deduped = allRows.filter(row => {
+    const deduped = nonEmpty.filter(row => {
       const emailKey = Object.keys(row).find(k => k.toLowerCase().includes('email'))
       const email = emailKey ? row[emailKey].toLowerCase().trim() : ''
       if (!email || seen.has(email)) return false
@@ -90,7 +96,7 @@ export async function POST(req: NextRequest) {
       total: deduped.length,
       valid: validCount,
       invalid: deduped.length - validCount,
-      crossSheetDuplicates: allRows.length - deduped.length,
+      crossSheetDuplicates: nonEmpty.length - deduped.length,
       columns: Object.keys(deduped[0] || {}),
       fileName: file.name,
       sheets: sheetNames,
