@@ -255,7 +255,7 @@ export default function CRMDashboard() {
     const months=['January','February','March','April','May','June','July','August','September','October','November','December']
     const body=compBody.replace(/\{\{month\}\}/g,months[now.getMonth()]).replace(/\{\{year\}\}/g,String(now.getFullYear()))
     const imageHtml = compImg ? `<div style="margin:16px 0;text-align:center"><img src="${compImg}" style="max-width:100%;border-radius:8px" alt=""/></div>` : ''
-    const r=await fetch('/api/crm/campaigns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:compSubj,body:body+(imageHtml?'\n\n[IMAGE]\n'+imageHtml:''),segment:compSeg,specificEmails:compSeg==='specific'?specificRecipients.split(',').map(s=>s.trim()).filter(Boolean):null})})
+    const r=await fetch('/api/crm/campaigns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:compSubj,body,segment:compSeg,specificEmails:compSeg==='specific'?specificRecipients.split(',').map(s=>s.trim()).filter(Boolean):null})})
     const d=await r.json()
     setSendRes(d); setSending(false)
     if(d.success){ showToast(`✅ Sent to ${d.sent} contacts!`); setCompSubj(''); setCompBody(''); setCompImg(''); loadCampaigns() }
@@ -591,9 +591,13 @@ export default function CRMDashboard() {
                   <input style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} placeholder="Enter subject…" value={compSubj} onChange={e=>setCompSubj(e.target.value)}/>
                 </div>
                 <div style={{padding:'12px 18px 0'}}>
-                  <div style={{fontSize:11,color:'#6B7280',marginBottom:6,padding:'6px 10px',background:'#F9FAFB',borderRadius:6,border:'1px solid #E2E4E8'}}>
-                  💡 <strong>Personalisation tokens</strong> — place anywhere in subject or body:<br/>
-                  <code style={{fontSize:11,color:'#1C3557'}}>{'{{firstName}}'}</code> · <code style={{fontSize:11,color:'#1C3557'}}>{'{{fullName}}'}</code> · <code style={{fontSize:11,color:'#1C3557'}}>{'{{month}}'}</code> · <code style={{fontSize:11,color:'#1C3557'}}>{'{{year}}'}</code>
+                  <div style={{fontSize:11,color:'#6B7280',marginBottom:6,padding:'8px 12px',background:'#F9FAFB',borderRadius:6,border:'1px solid #E2E4E8',lineHeight:1.7}}>
+                  💡 <strong>Auto-fill tokens</strong> — type these anywhere in your email and they'll be replaced with real values when sent:<br/>
+                  <code style={{fontSize:12,color:'#1C3557',background:'#EEF4FA',padding:'1px 5px',borderRadius:3}}>{'{{firstName}}'}</code> — contact's first name &nbsp;·&nbsp;
+                  <code style={{fontSize:12,color:'#1C3557',background:'#EEF4FA',padding:'1px 5px',borderRadius:3}}>{'{{fullName}}'}</code> — full name &nbsp;·&nbsp;
+                  <code style={{fontSize:12,color:'#1C3557',background:'#EEF4FA',padding:'1px 5px',borderRadius:3}}>{'{{month}}'}</code> — current month &nbsp;·&nbsp;
+                  <code style={{fontSize:12,color:'#1C3557',background:'#EEF4FA',padding:'1px 5px',borderRadius:3}}>{'{{year}}'}</code> — current year<br/>
+                  <span style={{fontSize:11,color:'#9CA3AF'}}>Example: "Dear {'{{firstName}}'}," sends as "Dear Ravi," for each contact</span>
                 </div>
                 </div>
                 <div style={{padding:'8px 18px 18px'}}>
@@ -608,8 +612,15 @@ export default function CRMDashboard() {
                         const reader = new FileReader()
                         reader.onload = ev => {
                           const base64 = ev.target?.result as string
-                          setCompImg(base64)
-                          showToast('📷 Image pasted! It will appear at the bottom of the email.')
+                          // Insert image placeholder inline at cursor position
+                          const ta = e.target as HTMLTextAreaElement
+                          const start = ta.selectionStart
+                          const end = ta.selectionEnd
+                          const before = compBody.substring(0, start)
+                          const after  = compBody.substring(end)
+                          const placeholder = `[IMG:${base64}]`
+                          setCompBody(before + placeholder + after)
+                          showToast('📷 Image inserted at cursor position')
                         }
                         reader.readAsDataURL(file)
                       }

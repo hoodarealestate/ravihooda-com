@@ -131,13 +131,18 @@ export async function POST(req: NextRequest) {
 function buildEmailHtml(subject: string, body: string, email: string): string {
   const unsubUrl = `${SITE}/api/crm/unsubscribe?email=${encodeURIComponent(email)}`
 
-  // Extract any image HTML that was appended to body
-  let mainBody = body
-  let imageHtml = ''
-  if (body.includes('[IMAGE]')) {
-    const parts = body.split('[IMAGE]')
-    mainBody = parts[0].trim()
-    imageHtml = parts[1]?.trim() || ''
+  // Render [IMG:base64] placeholders inline where they appear in the text
+  // Split body on image placeholders and rebuild as HTML with images inline
+  function renderBodyWithImages(rawBody: string): string {
+    const parts = rawBody.split(/(\[IMG:[^\]]+\])/g)
+    return parts.map(part => {
+      if (part.startsWith('[IMG:') && part.endsWith(']')) {
+        const base64 = part.slice(5, -1)
+        return `</div><div style="padding:0 32px 16px;text-align:center"><img src="${base64}" style="max-width:100%;border-radius:8px;display:block;margin:0 auto" alt=""/></div><div style="padding:0 32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">`
+      }
+      return part
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    }).join('')
   }
 
   return `<!DOCTYPE html>
@@ -148,8 +153,7 @@ function buildEmailHtml(subject: string, body: string, email: string): string {
     <div style="color:#D4B97A;font-family:Georgia,serif;font-size:1.2rem;font-weight:700">The Hooda Team</div>
     <div style="color:rgba(255,255,255,.6);font-size:.75rem;margin-top:2px">Century 21 Red Star Realty Inc. · ravihooda.com</div>
   </div>
-  <div style="padding:32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">${mainBody}</div>
-  ${imageHtml ? `<div style="padding:0 32px 24px">${imageHtml}</div>` : ''}
+  <div style="padding:32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">${renderBodyWithImages(body)}</div>
   <div style="padding:20px 32px;background:#F8F6F2;border-top:1px solid #E2E4E8">
     <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px">
       <tr>
