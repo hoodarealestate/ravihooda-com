@@ -287,7 +287,7 @@ export default function CRMDashboard() {
     {key:'dashboard',label:'Dashboard',emoji:'📊'},
     {key:'contacts', label:`Contacts (${stats.total})`,emoji:'👥'},
     {key:'add',      label:'Add Contact',emoji:'➕'},
-    {key:'import',   label:'Import CSV',emoji:'⬆'},
+    {key:'import',   label:'Import File',emoji:'⬆'},
     {key:'compose',  label:'Email Campaign',emoji:'✉'},
     {key:'campaigns',label:'Sent Campaigns',emoji:'📨'},
   ]
@@ -363,7 +363,7 @@ export default function CRMDashboard() {
                   <div style={{padding:16,display:'flex',flexDirection:'column',gap:8}}>
                     <button style={S.btn('#A8894A')} onClick={()=>setView('add')}>➕ Add Contact</button>
                     <button style={S.btn()} onClick={()=>setView('compose')}>✉ Send Campaign</button>
-                    <button style={S.btn('#059669')} onClick={()=>setView('import')}>⬆ Import CSV</button>
+                    <button style={S.btn('#059669')} onClick={()=>setView('import')}>⬆ Import Excel / CSV</button>
                   </div>
                 </div>
                 <div style={S.card}>
@@ -479,8 +479,8 @@ export default function CRMDashboard() {
           {/* IMPORT */}
           {view==='import'&&(
             <div style={{...S.card,padding:28,maxWidth:700}}>
-              <h3 style={{fontFamily:'Georgia,serif',color:'#1A1F2E',marginBottom:6}}>Import Contacts from CSV</h3>
-              <p style={{color:'#6B7280',fontSize:13,marginBottom:6}}>Upload your Excel/CSV. Column names are detected automatically — any order works. Duplicates (same email) are updated, not doubled.</p>
+              <h3 style={{fontFamily:'Georgia,serif',color:'#1A1F2E',marginBottom:6}}>Import Contacts — Excel or CSV</h3>
+              <p style={{color:'#6B7280',fontSize:13,marginBottom:6}}>Upload your Excel (.xlsx/.xls) or CSV file. Column names are detected automatically — any order works. Duplicates (same email) are updated, not doubled.</p>
               <div style={{background:'#FFF8E6',borderRadius:8,padding:'10px 14px',fontSize:12,color:'#7A6230',marginBottom:20}}>
                 <strong>Supported columns (auto-detected):</strong> Name, Email, Phone, Status, Category, Temperature, Source, Notes, Tags, Address, Birthday, Referred By
               </div>
@@ -492,11 +492,11 @@ export default function CRMDashboard() {
               >
                 <div style={{fontSize:36,marginBottom:8}}>📄</div>
                 <div style={{fontWeight:600,marginBottom:4}}>{csvFile?csvFile.name:'Drop your Excel or CSV file here, or click to browse'}</div>
-                <div style={{fontSize:12,color:'#9CA3AF',marginBottom:12}}>Supports .csv files up to 2,000 contacts</div>
+                <div style={{fontSize:12,color:'#9CA3AF',marginBottom:12}}>Supports .xlsx, .xls, .csv — all sheets imported · up to 2,000 contacts</div>
                 <button style={S.btnOut()} onClick={e=>{e.stopPropagation();document.getElementById('csvInput')?.click()}}>Choose File</button>
                 <input id="csvInput" type="file" accept=".csv,.xlsx,.xls,.txt" style={{display:'none'}} onChange={e=>{if(e.target.files?.[0])setCsvFile(e.target.files[0])}}/>
               </div>
-              {csvFile&&<button style={{...S.btn('#059669'),marginBottom:16}} onClick={handleImport} disabled={importing}>{importing?'Importing…':'Import Contacts'}</button>}
+              {csvFile&&<button style={{...S.btn('#059669'),marginBottom:16}} onClick={handleImport} disabled={importing}>{importing?'Importing…':(csvFile?.name?.match(/\.xlsx?$/i)?'Import Excel File':'Import CSV File')}</button>}
               {importRes&&(
                 <div style={{background:importRes.inserted||importRes.updated?'#E8F5EE':'#FEF2F2',borderRadius:8,padding:'14px 18px',fontSize:13,border:`1px solid ${importRes.inserted||importRes.updated?'#BBF7D0':'#FECACA'}`}}>
                   {importRes.inserted>0&&<div>✅ <strong>{importRes.inserted}</strong> new contacts added</div>}
