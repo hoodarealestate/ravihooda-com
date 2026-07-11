@@ -94,7 +94,7 @@ export default function CRMDashboard() {
   // Newsletter state
   const [newsSubject, setNewsSubject]   = useState("The GTA market is shifting, {{firstName}} — here's what you need to know")
   const [newsHtml, setNewsHtml]         = useState('')
-  const [newsSeg, setNewsSeg]           = useState('specific')
+  const [newsSeg, setNewsSeg]           = useState('all')
   const [sendingNews, setSendingNews]   = useState(false)
   const [newsResult, setNewsResult]     = useState<any>(null)
   const [newsLoading, setNewsLoading]   = useState(false)
@@ -156,9 +156,11 @@ export default function CRMDashboard() {
   const sendNewsletter = async () => {
     if (!newsSubject || !newsHtml) { showToast('Please load a template and set a subject.'); return }
     if (newsSeg === 'specific' && !newsTestEmail.trim()) { showToast('Please enter an email address.'); return }
-    const confirmMsg = newsSeg === 'specific'
-      ? `Send test newsletter to ${newsTestEmail}?`
-      : `Send HTML newsletter to ${newsSeg === 'all' ? 'ALL ' + stats.total : newsSeg} contacts?\n\nThis cannot be undone.`
+    // If test email provided, send only to that — otherwise send to segment
+    const isTest = newsTestEmail.trim().length > 0
+    const confirmMsg = isTest
+      ? `Send TEST newsletter to ${newsTestEmail.trim()} only?`
+      : `Send newsletter to ${newsSeg === 'all' ? 'ALL ' + stats.total : newsSeg} contacts?\n\nThis cannot be undone.`
     if (!confirm(confirmMsg)) return
     setSendingNews(true); setNewsResult(null)
     const r = await fetch('/api/crm/send-newsletter', {
@@ -167,8 +169,8 @@ export default function CRMDashboard() {
       body: JSON.stringify({
         subject: newsSubject,
         html: newsHtml,
-        segment: newsSeg === 'specific' ? 'all' : newsSeg,
-        specificEmails: newsSeg === 'specific' ? [newsTestEmail.trim()] : null
+        segment: newsSeg,
+        specificEmails: isTest ? [newsTestEmail.trim()] : null
       })
     })
     const d = await r.json()
@@ -758,28 +760,25 @@ export default function CRMDashboard() {
                   <div style={{...S.card,padding:0,marginBottom:16,overflow:'hidden'}}>
                     <div style={{padding:'12px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12}}>
                       <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Subject</span>
-                      <input style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSubject} onChange={e=>setNewsSubject(e.target.value)} placeholder="Email subject line…"/>
+                      <input style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSubject} onChange={e=>setNewsSubject(e.target.value)} placeholder="Email subject line (use {{firstName}} to personalise)"/>
                     </div>
                     <div style={{padding:'12px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12}}>
+                      <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Test Email</span>
+                      <input
+                        style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}}
+                        type="email"
+                        placeholder="your@email.com — test before sending to everyone"
+                        value={newsTestEmail}
+                        onChange={e=>setNewsTestEmail(e.target.value)}
+                      />
+                    </div>
+                    <div style={{padding:'12px 18px',display:'flex',alignItems:'center',gap:12}}>
                       <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Send To</span>
                       <select style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSeg} onChange={e=>setNewsSeg(e.target.value)}>
-                        <option value="specific">— Specific email address —</option>
                         <option value="all">All Contacts ({stats.total})</option>
                         {['Lead','Client','Past Client','Buyer','Seller','Investor','Hot','Warm','Cold','VOW Lead','POS Lead'].map(s=><option key={s} value={s}>{s}s</option>)}
                       </select>
                     </div>
-                    {newsSeg==='specific'&&(
-                      <div style={{padding:'12px 18px',display:'flex',alignItems:'center',gap:12}}>
-                        <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Email</span>
-                        <input
-                          style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}}
-                          type="email"
-                          placeholder="Enter email address to test..."
-                          value={newsTestEmail}
-                          onChange={e=>setNewsTestEmail(e.target.value)}
-                        />
-                      </div>
-                    )}
                   </div>
 
                   <div style={{...S.card,marginBottom:16,overflow:'hidden'}}>
