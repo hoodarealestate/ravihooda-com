@@ -94,11 +94,12 @@ export default function CRMDashboard() {
   // Newsletter state
   const [newsSubject, setNewsSubject]   = useState("The GTA market is shifting, {{firstName}} — here's what you need to know")
   const [newsHtml, setNewsHtml]         = useState('')
-  const [newsSeg, setNewsSeg]           = useState('all')
+  const [newsSeg, setNewsSeg]           = useState('specific')
   const [sendingNews, setSendingNews]   = useState(false)
   const [newsResult, setNewsResult]     = useState<any>(null)
   const [newsLoading, setNewsLoading]   = useState(false)
   const [newsPreview, setNewsPreview]   = useState(false)
+  const [newsTestEmail, setNewsTestEmail] = useState('')
   const [emailModal, setEmailModal]   = useState(false)
   const [singleSubj, setSingleSubj]   = useState('')
   const [singleBody, setSingleBody]   = useState('')
@@ -154,12 +155,21 @@ export default function CRMDashboard() {
 
   const sendNewsletter = async () => {
     if (!newsSubject || !newsHtml) { showToast('Please load a template and set a subject.'); return }
-    if (!confirm(`Send HTML newsletter to ${newsSeg === 'all' ? 'ALL ' + stats.total : newsSeg} contacts?\n\nThis cannot be undone.`)) return
+    if (newsSeg === 'specific' && !newsTestEmail.trim()) { showToast('Please enter an email address.'); return }
+    const confirmMsg = newsSeg === 'specific'
+      ? `Send test newsletter to ${newsTestEmail}?`
+      : `Send HTML newsletter to ${newsSeg === 'all' ? 'ALL ' + stats.total : newsSeg} contacts?\n\nThis cannot be undone.`
+    if (!confirm(confirmMsg)) return
     setSendingNews(true); setNewsResult(null)
     const r = await fetch('/api/crm/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject: newsSubject, html: newsHtml, segment: newsSeg })
+      body: JSON.stringify({
+        subject: newsSubject,
+        html: newsHtml,
+        segment: newsSeg === 'specific' ? 'all' : newsSeg,
+        specificEmails: newsSeg === 'specific' ? [newsTestEmail.trim()] : null
+      })
     })
     const d = await r.json()
     setNewsResult(d)
@@ -750,13 +760,26 @@ export default function CRMDashboard() {
                       <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Subject</span>
                       <input style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSubject} onChange={e=>setNewsSubject(e.target.value)} placeholder="Email subject line…"/>
                     </div>
-                    <div style={{padding:'12px 18px',display:'flex',alignItems:'center',gap:12}}>
+                    <div style={{padding:'12px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12}}>
                       <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Send To</span>
                       <select style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSeg} onChange={e=>setNewsSeg(e.target.value)}>
+                        <option value="specific">— Specific email address —</option>
                         <option value="all">All Contacts ({stats.total})</option>
                         {['Lead','Client','Past Client','Buyer','Seller','Investor','Hot','Warm','Cold','VOW Lead','POS Lead'].map(s=><option key={s} value={s}>{s}s</option>)}
                       </select>
                     </div>
+                    {newsSeg==='specific'&&(
+                      <div style={{padding:'12px 18px',display:'flex',alignItems:'center',gap:12}}>
+                        <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Email</span>
+                        <input
+                          style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}}
+                          type="email"
+                          placeholder="Enter email address to test..."
+                          value={newsTestEmail}
+                          onChange={e=>setNewsTestEmail(e.target.value)}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div style={{...S.card,marginBottom:16,overflow:'hidden'}}>
