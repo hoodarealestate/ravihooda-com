@@ -88,10 +88,38 @@ export default function CRMDashboard() {
   const [newContact,setNewContact] = useState<Partial<Contact>>({status:'Lead',category:'Prospect',temperature:'Warm'})
   const [saving,setSaving]         = useState(false)
   const imgRef = useRef<HTMLInputElement>(null)
+  const [emailModal, setEmailModal]   = useState(false)
+  const [singleSubj, setSingleSubj]   = useState('')
+  const [singleBody, setSingleBody]   = useState('')
+  const [sendingSingle, setSendingSingle] = useState(false)
+  const [singleResult, setSingleResult]   = useState('')
 
   const showToast = (m:string) => { setToast(m); setTimeout(()=>setToast(''),3500) }
 
   useEffect(()=>{ fetch('/api/admin').then(r=>r.json()).then(d=>{ setAuthed(d.authenticated); setLoading(false) }) },[])
+
+  const sendSingleEmail = async () => {
+    if (!detail || !singleSubj || !singleBody) { showToast('Fill in subject and message.'); return }
+    setSendingSingle(true); setSingleResult('')
+    try {
+      const r = await fetch('/api/crm/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: detail.email, toName: detail.name, subject: singleSubj, body: singleBody })
+      })
+      const d = await r.json()
+      if (d.success) {
+        setSingleResult('✅ Email sent successfully!')
+        showToast('✅ Email sent to ' + detail.name + '!')
+        setTimeout(() => { setEmailModal(false); setSingleSubj(''); setSingleBody(''); setSingleResult('') }, 1500)
+      } else {
+        setSingleResult('❌ ' + (d.error || 'Failed to send'))
+      }
+    } catch (e: any) {
+      setSingleResult('❌ ' + (e.message || 'Network error'))
+    }
+    setSendingSingle(false)
+  }
 
   const doLogin = async()=>{
     setLoginErr('')
@@ -593,7 +621,7 @@ export default function CRMDashboard() {
               </div>
               <div style={{display:'flex',gap:8,paddingTop:4}}>
                 <button style={S.btn('#A8894A')} onClick={saveContact} disabled={saving}>{saving?'Saving…':'Save Changes'}</button>
-                <button style={S.btn()} onClick={()=>window.open('https://mail.google.com/mail/?view=cm&to='+encodeURIComponent(detail.email)+'&su=&body=Hi '+encodeURIComponent(detail.name.split(' ')[0])+',','_blank')}>✉ Gmail</button>
+                <button style={S.btn()} onClick={()=>{setSingleSubj('Following up — '+detail.name.split(' ')[0]);setSingleBody('Hi '+detail.name.split(' ')[0]+',\n\n');setEmailModal(true)}}>✉ Email</button>
                 {detail.phone&&<a href={`tel:${detail.phone}`} style={{...S.btn('#059669'),textDecoration:'none'}}>📞 Call</a>}
               {detail.phone&&<button style={S.btn('#25D366')} onClick={()=>window.open('https://wa.me/1'+detail.phone.replace(/\D/g,''),'_blank')}>💬 WhatsApp</button>}
               </div>
@@ -607,6 +635,42 @@ export default function CRMDashboard() {
       )}
 
       {/* TOAST */}
+      {/* SINGLE EMAIL MODAL */}
+      {emailModal && detail && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',zIndex:2000,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={()=>setEmailModal(false)}>
+          <div style={{background:'#fff',borderRadius:12,width:'100%',maxWidth:560,boxShadow:'0 20px 60px rgba(0,0,0,.2)',overflow:'hidden'}} onClick={e=>e.stopPropagation()}>
+            <div style={{background:'#1C3557',padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+              <div>
+                <div style={{color:'#D4B97A',fontFamily:'Georgia,serif',fontWeight:700}}>Send Email via Resend</div>
+                <div style={{color:'rgba(255,255,255,.6)',fontSize:12,marginTop:2}}>To: {detail.name} &lt;{detail.email}&gt;</div>
+              </div>
+              <button style={{background:'none',border:'none',color:'rgba(255,255,255,.6)',cursor:'pointer',fontSize:20}} onClick={()=>setEmailModal(false)}>×</button>
+            </div>
+            <div style={{padding:20,display:'flex',flexDirection:'column',gap:12}}>
+              <div>
+                <label style={S.label}>Subject</label>
+                <input style={S.input} value={singleSubj} onChange={e=>setSingleSubj(e.target.value)} placeholder="Enter subject…"/>
+              </div>
+              <div>
+                <label style={S.label}>Message</label>
+                <textarea style={{...S.input,minHeight:180,resize:'vertical',lineHeight:1.7}} value={singleBody} onChange={e=>setSingleBody(e.target.value)} placeholder={"Hi {{firstName}},\n\nWrite your message here…"}/>
+                <div style={{fontSize:11,color:'#9CA3AF',marginTop:4}}>Use {'{{firstName}}'} and {'{{fullName}}'} for personalisation</div>
+              </div>
+              {singleResult && <div style={{padding:'10px 14px',borderRadius:8,background:singleResult.startsWith('✅')?'#E8F5EE':'#FEF2F2',fontSize:13}}>{singleResult}</div>}
+              <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+                <button style={S.btnOut()} onClick={()=>setEmailModal(false)}>Cancel</button>
+                <button style={S.btn('#A8894A')} onClick={sendSingleEmail} disabled={sendingSingle}>
+                  {sendingSingle ? 'Sending…' : '✉ Send via Resend'}
+                </button>
+              </div>
+              <div style={{fontSize:11,color:'#9CA3AF',borderTop:'1px solid #E2E4E8',paddingTop:10}}>
+                Sends from ravi@ravihooda.com via Resend · Branded email template with unsubscribe link · No Gmail limits
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {toast&&<div style={{position:'fixed',bottom:24,right:24,background:'#1C3557',color:'#fff',padding:'14px 20px',borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,.2)',zIndex:9999,fontSize:13,fontWeight:500,borderLeft:'4px solid #A8894A',maxWidth:320,animation:'slideIn .3s ease'}}>{toast}</div>}
     </div>
   )
