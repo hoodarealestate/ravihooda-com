@@ -188,26 +188,58 @@ export default function CRMDashboard() {
   const handleImport = async()=>{
     if(!csvFile) return
     setImporting(true); setImportRes(null)
-    const text = await csvFile.text()
-    const lines = text.trim().split('\n').filter(l=>l.trim())
-    const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''))
-    const rows = lines.slice(1).map(l=>{
-      const vals:string[]=[]
-      let inQ=false,cur=''
-      for(const ch of l){
-        if(ch==='"'){ inQ=!inQ }
-        else if(ch===','&&!inQ){ vals.push(cur.trim()); cur='' }
-        else cur+=ch
+
+    try {
+      const fileName = csvFile.name.toLowerCase()
+      const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls')
+
+      let rows: Record<string,string>[] = []
+
+      if (isExcel) {
+        // Send to server-side Excel parser
+        const formData = new FormData()
+        formData.append('file', csvFile)
+        const parseRes = await fetch('/api/crm/parse-file', { method: 'POST', body: formData })
+        const parsed = await parseRes.json()
+        if (!parseRes.ok || parsed.error) {
+          setImportRes({ error: parsed.error || 'Failed to parse Excel file' })
+          setImporting(false); return
+        }
+        rows = parsed.rows
+        showToast(`📊 Parsed ${parsed.total} rows from "${parsed.sheetName}" sheet`)
+      } else {
+        // Parse CSV client-side
+        const text = await csvFile.text()
+        const lines = text.trim().split('\n').filter(l=>l.trim())
+        const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''))
+        rows = lines.slice(1).map(l=>{
+          const vals:string[]=[]
+          let inQ=false,cur=''
+          for(const ch of l){
+            if(ch==='"'){ inQ=!inQ }
+            else if(ch===','&&!inQ){ vals.push(cur.trim()); cur='' }
+            else cur+=ch
+          }
+          vals.push(cur.trim())
+          const obj:Record<string,string>={}
+          headers.forEach((h,i)=>{ obj[h]=vals[i]||'' })
+          return obj
+        })
       }
-      vals.push(cur.trim())
-      const obj:Record<string,string>={}
-      headers.forEach((h,i)=>{ obj[h]=vals[i]||'' })
-      return obj
-    })
-    const r=await fetch('/api/crm/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contacts:rows})})
-    const d=await r.json()
-    setImportRes(d); setImporting(false)
-    if(d.inserted||d.updated){ showToast(`✅ ${d.inserted} added, ${d.updated} updated!`); loadDash() }
+
+      // Send parsed rows to import API
+      const r = await fetch('/api/crm/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contacts: rows })
+      })
+      const d = await r.json()
+      setImportRes(d)
+      if(d.inserted||d.updated){ showToast(`✅ ${d.inserted} added, ${d.updated} updated!`); loadDash() }
+    } catch(e: any) {
+      setImportRes({ error: e.message || 'Import failed' })
+    }
+    setImporting(false)
   }
 
   const sendCampaign = async()=>{
@@ -456,10 +488,10 @@ export default function CRMDashboard() {
                 onDrop={e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)setCsvFile(f)}}
               >
                 <div style={{fontSize:36,marginBottom:8}}>📄</div>
-                <div style={{fontWeight:600,marginBottom:4}}>{csvFile?csvFile.name:'Drop your CSV here or click to browse'}</div>
+                <div style={{fontWeight:600,marginBottom:4}}>{csvFile?csvFile.name:'Drop your Excel or CSV file here, or click to browse'}</div>
                 <div style={{fontSize:12,color:'#9CA3AF',marginBottom:12}}>Supports .csv files up to 2,000 contacts</div>
                 <button style={S.btnOut()} onClick={e=>{e.stopPropagation();document.getElementById('csvInput')?.click()}}>Choose File</button>
-                <input id="csvInput" type="file" accept=".csv,.txt" style={{display:'none'}} onChange={e=>{if(e.target.files?.[0])setCsvFile(e.target.files[0])}}/>
+                <input id="csvInput" type="file" accept=".csv,.xlsx,.xls,.txt" style={{display:'none'}} onChange={e=>{if(e.target.files?.[0])setCsvFile(e.target.files[0])}}/>
               </div>
               {csvFile&&<button style={{...S.btn('#059669'),marginBottom:16}} onClick={handleImport} disabled={importing}>{importing?'Importing…':'Import Contacts'}</button>}
               {importRes&&(
