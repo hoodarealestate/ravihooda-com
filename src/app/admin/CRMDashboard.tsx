@@ -10,7 +10,7 @@ type Contact = {
   created_at: string; updated_at: string
 }
 type Campaign = { id:string; subject:string; segment:string; recipient_count:number; failed_count:number; sent_at:string }
-type View = 'dashboard'|'contacts'|'add'|'import'|'compose'|'campaigns'
+type View = 'dashboard'|'contacts'|'add'|'import'|'compose'|'campaigns'|'newsletter'
 
 const STATUSES    = ['Lead','Client','Past Client','Prospect','VOW Lead','POS Lead','Unsubscribed']
 const CATEGORIES  = ['Buyer','Seller','Investor','Renter','Prospect','Referral Partner']
@@ -94,6 +94,13 @@ export default function CRMDashboard() {
   const [singleSubj, setSingleSubj]   = useState('')
   const [singleBody, setSingleBody]   = useState('')
   const [sendingSingle, setSendingSingle] = useState(false)
+  const [newsSubject, setNewsSubject]     = useState('The GTA market is shifting, {{firstName}} — here\'s what you need to know')
+  const [newsHtml, setNewsHtml]           = useState('')
+  const [newsSeg, setNewsSeg]             = useState('all')
+  const [sendingNews, setSendingNews]     = useState(false)
+  const [newsResult, setNewsResult]       = useState<any>(null)
+  const [newsLoading, setNewsLoading]     = useState(false)
+  const [newsPreview, setNewsPreview]     = useState(false)
   const [singleResult, setSingleResult]   = useState('')
 
   const showToast = (m:string) => { setToast(m); setTimeout(()=>setToast(''),3500) }
@@ -121,6 +128,34 @@ export default function CRMDashboard() {
       setSingleResult('❌ ' + (e.message || 'Network error'))
     }
     setSendingSingle(false)
+  }
+
+  const loadNewsletterTemplate = async (file: string) => {
+    setNewsLoading(true)
+    try {
+      const r = await fetch('/' + file)
+      const html = await r.text()
+      setNewsHtml(html)
+      showToast('✅ Template loaded!')
+    } catch (e) {
+      showToast('❌ Could not load template')
+    }
+    setNewsLoading(false)
+  }
+
+  const sendNewsletter = async () => {
+    if (!newsSubject || !newsHtml) { showToast('Please load a template and set a subject.'); return }
+    if (!confirm(`Send HTML newsletter to ${newsSeg === 'all' ? 'ALL ' + stats.total : newsSeg} contacts?\n\nThis cannot be undone.`)) return
+    setSendingNews(true); setNewsResult(null)
+    const r = await fetch('/api/crm/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: newsSubject, html: newsHtml, segment: newsSeg })
+    })
+    const d = await r.json()
+    setNewsResult(d)
+    setSendingNews(false)
+    if (d.success) { showToast('🎉 Newsletter sent to ' + d.sent + ' contacts!'); loadCampaigns() }
   }
 
   const doLogin = async()=>{
@@ -292,7 +327,8 @@ export default function CRMDashboard() {
     {key:'add',      label:'Add Contact',emoji:'➕'},
     {key:'import',   label:'Import File',emoji:'⬆'},
     {key:'compose',  label:'Email Campaign',emoji:'✉'},
-    {key:'campaigns',label:'Sent Campaigns',emoji:'📨'},
+    {key:'campaigns',   label:'Sent Campaigns',emoji:'📨'},
+    {key:'newsletter',  label:'HTML Newsletter',emoji:'📰'},
   ]
 
   return (

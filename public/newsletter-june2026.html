@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GTA Market Update — June 2026 | The Hooda Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', Arial, sans-serif;
+    background: #F0EDE6;
+    color: #1A1F2E;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .email-wrapper {
+    max-width: 640px;
+    margin: 32px auto;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #1C3557;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(168,137,74,0.12);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 30px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #D4B97A;
+    margin-bottom: 10px;
+  }
+  .header-team {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .header-team em {
+    color: #D4B97A;
+    font-style: italic;
+  }
+  .header-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.04em;
+  }
+  .header-divider {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, #A8894A, #D4B97A);
+    margin: 16px 0;
+  }
+  .header-issue {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    font-style: italic;
+  }
+
+  /* ── HERO STAT BAND ── */
+  .hero-band {
+    background: linear-gradient(135deg, #A8894A 0%, #8A6F38 100%);
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  .hero-stat {
+    text-align: center;
+    padding: 0 16px;
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    display: block;
+  }
+  .hero-stat-num sup {
+    font-size: 18px;
+    vertical-align: top;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .hero-stat-arrow {
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: 3px;
+  }
+  .hero-stat-arrow.up { color: #90EE90; }
+  .hero-stat-arrow.down { color: #FFB3B3; }
+  .hero-stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 6px;
+    display: block;
+  }
+  .hero-divider {
+    width: 1px;
+    height: 48px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* ── BODY CONTENT ── */
+  .body-pad {
+    padding: 36px 40px;
+  }
+
+  .greeting {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1C3557;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .body-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #374151;
+    margin-bottom: 22px;
+  }
+
+  .body-text strong { color: #1A1F2E; font-weight: 600; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 32px 0 16px;
+  }
+  .section-icon {
+    width: 32px; height: 32px;
+    background: #1C3557;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1C3557;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── STATS CARDS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #F8F6F2;
+    border-radius: 10px;
+    padding: 16px 18px;
+    border-left: 3px solid #A8894A;
+  }
+  .stat-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9CA3AF;
+    margin-bottom: 6px;
+  }
+  .stat-card-value {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1A1F2E;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card-change {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 50px;
+    display: inline-block;
+  }
+  .change-up { background: #DCFCE7; color: #166534; }
+  .change-down { background: #FEE2E2; color: #991B1B; }
+  .change-neutral { background: #F3F4F6; color: #4B5563; }
+
+  /* ── PROPERTY TYPE TABLE ── */
+  .prop-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .prop-table thead tr {
+    background: #1C3557;
+    color: #fff;
+  }
+  .prop-table th {
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+  .prop-table th:last-child,
+  .prop-table td:last-child { text-align: right; }
+  .prop-table tbody tr:nth-child(odd) { background: #F8F6F2; }
+  .prop-table tbody tr:nth-child(even) { background: #fff; }
+  .prop-table td {
+    padding: 11px 14px;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .prop-table td strong { color: #1A1F2E; font-weight: 600; }
+  .prop-table td .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 50px;
+  }
+
+  /* ── QUOTE BLOCK ── */
+  .quote-block {
+    border-left: 3px solid #A8894A;
+    padding: 16px 20px;
+    background: #FAF8F4;
+    border-radius: 0 8px 8px 0;
+    margin: 24px 0;
+  }
+  .quote-text {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
+    font-style: italic;
+    color: #1C3557;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+  .quote-source {
+    font-size: 11px;
+    font-weight: 600;
+    color: #A8894A;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── MARKET INSIGHT BOXES ── */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 24px 0;
+  }
+  .insight-box {
+    background: #F8F6F2;
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .insight-emoji { font-size: 24px; margin-bottom: 8px; display: block; }
+  .insight-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1C3557;
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+  .insight-body {
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 1.5;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #E2E4E8, transparent);
+    margin: 28px 0;
+  }
+
+  /* ── CTA CARDS ── */
+  .cta-stack { display: flex; flex-direction: column; gap: 14px; margin: 28px 0; }
+  .cta-card {
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    text-decoration: none;
+    transition: transform 0.2s;
+    border: 1.5px solid #E2E4E8;
+  }
+  .cta-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  .cta-accent {
+    width: 6px;
+    flex-shrink: 0;
+  }
+  .cta-body {
+    flex: 1;
+    padding: 16px 18px;
+    background: #fff;
+  }
+  .cta-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    margin-bottom: 4px;
+  }
+  .cta-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1A1F2E;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .cta-sub {
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: #fff;
+  }
+  .cta-icon {
+    width: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  /* ── CHART VISUAL ── */
+  .chart-wrap {
+    background: #F8F6F2;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1C3557;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 12px; color: #374151; width: 100px; flex-shrink: 0; }
+  .bar-track { flex: 1; background: #E2E4E8; border-radius: 4px; height: 24px; position: relative; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #1C3557, #2a4d7a);
+    display: flex; align-items: center; padding-left: 8px;
+    transition: width 0.5s ease;
+    position: relative;
+  }
+  .bar-fill.gold { background: linear-gradient(90deg, #A8894A, #C9A84C); }
+  .bar-value { font-size: 11px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .bar-pct { font-size: 11px; font-weight: 700; color: #374151; margin-left: 6px; }
+
+  /* ── SIGN-OFF ── */
+  .signoff {
+    background: #1C3557;
+    padding: 28px 40px;
+  }
+  .signoff-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .signoff-agents {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  .signoff-agent { padding: 0 0; }
+  .signoff-agent:last-child { padding-left: 20px; }
+  .signoff-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #D4B97A;
+    margin-bottom: 2px;
+  }
+  .signoff-cred {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 3px;
+  }
+  .signoff-phone {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+  }
+  .signoff-sep { width: 1px; height: 50px; background: rgba(255,255,255,0.15); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #12253D;
+    padding: 18px 40px;
+    text-align: center;
+  }
+  .footer-text {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.7;
+  }
+  .footer-text a { color: rgba(255,255,255,0.4); text-decoration: underline; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 520px) {
+    .body-pad { padding: 24px 20px; }
+    .hero-band { grid-template-columns: 1fr; gap: 16px; padding: 24px 20px; }
+    .hero-divider { display: none; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .signoff-agents { grid-template-columns: 1fr; }
+    .signoff-sep { display: none; }
+    .signoff-agent:last-child { padding-left: 0; margin-top: 16px; }
+    .header { padding: 24px 20px; }
+    .signoff { padding: 24px 20px; }
+    .footer { padding: 16px 20px; }
+    .cta-icon { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="email-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">GTA Market Intelligence · July 2026</div>
+    <div class="header-team">The <em>Hooda Team</em></div>
+    <div class="header-sub">Century 21 Red Star Realty Inc., Brokerage</div>
+    <div class="header-divider"></div>
+    <div class="header-issue">June 2026 Market Watch · Powered by TRREB MLS® Data</div>
+  </div>
+
+  <!-- HERO STAT BAND -->
+  <div class="hero-band">
+    <div class="hero-stat">
+      <span class="hero-stat-num">6,770 <span class="hero-stat-arrow up">↑</span></span>
+      <span class="hero-stat-label">GTA Home Sales</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">9.4%</span>
+      <span class="hero-stat-label">Sales Growth vs 2025</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">$1.06M</span>
+      <span class="hero-stat-label">Avg Selling Price</span>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body-pad">
+
+    <div class="greeting">Dear {{firstName}},</div>
+
+    <p class="body-text">
+      I hope you're having a great summer. I wanted to reach out personally with some genuinely positive news from the GTA housing market — and what it could mean for you in the months ahead.
+    </p>
+
+    <p class="body-text">
+      The Toronto Regional Real Estate Board just released the <strong>June 2026 Market Watch</strong>, and the numbers tell a clear story: the market is gaining real momentum.
+    </p>
+
+    <!-- SECTION: THE NUMBERS -->
+    <div class="section-header">
+      <div class="section-icon">📊</div>
+      <div class="section-title">The June 2026 Numbers</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-label">GTA Home Sales</div>
+        <div class="stat-card-value">6,770</div>
+        <span class="stat-card-change change-up">↑ 9.4% vs June 2025</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">New Listings</div>
+        <div class="stat-card-value">17,282</div>
+        <span class="stat-card-change change-down">↓ 12.9% — tightening supply</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Average Price</div>
+        <div class="stat-card-value">$1,058,658</div>
+        <span class="stat-card-change change-neutral">↑ Rising month-over-month</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Year-to-Date Sales</div>
+        <div class="stat-card-value">31,149</div>
+        <span class="stat-card-change change-up">↑ vs 30,844 in H1 2025</span>
+      </div>
+    </div>
+
+    <!-- BAR CHART: SALES BY TYPE -->
+    <div class="chart-wrap">
+      <div class="chart-title">📈 June 2026 Sales by Property Type — GTA</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">Detached</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:76%"><span class="bar-value">3,256 sales</span></div>
+          </div>
+          <span class="bar-pct change-up">↑ 9.1%</span>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Condo Apt.</div>
+          <div class="bar-track">
+            <div class="bar-fill gold" style="width:40%"><span class="bar-value">1,714 sales</span></div>
+          </div>
+          <span class="bar-pct change-up">↑ 14.3%</span>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Townhouse</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:25%"><span class="bar-value">1,082 sales</span></div>
+          </div>
+          <span class="bar-pct change-up">↑ 4.3%</span>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Semi-Detach.</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:14%"><span class="bar-value">617 sales</span></div>
+          </div>
+          <span class="bar-pct change-up">↑ 3.0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPERTY TYPE TABLE -->
+    <table class="prop-table">
+      <thead>
+        <tr>
+          <th>Property Type</th>
+          <th>Avg. Price (GTA)</th>
+          <th>Sales ↑/↓</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Detached</strong></td>
+          <td>$1,364,204</td>
+          <td><span class="pill change-up">↑ 9.1%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Semi-Detached</strong></td>
+          <td>$1,038,973</td>
+          <td><span class="pill change-up">↑ 3.0%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Townhouse</strong></td>
+          <td>$844,579</td>
+          <td><span class="pill change-up">↑ 4.3%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Condo Apartment</strong></td>
+          <td>$630,688</td>
+          <td><span class="pill change-up">↑ 14.3%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- QUOTE -->
+    <div class="quote-block">
+      <div class="quote-text">"We expect accelerating transactions and more competition between buyers in the last six months of the year, helping to satisfy pent-up demand and ultimately resulting in renewed price growth."</div>
+      <div class="quote-source">— Daniel Steinfeld, TRREB President · July 3, 2026</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- INSIGHTS -->
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <div class="section-title">What This Means For You</div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-box">
+        <span class="insight-emoji">🏃</span>
+        <div class="insight-heading">Buyers: Act Now</div>
+        <div class="insight-body">Prices still off peak. Competition coming. The next 60–90 days are your window.</div>
+      </div>
+      <div class="insight-box">
+        <span class="insight-emoji">📈</span>
+        <div class="insight-heading">Sellers: Tide Is Turning</div>
+        <div class="insight-body">Inventory falling. Buyers returning. Price declines are reversing month-over-month.</div>
+      </div>
+      <div class="insight-box">
+        <span class="insight-emoji">💼</span>
+        <div class="insight-heading">Investors: Math Works</div>
+        <div class="insight-body">Condos at $630K with 14.3% sales growth and strong rental demand across GTA.</div>
+      </div>
+    </div>
+
+    <p class="body-text">
+      As someone who watches this market daily, my honest read is this: <strong>the buyers who act in the next 60–90 days are going to look back and be very glad they did.</strong> The rate of price decline has shrunk every month this year. Month-over-month, prices are already ticking upward.
+    </p>
+
+    <p class="body-text">
+      For anyone thinking about selling — inventory is at its lowest in years while demand is rising. That's the recipe for stronger offers. A quick home evaluation will show you exactly where you stand right now.
+    </p>
+
+    <div class="divider"></div>
+
+    <!-- CTA CARDS -->
+    <div class="section-header">
+      <div class="section-icon">🔑</div>
+      <div class="section-title">How We Can Help You</div>
+    </div>
+
+    <div class="cta-stack">
+
+      <a href="https://ravihooda.com/home-value" class="cta-card" style="text-decoration:none">
+        <div class="cta-accent" style="background:#1C3557"></div>
+        <div class="cta-body">
+          <div class="cta-eyebrow">For Homeowners</div>
+          <div class="cta-heading">What Is Your Home Worth Right Now?</div>
+          <div class="cta-sub">Get a free, no-obligation market evaluation. We'll show you what comparable homes in your area are actually selling for in June 2026.</div>
+          <span class="cta-btn" style="background:#1C3557">Get Free Home Evaluation →</span>
+        </div>
+        <div class="cta-icon">🏠</div>
+      </a>
+
+      <a href="https://ravihooda.com/dream-home" class="cta-card" style="text-decoration:none">
+        <div class="cta-accent" style="background:#A8894A"></div>
+        <div class="cta-body">
+          <div class="cta-eyebrow">For Buyers</div>
+          <div class="cta-heading">Tell Us What You're Looking For</div>
+          <div class="cta-sub">We'll find it — including off-market properties and exclusive opportunities before they hit the public listings. No cost, no obligation.</div>
+          <span class="cta-btn" style="background:#A8894A">Start My Home Search →</span>
+        </div>
+        <div class="cta-icon">🔍</div>
+      </a>
+
+      <a href="https://ravihooda.com/#powerofsale" class="cta-card" style="text-decoration:none">
+        <div class="cta-accent" style="background:#dc2626"></div>
+        <div class="cta-body">
+          <div class="cta-eyebrow">Below-Market Opportunities</div>
+          <div class="cta-heading">Power of Sale Properties Across the GTA</div>
+          <div class="cta-sub">Court-ordered, power of sale, and estate properties — often priced 10–20% below market. Register free to see current listings updated daily from MLS®.</div>
+          <span class="cta-btn" style="background:#dc2626">View Power of Sale →</span>
+        </div>
+        <div class="cta-icon">💰</div>
+      </a>
+
+    </div>
+
+  </div><!-- /body-pad -->
+
+  <!-- SIGN-OFF -->
+  <div class="signoff">
+    <p class="signoff-text">
+      As always, {{firstName}}, the best move is an informed one. Whether you're buying, selling, or just curious about where things are headed — reply to this email or give us a call anytime. No pressure, ever. Just honest answers from people who know this market.
+    </p>
+    <div class="signoff-agents">
+      <div class="signoff-agent">
+        <div class="signoff-name">Ravi Hooda</div>
+        <div class="signoff-cred">Broker · LUXE · ACP · B.Com · MBA</div>
+        <div class="signoff-phone">416-825-5032</div>
+      </div>
+      <div class="signoff-sep"></div>
+      <div class="signoff-agent">
+        <div class="signoff-name">Rashmi Hooda</div>
+        <div class="signoff-cred">Broker · BSc · FDIT · BCA</div>
+        <div class="signoff-phone">647-766-5040</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p class="footer-text">
+      The Hooda Team · Century 21 Red Star Realty Inc., Brokerage · ravihooda.com<br/>
+      Data source: TRREB Market Watch Report, June 2026. All statistics deemed reliable but not guaranteed accurate by PROPTX.<br/>
+      The information herein must only be used by consumers with a bona fide interest in real estate and may not be used for commercial purposes.<br/>
+      <a href="https://ravihooda.com/api/crm/unsubscribe?email={{email}}">Unsubscribe</a> from future emails.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
