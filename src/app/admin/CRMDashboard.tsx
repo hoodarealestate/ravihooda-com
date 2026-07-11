@@ -711,6 +711,82 @@ export default function CRMDashboard() {
             </div>
           )}
 
+          {/* ── NEWSLETTER ── */}
+          {view==='newsletter'&&(
+            <div style={{maxWidth:720}}>
+              <div style={{...S.card,padding:24,marginBottom:16}}>
+                <div style={{fontFamily:'Georgia,serif',fontSize:'1.05rem',fontWeight:700,color:'#1A1F2E',marginBottom:6}}>📰 HTML Newsletter Templates</div>
+                <p style={{fontSize:13,color:'#6B7280',marginBottom:16}}>Load a professionally designed newsletter with real market data, graphics, and CTAs — then send to your full list or a segment in one click.</p>
+                <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                  <button style={{...S.btn('#1C3557'),opacity:newsLoading?0.6:1}} onClick={()=>loadNewsletterTemplate('newsletter-june2026.html')} disabled={newsLoading}>
+                    {newsLoading?'⏳ Loading…':'📊 Load June 2026 Market Update'}
+                  </button>
+                  <label style={{...S.btnOut(),cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
+                    📁 Upload Your Own HTML
+                    <input type="file" accept=".html,.htm" style={{display:'none'}} onChange={async e=>{
+                      const f=e.target.files?.[0]
+                      if(!f) return
+                      const txt=await f.text()
+                      setNewsHtml(txt)
+                      showToast('✅ Custom HTML template loaded!')
+                    }}/>
+                  </label>
+                </div>
+              </div>
+
+              {newsHtml?(
+                <>
+                  <div style={{...S.card,padding:0,marginBottom:16,overflow:'hidden'}}>
+                    <div style={{padding:'12px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12}}>
+                      <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Subject</span>
+                      <input style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSubject} onChange={e=>setNewsSubject(e.target.value)} placeholder="Email subject line…"/>
+                    </div>
+                    <div style={{padding:'12px 18px',display:'flex',alignItems:'center',gap:12}}>
+                      <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:70,flexShrink:0}}>Send To</span>
+                      <select style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={newsSeg} onChange={e=>setNewsSeg(e.target.value)}>
+                        <option value="all">All Contacts ({stats.total})</option>
+                        {['Lead','Client','Past Client','Buyer','Seller','Investor','Hot','Warm','Cold','VOW Lead','POS Lead'].map(s=><option key={s} value={s}>{s}s</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{...S.card,marginBottom:16,overflow:'hidden'}}>
+                    <div style={{padding:'10px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+                      <span style={{fontWeight:600,fontSize:13,color:'#1A1F2E'}}>Newsletter Preview</span>
+                      <div style={{display:'flex',gap:8}}>
+                        <button style={S.btnOut(true)} onClick={()=>setNewsPreview(p=>!p)}>{newsPreview?'Hide Preview':'👁 Show Preview'}</button>
+                        <button style={S.btnOut(true)} onClick={()=>{const w=window.open('','_blank');w?.document.write(newsHtml.replace(/\{\{firstName\}\}/g,'Ravi').replace(/\{\{fullName\}\}/g,'Ravi Hooda'))}}>🔗 Open Full Preview</button>
+                      </div>
+                    </div>
+                    {newsPreview&&(
+                      <iframe srcDoc={newsHtml.replace(/\{\{firstName\}\}/g,'Ravi').replace(/\{\{fullName\}\}/g,'Ravi Hooda')} style={{width:'100%',height:500,border:'none',display:'block'}} title="Newsletter preview"/>
+                    )}
+                  </div>
+
+                  <div style={{...S.card,padding:20}}>
+                    <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap',marginBottom:newsResult?14:0}}>
+                      <button style={{...S.btn('#A8894A'),fontSize:14,padding:'11px 28px'}} onClick={sendNewsletter} disabled={sendingNews}>
+                        {sendingNews?'⏳ Sending…':'🚀 Send HTML Newsletter'}
+                      </button>
+                      <span style={{fontSize:12,color:'#9CA3AF'}}>Sends via Resend · personalised per contact · CASL compliant</span>
+                    </div>
+                    {newsResult&&(
+                      <div style={{padding:'12px 16px',borderRadius:8,background:newsResult.success?'#E8F5EE':'#FEF2F2',fontSize:13}}>
+                        {newsResult.success?`🎉 Newsletter sent to ${newsResult.sent} contacts!${newsResult.failed?` (${newsResult.failed} failed)`:''}`:`❌ ${newsResult.error}`}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ):(
+                <div style={{...S.card,padding:48,textAlign:'center',color:'#9CA3AF'}}>
+                  <div style={{fontSize:40,marginBottom:12}}>📰</div>
+                  <div style={{fontWeight:600,color:'#1A1F2E',marginBottom:6}}>No Template Loaded Yet</div>
+                  <div style={{fontSize:13}}>Click "Load June 2026 Market Update" above, or upload your own HTML file.</div>
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
       </div>
 
