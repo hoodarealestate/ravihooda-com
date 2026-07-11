@@ -28,43 +28,53 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!await authCheck(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { subject, body, segment } = await req.json()
+  const { subject, body, segment, specificEmails } = await req.json()
   if (!subject || !body) return NextResponse.json({ error: 'Subject and body required' }, { status: 400 })
 
   // Get unsubscribed emails
   const { data: unsubs } = await supabase.from('unsubscribes').select('email')
   const unsubEmails = new Set((unsubs || []).map((u: any) => u.email.toLowerCase()))
 
-  // Build query with smart segment detection
-  // Segments can be: 'all', a status value, a category value, or a temperature value
-  const STATUSES     = ['Lead','Client','Past Client','Prospect','VOW Lead','POS Lead']
-  const CATEGORIES   = ['Buyer','Seller','Investor','Renter','Referral Partner']
-  const TEMPERATURES = ['Hot','Warm','Cold']
+  let recipients: Array<{name: string, email: string}> = []
 
-  let query = supabase.from('contacts').select('name, email, status')
+  if (specificEmails && specificEmails.length > 0) {
+    // Send to specific email addresses only
+    const emailList = specificEmails.map((e: string) => e.toLowerCase().trim()).filter(Boolean)
+    const { data: found } = await supabase
+      .from('contacts')
+      .select('name, email')
+      .in('email', emailList)
+    // For emails not in DB, still send with email as name
+    const foundEmails = new Set((found || []).map((c: any) => c.email))
+    const notInDB = emailList
+      .filter((e: string) => !foundEmails.has(e))
+      .map((e: string) => ({ name: e.split('@')[0], email: e }))
+    recipients = [...(found || []), ...notInDB]
+      .filter((c: any) => !unsubEmails.has(c.email.toLowerCase()))
+  } else {
+    // Segment-based send
+    const STATUSES     = ['Lead','Client','Past Client','Prospect','VOW Lead','POS Lead']
+    const CATEGORIES   = ['Buyer','Seller','Investor','Renter','Referral Partner']
+    const TEMPERATURES = ['Hot','Warm','Cold']
 
-  if (segment && segment !== 'all') {
-    if (STATUSES.includes(segment)) {
-      query = query.eq('status', segment)
-    } else if (CATEGORIES.includes(segment)) {
-      query = query.eq('category', segment)
-    } else if (TEMPERATURES.includes(segment)) {
-      query = query.eq('temperature', segment)
+    let query = supabase.from('contacts').select('name, email').neq('status', 'Unsubscribed')
+
+    if (segment && segment !== 'all') {
+      if (STATUSES.includes(segment))     query = query.eq('status', segment)
+      else if (CATEGORIES.includes(segment)) query = query.eq('category', segment)
+      else if (TEMPERATURES.includes(segment)) query = query.eq('temperature', segment)
     }
+
+    const { data: contacts, error: cErr } = await query
+    if (cErr) return NextResponse.json({ error: cErr.message }, { status: 500 })
+
+    recipients = (contacts || []).filter((c: any) =>
+      c.email && c.email.includes('@') && !unsubEmails.has(c.email.toLowerCase())
+    )
   }
 
-  // Always exclude unsubscribed
-  query = query.neq('status', 'Unsubscribed')
-
-  const { data: contacts, error: cErr } = await query
-  if (cErr) return NextResponse.json({ error: cErr.message }, { status: 500 })
-
-  const recipients = (contacts || []).filter((c: any) =>
-    c.email && c.email.includes('@') && !unsubEmails.has(c.email.toLowerCase())
-  )
-
   if (!recipients.length) {
-    return NextResponse.json({ error: `No contacts found in segment "${segment}". Check that contacts exist with this status/category.` }, { status: 400 })
+    return NextResponse.json({ error: specificEmails ? 'No valid recipients found.' : `No contacts in segment "${segment}".` }, { status: 400 })
   }
 
   // Send in batches of 100

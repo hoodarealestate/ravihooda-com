@@ -81,7 +81,9 @@ export default function CRMDashboard() {
   const [compSubj,setCompSubj]     = useState('')
   const [compBody,setCompBody]     = useState('')
   const [compSeg,setCompSeg]       = useState('all')
-  const [compImg,setCompImg]       = useState('')
+  const [compImg,setCompImg]           = useState('')
+  const [specificRecipients,setSpecificRecipients] = useState('')
+  const [recipientSearch,setRecipientSearch]       = useState('')
   const [sending,setSending]       = useState(false)
   const [sendRes,setSendRes]       = useState<any>(null)
   const [toast,setToast]           = useState('')
@@ -247,12 +249,13 @@ export default function CRMDashboard() {
 
   const sendCampaign = async()=>{
     if(!compSubj||!compBody){ showToast('Fill in subject and body.'); return }
+    if(compSeg==='specific'&&!specificRecipients.trim()){ showToast('Please select at least one recipient.'); return }
     setSending(true); setSendRes(null)
     const now=new Date()
     const months=['January','February','March','April','May','June','July','August','September','October','November','December']
     const body=compBody.replace(/\{\{month\}\}/g,months[now.getMonth()]).replace(/\{\{year\}\}/g,String(now.getFullYear()))
     const imageHtml = compImg ? `<div style="margin:16px 0;text-align:center"><img src="${compImg}" style="max-width:100%;border-radius:8px" alt=""/></div>` : ''
-    const r=await fetch('/api/crm/campaigns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:compSubj,body:body+(imageHtml?'\n\n[IMAGE]\n'+imageHtml:''),segment:compSeg})})
+    const r=await fetch('/api/crm/campaigns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subject:compSubj,body:body+(imageHtml?'\n\n[IMAGE]\n'+imageHtml:''),segment:compSeg,specificEmails:compSeg==='specific'?specificRecipients.split(',').map(s=>s.trim()).filter(Boolean):null})})
     const d=await r.json()
     setSendRes(d); setSending(false)
     if(d.success){ showToast(`✅ Sent to ${d.sent} contacts!`); setCompSubj(''); setCompBody(''); setCompImg(''); loadCampaigns() }
@@ -527,19 +530,91 @@ export default function CRMDashboard() {
                     <span style={{fontSize:13}}>{val}</span>
                   </div>
                 ))}
-                <div style={{padding:'11px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12}}>
-                  <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:60,flexShrink:0}}>To</span>
-                  <select style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} value={compSeg} onChange={e=>setCompSeg(e.target.value)}>
-                    <option value="all">All Contacts</option>
-                    {SEGMENTS.slice(1).map(s=><option key={s} value={s}>{s}s</option>)}
-                  </select>
+                <div style={{padding:'11px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'flex-start',gap:12}}>
+                  <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:60,flexShrink:0,paddingTop:8}}>To</span>
+                  <div style={{flex:1}}>
+                    <select style={{...S.input,border:'none',padding:'4px 0',fontSize:13,marginBottom:compSeg==='specific'?8:0}} value={compSeg} onChange={e=>{setCompSeg(e.target.value);if(e.target.value!=='specific')setSpecificRecipients('')}}>
+                      <option value="all">All Contacts ({stats.total})</option>
+                      <option value="specific">Specific contacts — type emails below</option>
+                      {SEGMENTS.slice(1).map(s=><option key={s} value={s}>{s}s</option>)}
+                    </select>
+                    {compSeg==='specific'&&(
+                      <div>
+                        <input
+                          style={{...S.input,fontSize:13,marginBottom:4}}
+                          placeholder="Search by name or email…"
+                          value={recipientSearch}
+                          onChange={e=>setRecipientSearch(e.target.value)}
+                        />
+                        {recipientSearch.length>1&&(
+                          <div style={{border:'1px solid #E2E4E8',borderRadius:8,maxHeight:160,overflowY:'auto',background:'#fff'}}>
+                            {contacts.filter(c=>
+                              c.name.toLowerCase().includes(recipientSearch.toLowerCase())||
+                              c.email.toLowerCase().includes(recipientSearch.toLowerCase())
+                            ).slice(0,10).map(c=>(
+                              <div key={c.id}
+                                style={{padding:'8px 12px',cursor:'pointer',fontSize:13,display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:'1px solid #F3F4F6'}}
+                                onClick={()=>{
+                                  setSpecificRecipients(prev=>{
+                                    const list = prev ? prev.split(',').map(s=>s.trim()).filter(Boolean) : []
+                                    if(!list.includes(c.email)) list.push(c.email)
+                                    return list.join(', ')
+                                  })
+                                  setRecipientSearch('')
+                                }}
+                              >
+                                <span><strong>{c.name}</strong> — {c.email}</span>
+                                <span style={{color:'#059669',fontSize:11}}>+ Add</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {specificRecipients&&(
+                          <div style={{marginTop:6}}>
+                            <div style={{fontSize:11,color:'#6B7280',marginBottom:4}}>Selected recipients:</div>
+                            <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
+                              {specificRecipients.split(',').map(e=>e.trim()).filter(Boolean).map(email=>(
+                                <span key={email} style={{background:'#EEF4FA',color:'#1C3557',padding:'3px 8px',borderRadius:50,fontSize:12,display:'inline-flex',alignItems:'center',gap:4}}>
+                                  {email}
+                                  <button style={{background:'none',border:'none',cursor:'pointer',color:'#9CA3AF',fontSize:14,lineHeight:1,padding:0}} onClick={()=>setSpecificRecipients(prev=>prev.split(',').map(s=>s.trim()).filter(s=>s&&s!==email).join(', '))}>×</button>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div style={{padding:'11px 18px',borderBottom:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12}}>
                   <span style={{fontSize:12,fontWeight:600,color:'#6B7280',width:60,flexShrink:0}}>Subject</span>
                   <input style={{...S.input,border:'none',padding:0,flex:1,fontSize:13}} placeholder="Enter subject…" value={compSubj} onChange={e=>setCompSubj(e.target.value)}/>
                 </div>
-                <div style={{padding:18}}>
-                  <textarea style={{...S.input,minHeight:220,resize:'vertical',lineHeight:1.7}} placeholder={"Write your email here…\n\nUse {{firstName}} and {{fullName}} for personalisation.\nUse {{month}} and {{year}} for dates."} value={compBody} onChange={e=>setCompBody(e.target.value)}/>
+                <div style={{padding:'12px 18px 0'}}>
+                  <div style={{fontSize:11,color:'#6B7280',marginBottom:6,padding:'6px 10px',background:'#F9FAFB',borderRadius:6,border:'1px solid #E2E4E8'}}>
+                  💡 <strong>Personalisation tokens</strong> — place anywhere in subject or body:<br/>
+                  <code style={{fontSize:11,color:'#1C3557'}}>{'{{firstName}}'}</code> · <code style={{fontSize:11,color:'#1C3557'}}>{'{{fullName}}'}</code> · <code style={{fontSize:11,color:'#1C3557'}}>{'{{month}}'}</code> · <code style={{fontSize:11,color:'#1C3557'}}>{'{{year}}'}</code>
+                </div>
+                </div>
+                <div style={{padding:'8px 18px 18px'}}>
+                  <textarea style={{...S.input,minHeight:220,resize:'vertical',lineHeight:1.7}} placeholder={"Write your email here…\n\nHint: Use {{firstName}}, {{fullName}}, {{month}}, {{year}} anywhere in the text to personalise."} value={compBody} onChange={e=>setCompBody(e.target.value)}
+                  onPaste={e=>{
+                    const items = Array.from(e.clipboardData?.items||[])
+                    const imgItem = items.find(i=>i.type.startsWith('image/'))
+                    if(imgItem){
+                      e.preventDefault()
+                      const file = imgItem.getAsFile()
+                      if(file){
+                        const reader = new FileReader()
+                        reader.onload = ev => {
+                          const base64 = ev.target?.result as string
+                          setCompImg(base64)
+                          showToast('📷 Image pasted! It will appear at the bottom of the email.')
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }
+                  }}/>
                 </div>
                 {/* Image attachment */}
                 <div style={{padding:'12px 18px',borderTop:'1px solid #E2E4E8',display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
