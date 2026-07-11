@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
     const emails = batch.map((r: any) => ({
       from: FROM,
       to:   [r.email],
+      replyTo: process.env.RESEND_FROM_EMAIL || 'ravi@ravihooda.com',
       subject,
       html: buildEmailHtml(
         subject,
@@ -140,13 +141,21 @@ function buildEmailHtml(subject: string, body: string, email: string): string {
   <div style="padding:32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">${mainBody}</div>
   ${imageHtml ? `<div style="padding:0 32px 24px">${imageHtml}</div>` : ''}
   <div style="padding:20px 32px;background:#F8F6F2;border-top:1px solid #E2E4E8">
-    <div style="display:flex;gap:24px;margin-bottom:12px">
-      <div><div style="font-size:.82rem;font-weight:700;color:#1A1F2E">Ravi Hooda</div><div style="font-size:.75rem;color:#6B7280">Broker · 416-825-5032</div></div>
-      <div><div style="font-size:.82rem;font-weight:700;color:#1A1F2E">Rashmi Hooda</div><div style="font-size:.75rem;color:#6B7280">Broker · 647-766-5040</div></div>
-    </div>
-    <div style="font-size:.7rem;color:#9CA3AF;line-height:1.6">
-      Century 21 Red Star Realty Inc. · 239 Queen St E, Unit 27, Brampton ON<br/>
-      hoodarealestate@gmail.com · ravihooda.com<br/>
+    <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px">
+      <tr>
+        <td style="padding-right:32px;vertical-align:top">
+          <div style="font-size:.85rem;font-weight:700;color:#1A1F2E;white-space:nowrap">Ravi Hooda</div>
+          <div style="font-size:.75rem;color:#6B7280;white-space:nowrap">Broker &nbsp;·&nbsp; 416-825-5032</div>
+        </td>
+        <td style="border-left:1px solid #E2E4E8;padding-left:32px;vertical-align:top">
+          <div style="font-size:.85rem;font-weight:700;color:#1A1F2E;white-space:nowrap">Rashmi Hooda</div>
+          <div style="font-size:.75rem;color:#6B7280;white-space:nowrap">Broker &nbsp;·&nbsp; 647-766-5040</div>
+        </td>
+      </tr>
+    </table>
+    <div style="font-size:.7rem;color:#9CA3AF;line-height:1.8">
+      Century 21 Red Star Realty Inc., Brokerage &nbsp;·&nbsp; ravihooda.com<br/>
+      <a href="mailto:ravi@ravihooda.com" style="color:#A8894A;text-decoration:none">ravi@ravihooda.com</a><br/>
       <a href="${unsubUrl}" style="color:#A8894A">Unsubscribe</a> from future emails.
     </div>
   </div>
