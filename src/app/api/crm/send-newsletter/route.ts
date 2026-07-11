@@ -70,7 +70,23 @@ export async function POST(req: NextRequest) {
         .replace(/\{\{email\}\}/g, r.email)
         .replace(/https:\/\/ravihooda\.com\/api\/crm\/unsubscribe\?email=\{\{email\}\}/g, unsubUrl)
         .replace(/\{\{unsubscribeUrl\}\}/g, unsubUrl)
-      return { from: FROM, to: [r.email], replyTo: REPLY, subject, html: personalised }
+
+      // Personalise subject line per recipient too
+      const personalisedSubject = subject
+        .replace(/\{\{firstName\}\}/g, firstName)
+        .replace(/\{\{fullName\}\}/g, fullName)
+
+      return {
+        from: FROM,
+        to: [r.email],
+        replyTo: REPLY,
+        subject: personalisedSubject,
+        html: personalised,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Entity-Ref-ID': `hooda-newsletter-${Date.now()}-${r.email}`,
+        }
+      }
     })
 
     try {
