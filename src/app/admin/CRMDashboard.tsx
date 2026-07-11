@@ -206,7 +206,10 @@ export default function CRMDashboard() {
           setImporting(false); return
         }
         rows = parsed.rows
-        showToast(`📊 Parsed ${parsed.total} rows from "${parsed.sheetName}" sheet`)
+        const sheetInfo = parsed.sheets?.length > 1
+          ? `${parsed.sheets.length} sheets (${Object.entries(parsed.sheetSummary || {}).map(([s,n])=>`${s}: ${n}`).join(', ')})`
+          : parsed.sheets?.[0] || 'Sheet 1'
+        showToast(`📊 Parsed ${parsed.total} rows from ${sheetInfo}`)
       } else {
         // Parse CSV client-side
         const text = await csvFile.text()
@@ -499,6 +502,7 @@ export default function CRMDashboard() {
                   {importRes.inserted>0&&<div>✅ <strong>{importRes.inserted}</strong> new contacts added</div>}
                   {importRes.updated>0&&<div>🔄 <strong>{importRes.updated}</strong> existing contacts updated</div>}
                   {importRes.skipped>0&&<div>⏭ <strong>{importRes.skipped}</strong> skipped (no email)</div>}
+                  {importRes.crossSheetDuplicates>0&&<div>🔄 <strong>{importRes.crossSheetDuplicates}</strong> cross-sheet duplicates merged</div>}
                   {importRes.failed>0&&<div>❌ <strong>{importRes.failed}</strong> failed</div>}
                   {importRes.error&&<div>❌ {importRes.error}</div>}
                 </div>

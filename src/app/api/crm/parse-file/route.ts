@@ -32,43 +32,69 @@ export async function POST(req: NextRequest) {
     const buffer = await file.arrayBuffer()
     const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true })
 
-    // Use first sheet
-    const sheetName = workbook.SheetNames[0]
-    const sheet = workbook.Sheets[sheetName]
+    // Process ALL sheets and combine rows
+    const sheetNames = workbook.SheetNames
+    const allRows: Record<string, string>[] = []
+    const sheetSummary: Record<string, number> = {}
 
-    // Convert to JSON — raw: false gives formatted values, defval: '' fills empty cells
-    const rows: Record<string, any>[] = XLSX.utils.sheet_to_json(sheet, {
-      raw: false,
-      defval: '',
-      blankrows: false,
-    })
+    for (const sheetName of sheetNames) {
+      const sheet = workbook.Sheets[sheetName]
+      const rows: Record<string, any>[] = XLSX.utils.sheet_to_json(sheet, {
+        raw: false,
+        defval: '',
+        blankrows: false,
+      })
 
-    if (!rows.length) return NextResponse.json({ error: 'File appears to be empty' }, { status: 400 })
-
-    // Clean up keys — trim whitespace from column headers
-    const cleanRows = rows.map(row => {
-      const clean: Record<string, string> = {}
-      for (const [k, v] of Object.entries(row)) {
-        clean[k.trim()] = String(v ?? '').trim()
+      if (!rows.length) {
+        sheetSummary[sheetName] = 0
+        continue
       }
-      return clean
+
+      // Clean up keys and add sheet name as source hint
+      const cleanRows = rows.map(row => {
+        const clean: Record<string, string> = {}
+        for (const [k, v] of Object.entries(row)) {
+          clean[k.trim()] = String(v ?? '').trim()
+        }
+        // If no source column, tag with sheet name so import knows where it came from
+        if (!clean['Source'] && !clean['source'] && !clean['lead source']) {
+          clean['_sheet'] = sheetName
+        }
+        return clean
+      })
+
+      sheetSummary[sheetName] = cleanRows.length
+      allRows.push(...cleanRows)
+    }
+
+    if (!allRows.length) return NextResponse.json({ error: 'File appears to be empty' }, { status: 400 })
+
+    // Deduplicate by email across sheets (keep first occurrence)
+    const seen = new Set<string>()
+    const deduped = allRows.filter(row => {
+      const emailKey = Object.keys(row).find(k => k.toLowerCase().includes('email'))
+      const email = emailKey ? row[emailKey].toLowerCase().trim() : ''
+      if (!email || seen.has(email)) return false
+      seen.add(email)
+      return true
     })
 
-    // Preview stats
-    const validCount = cleanRows.filter(r => {
+    const validCount = deduped.filter(r => {
       const emailKey = Object.keys(r).find(k => k.toLowerCase().includes('email'))
       return emailKey && r[emailKey] && r[emailKey].includes('@')
     }).length
 
     return NextResponse.json({
       success: true,
-      rows: cleanRows,
-      total: cleanRows.length,
+      rows: deduped,
+      total: deduped.length,
       valid: validCount,
-      invalid: cleanRows.length - validCount,
-      columns: Object.keys(cleanRows[0] || {}),
+      invalid: deduped.length - validCount,
+      crossSheetDuplicates: allRows.length - deduped.length,
+      columns: Object.keys(deduped[0] || {}),
       fileName: file.name,
-      sheetName,
+      sheets: sheetNames,
+      sheetSummary,
     })
   } catch (err: any) {
     console.error('File parse error:', err)
