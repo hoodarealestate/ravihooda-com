@@ -77,13 +77,13 @@ function buildEmailHtml(subject: string, body: string, unsubUrl: string): string
     return parts.map(part => {
       if (part.startsWith('[IMG:') && part.endsWith(']')) {
         const base64 = part.slice(5, -1)
-        return \`</div><div style="padding:0 32px 16px;text-align:center"><img src="\${base64}" style="max-width:100%;border-radius:8px;display:block;margin:0 auto" alt=""/></div><div style="padding:0 32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">\`
+        return `</div><div style="padding:0 32px 16px;text-align:center"><img src="${base64}" style="max-width:100%;border-radius:8px;display:block;margin:0 auto" alt=""/></div><div style="padding:0 32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">`
       }
       return part.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     }).join('')
   }
 
-  return \`<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
 <body style="margin:0;padding:0;background:#F5F3EF;font-family:Arial,sans-serif">
 <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">
@@ -91,7 +91,7 @@ function buildEmailHtml(subject: string, body: string, unsubUrl: string): string
     <div style="color:#D4B97A;font-family:Georgia,serif;font-size:1.2rem;font-weight:700">The Hooda Team</div>
     <div style="color:rgba(255,255,255,.6);font-size:.75rem;margin-top:2px">Century 21 Red Star Realty Inc. · ravihooda.com</div>
   </div>
-  <div style="padding:32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">\${renderBody(body)}</div>
+  <div style="padding:32px;color:#1A1F2E;line-height:1.75;font-size:.95rem;white-space:pre-wrap">${renderBody(body)}</div>
   <div style="padding:20px 32px;background:#F8F6F2;border-top:1px solid #E2E4E8">
     <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px">
       <tr>
@@ -108,9 +108,9 @@ function buildEmailHtml(subject: string, body: string, unsubUrl: string): string
     <div style="font-size:.7rem;color:#9CA3AF;line-height:1.8">
       Century 21 Red Star Realty Inc., Brokerage &nbsp;·&nbsp; ravihooda.com<br/>
       <a href="mailto:ravi@ravihooda.com" style="color:#A8894A;text-decoration:none">ravi@ravihooda.com</a><br/>
-      <a href="\${unsubUrl}" style="color:#A8894A">Unsubscribe</a> from future emails.
+      <a href="${unsubUrl}" style="color:#A8894A">Unsubscribe</a> from future emails.
     </div>
   </div>
 </div>
-</body></html>\`
+</body></html>`
 }
