@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendEmail } from '@/lib/email'
 import { jwtVerify } from 'jose'
 
-const resend = new Resend(process.env.RESEND_API_KEY!)
 const CRM_SECRET = new TextEncoder().encode(process.env.CRM_JWT_SECRET || 'hooda-crm-jwt-secret-2026')
 
 export async function POST(req: NextRequest) {
@@ -26,7 +25,7 @@ export async function POST(req: NextRequest) {
         subject,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px">${body.replace(/{{firstName}}/g, r.name.split(' ')[0]).replace(/{{fullName}}/g, r.name).replace(/\n/g,'<br/>')}</div><p style="font-size:11px;color:#999;margin-top:24px">Century 21 Red Star Realty Inc., 239 Queen St E Unit 27, Brampton ON<br/><a href="${process.env.NEXT_PUBLIC_SITE_URL}/unsubscribe?email=${r.email}">Unsubscribe</a></p>`
       }))
-      await resend.batch.send(emails)
+      await Promise.all(emails.map((e: any) => sendEmail({ to: e.to[0], subject: e.subject, html: e.html })))
       sent += batch.length
       if (i + BATCH < recipients.length) await new Promise(r => setTimeout(r, 500))
     }

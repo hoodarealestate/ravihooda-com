@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sendEmail, sendBatch } from '@/lib/email'
 import { SignJWT } from 'jose'
-import { Resend } from 'resend'
+import { sendEmail, sendBatch } from '@/lib/brevo'
 import { supabase } from '@/lib/supabase'
 
-const resend = new Resend(process.env.RESEND_API_KEY!)
 const VOW_SECRET = new TextEncoder().encode(process.env.VOW_JWT_SECRET || 'hooda-vow-jwt-secret-2026')
 
 export async function POST(req: NextRequest) {
@@ -20,20 +20,10 @@ export async function POST(req: NextRequest) {
       .sign(VOW_SECRET)
 
     // Welcome email
-    await resend.emails.send({
-      from: `The Hooda Team <${process.env.RESEND_FROM_EMAIL}>`,
-      to: email,
-      subject: 'Welcome — Your GTA Property Access is Ready',
-      html: `<p>Hi ${name.split(' ')[0]},</p><p>Your free VOW membership is active. You now have access to sold prices, days on market, and full listing history across the GTA.</p><p>Visit <a href="https://ravihooda.com">ravihooda.com</a> to start searching.</p><p>Ravi: 416-825-5032 | Rashmi: 647-766-5040</p><p style="font-size:11px;color:#999">Century 21 Red Star Realty Inc., 239 Queen St E Unit 27, Brampton ON. <a href="https://ravihooda.com/unsubscribe?email=${email}">Unsubscribe</a></p>`
-    })
+    await sendEmail({ to: 'hoodarealestate@gmail.com', subject: 'Welcome — Your GTA Property Access is Ready', html: `<p>Hi ${name.split(' ')[0]},</p><p>Your free VOW membership is active. You now have access to sold prices, days on market, and full listing history across the GTA.</p><p>Visit <a href="https://ravihooda.com">ravihooda.com</a> to start searching.</p><p>Ravi: 416-825-5032 | Rashmi: 647-766-5040</p><p style="font-size:11px;color:#999">Century 21 Red Star Realty Inc., 239 Queen St E Unit 27, Brampton ON. <a href="https://ravihooda.com/unsubscribe?email=${email}">Unsubscribe</a></p>` })
 
     // Notify Ravi
-    await resend.emails.send({
-      from: `The Hooda Team <${process.env.RESEND_FROM_EMAIL}>`,
-      to: 'hoodarealestate@gmail.com',
-      subject: `New VOW Registration: ${name}`,
-      html: `<p><strong>Name:</strong> ${name}<br/><strong>Email:</strong> ${email}<br/><strong>Phone:</strong> ${phone}</p>`
-    })
+    await sendEmail({ to: 'hoodarealestate@gmail.com', subject: `New VOW Registration: ${name, html: `<p><strong>Name:</strong> ${name}<br/><strong>Email:</strong> ${email}<br/><strong>Phone:</strong> ${phone}</p>` })
 
     // Auto-save VOW registrant to CRM
     try {

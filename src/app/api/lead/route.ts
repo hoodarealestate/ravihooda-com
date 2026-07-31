@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendEmail } from '@/lib/email'
 
-const resend = new Resend(process.env.RESEND_API_KEY!)
 
 // Bell Canada SMS gateway — no Twilio needed
 const SMS_GATEWAY = '4168255032@txt.bell.ca'
@@ -54,42 +53,16 @@ export async function POST(req: NextRequest) {
     ].filter(Boolean).join('\n')
 
     // Fire email + SMS in parallel; don't let one failure block the other
-    const emailPromise = resend.emails.send({
-      from: `The Hooda Team <${process.env.RESEND_FROM_EMAIL}>`,
-      to:   [RAVI_EMAIL],
-      subject: subjectLine,
-      html: `
-<table style="font-family:Arial,sans-serif;font-size:14px;color:#222;max-width:600px">
-  <tr><td style="padding:20px;background:#1C3557;color:#fff">
-    <h2 style="margin:0;font-size:18px">🏠 New Lead — ${label}</h2>
-  </td></tr>
-  <tr><td style="padding:20px;border:1px solid #eee">
-    <p><strong>Name:</strong> ${name}</p>
-    <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-    ${phone ? `<p><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>` : ''}
-    ${property ? `<p><strong>Property/Address:</strong> ${property}</p>` : ''}
-    ${timeline ? `<p><strong>Timeline:</strong> ${timeline}</p>` : ''}
-    ${message ? `<p><strong>Message:</strong> ${message}</p>` : ''}
-    <hr style="margin:16px 0;border:none;border-top:1px solid #eee">
-    <p style="font-size:12px;color:#999">Submitted via ravihooda.com · ${new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' })}</p>
+    const emailPromise = sendEmail({ to: RAVI_EMAIL, subject: subjectLine, html: '' })}</p>
   </td></tr>
 </table>`
     }).catch(err => { console.error('Lead email error:', err); return null })
 
     // Send SMS via Bell email-to-SMS gateway
-    const smsPromise = resend.emails.send({
-      from:    `The Hooda Team <${process.env.RESEND_FROM_EMAIL}>`,
-      to:      [SMS_GATEWAY],
-      subject: '',          // subject is prepended to body on Bell gateway — keep empty
-      text:    smsText,
-    }).catch(err => { console.error('Lead SMS error:', err); return null })
+    const smsPromise = sendEmail({ to: SMS_GATEWAY, subject: '', html: '' }).catch(err => { console.error('Lead SMS error:', err); return null })
 
     // Auto-reply to lead
-    const replyPromise = resend.emails.send({
-      from:    `The Hooda Team <${process.env.RESEND_FROM_EMAIL}>`,
-      to:      [email],
-      subject: 'Thanks for reaching out — The Hooda Team',
-      html: `
+    const replyPromise = sendEmail({ to: email, subject: 'Thanks for reaching out — The Hooda Team', html: `
 <table style="font-family:Arial,sans-serif;font-size:14px;color:#222;max-width:600px">
   <tr><td style="padding:20px;background:#1C3557;color:#fff">
     <h2 style="margin:0;font-size:18px">The Hooda Team | Century 21 Red Star Realty</h2>
@@ -106,8 +79,7 @@ export async function POST(req: NextRequest) {
     <hr style="margin:16px 0;border:none;border-top:1px solid #eee"/>
     <p style="font-size:11px;color:#999">239 Queen St E Unit 27, Brampton, ON · <a href="${process.env.NEXT_PUBLIC_SITE_URL}/unsubscribe?email=${encodeURIComponent(email)}" style="color:#999">Unsubscribe</a></p>
   </td></tr>
-</table>`
-    }).catch(err => { console.error('Lead auto-reply error:', err); return null })
+</table>` }).catch(err => { console.error('Lead auto-reply error:', err); return null })
 
     await Promise.all([emailPromise, smsPromise, replyPromise])
 
