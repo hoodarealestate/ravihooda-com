@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
-import { sendBatch } from '@/lib/brevo'
+import { sendBatch } from '@/lib/email'
 import { supabase } from '@/lib/supabase'
 
 const CRM_SECRET = new TextEncoder().encode(process.env.CRM_JWT_SECRET || 'hooda-crm-jwt-secret-2026')

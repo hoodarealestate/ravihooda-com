@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
-import { sendEmail } from '@/lib/brevo'
+import { sendEmail } from '@/lib/email'
 
 const CRM_SECRET = new TextEncoder().encode(process.env.CRM_JWT_SECRET || 'hooda-crm-jwt-secret-2026')
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://ravihooda.com'

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail, sendBatch } from '@/lib/email'
 import { SignJWT } from 'jose'
-import { sendEmail, sendBatch } from '@/lib/brevo'
 import { supabase } from '@/lib/supabase'
 
 const VOW_SECRET = new TextEncoder().encode(process.env.VOW_JWT_SECRET || 'hooda-vow-jwt-secret-2026')
