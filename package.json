@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^6.0.2",
     "@supabase/supabase-js": "^2.110.2",
     "jose": "^5.2.4",
     "next": "14.2.3",
