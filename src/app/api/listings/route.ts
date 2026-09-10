@@ -86,6 +86,9 @@ export async function GET(req: NextRequest) {
     const maxPrice     = searchParams.get('maxPrice')
     const minPrice     = searchParams.get('minPrice')
     const beds         = searchParams.get('beds')
+    const street       = searchParams.get('street')  // street name search
+    const postalCode   = searchParams.get('postal')   // postal code search
+
     const filters: string[] = [
       "StandardStatus eq 'Active'",
       "TransactionType eq 'For Sale'"
@@ -96,6 +99,10 @@ export async function GET(req: NextRequest) {
     if (maxPrice)     filters.push(`ListPrice le ${maxPrice}`)
     if (minPrice)     filters.push(`ListPrice ge ${minPrice}`)
     if (beds)         filters.push(`BedroomsTotal ge ${beds}`)
+    // Street name search — use contains() for partial match
+    if (street)       filters.push(`contains(tolower(StreetName),'${street.toLowerCase().trim().replace(/'/g,"''")}')`)
+    // Postal code search — strip spaces, match start
+    if (postalCode)   filters.push(`startswith(tolower(PostalCode),'${postalCode.toLowerCase().replace(/\s/g,'').trim()}')`)
 
     // Proximity filter — bounding box around a lat/lng point
     // ~1 degree lat = 111km, ~1 degree lng = 73km at Toronto latitude

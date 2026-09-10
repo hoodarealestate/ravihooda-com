@@ -1526,7 +1526,7 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
     <div class="hero-search-inner">
       <div class="hero-search-title">Search GTA Properties — Live MLS&reg; Data</div>
       <div class="hero-search-row">
-        <input type="text" id="heroSearch" placeholder="City, neighbourhood or MLS#&hellip;"/>
+        <input type="text" id="heroStreet" placeholder="Street name (e.g. Maple, King, Bay)&hellip;" style="grid-column:span 2"/>
         <select id="heroCity">
           <option value="">Any GTA City</option>
           <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
@@ -1539,13 +1539,25 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
           <option>Detached</option><option>Semi-Detached</option>
           <option>Townhouse</option><option>Condo</option><option>Commercial</option>
         </select>
+        <select id="heroMinPrice">
+          <option value="">Min Price</option>
+          <option value="300000">$300K</option><option value="500000">$500K</option>
+          <option value="700000">$700K</option><option value="900000">$900K</option>
+          <option value="1200000">$1.2M</option>
+        </select>
         <select id="heroPrice">
           <option value="">Max Price</option>
           <option value="600000">$600K</option><option value="800000">$800K</option>
           <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
-          <option value="2000000">$2M+</option>
+          <option value="2000000">$2M</option><option value="3000000">$3M+</option>
         </select>
-        <button class="hero-search-go" onclick="searchListings()">Search</button>
+        <select id="heroBeds">
+          <option value="">Any Beds</option>
+          <option value="1">1+ bed</option><option value="2">2+ beds</option>
+          <option value="3">3+ beds</option><option value="4">4+ beds</option>
+          <option value="5">5+ beds</option>
+        </select>
+        <button class="hero-search-go" onclick="searchListings()" style="grid-column:span 2">🔍 Search Listings</button>
       </div>
       <div class="hero-quick-tags">
         <button class="hero-quick-tag" onclick="quickSearch('Toronto')">Toronto</button>
@@ -2617,16 +2629,17 @@ let listingsShown = 12;            // grid pagination
 const LISTINGS_PAGE = 12;
 const FREE_VIEW_LIMIT = 3;         // free property detail views before registration
 
-async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='') {
+async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', street='') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
   try {
     const p = new URLSearchParams();
-    if (city) p.set('city', city);
+    if (city)         p.set('city', city);
     if (propertyType) p.set('type', propertyType);
-    if (maxPrice) p.set('maxPrice', maxPrice);
-    if (minPrice) p.set('minPrice', minPrice);
-    if (beds) p.set('beds', beds);
+    if (maxPrice)     p.set('maxPrice', maxPrice);
+    if (minPrice)     p.set('minPrice', minPrice);
+    if (beds)         p.set('beds', beds);
+    if (street)       p.set('street', street);
     // Same-origin call: the page is served from www.ravihooda.com, but the apex
     // ravihooda.com 308-redirects there. Hardcoding the apex forced an
     // unnecessary cross-origin redirect on every load; using the page's own
@@ -2709,10 +2722,13 @@ function filterListings(btn, type) {
 }
 
 function searchListings() {
-  const city  = document.getElementById('heroCity')?.value || '';
-  const type  = document.getElementById('heroType')?.value || '';
-  const price = document.getElementById('heroPrice')?.value || '';
-  fetchListings(city, type, price);
+  const street   = document.getElementById('heroStreet')?.value.trim() || '';
+  const city     = document.getElementById('heroCity')?.value || '';
+  const type     = document.getElementById('heroType')?.value || '';
+  const minPrice = document.getElementById('heroMinPrice')?.value || '';
+  const maxPrice = document.getElementById('heroPrice')?.value || '';
+  const beds     = document.getElementById('heroBeds')?.value || '';
+  fetchListings(city, type, maxPrice, minPrice, beds, street);
   document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 }
 
