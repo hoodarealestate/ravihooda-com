@@ -1557,18 +1557,28 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
           <option>Detached</option><option>Semi-Detached</option>
           <option>Townhouse</option><option>Condo</option><option>Commercial</option>
         </select>
-        <select id="heroMinPrice">
-          <option value="">Min Price</option>
-          <option value="400000">$400K</option><option value="600000">$600K</option>
-          <option value="800000">$800K</option><option value="1000000">$1M</option>
-          <option value="1500000">$1.5M</option><option value="2000000">$2M</option>
-        </select>
-        <select id="heroPrice">
-          <option value="">Max Price</option>
-          <option value="600000">$600K</option><option value="800000">$800K</option>
-          <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
-          <option value="2000000">$2M</option><option value="3000000">$3M</option>
-        </select>
+        <div style="position:relative">
+          <select id="heroMinPrice" onchange="toggleCustomPrice(this,'heroMinPriceVal')">
+            <option value="">Min Price</option>
+            <option value="400000">$400K</option><option value="600000">$600K</option>
+            <option value="800000">$800K</option><option value="1000000">$1M</option>
+            <option value="1500000">$1.5M</option><option value="2000000">$2M</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <input type="number" id="heroMinPriceVal" placeholder="Min $" min="0" step="1000"
+            style="display:none;position:absolute;inset:0;width:100%;border:1.5px solid var(--sky);border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.94rem;background:var(--white);outline:none"/>
+        </div>
+        <div style="position:relative">
+          <select id="heroPrice" onchange="toggleCustomPrice(this,'heroPriceVal')">
+            <option value="">Max Price</option>
+            <option value="600000">$600K</option><option value="800000">$800K</option>
+            <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
+            <option value="2000000">$2M</option><option value="3000000">$3M</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <input type="number" id="heroPriceVal" placeholder="Max $" min="0" step="1000"
+            style="display:none;position:absolute;inset:0;width:100%;border:1.5px solid var(--sky);border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.94rem;background:var(--white);outline:none"/>
+        </div>
         <select id="heroBeds">
           <option value="">Beds</option>
           <option value="1">1+</option><option value="2">2+</option>
@@ -2739,13 +2749,25 @@ function filterListings(btn, type) {
   fetchListings('', type);
 }
 
+function toggleCustomPrice(sel, inputId) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (sel.value === 'custom') { inp.style.display = ''; inp.focus(); }
+  else inp.style.display = 'none';
+}
+function resolvePrice(selId, inputId) {
+  const sel = document.getElementById(selId);
+  if (sel?.value === 'custom') return document.getElementById(inputId)?.value || '';
+  return sel?.value || '';
+}
+
 function searchListings() {
   const address  = (document.getElementById('heroAddress')?.value || '').trim();
   const city     = window._heroPlaceCity || document.getElementById('heroCity')?.value || '';
   const street   = window._heroPlaceStreet || '';
   const type     = document.getElementById('heroType')?.value || '';
-  const maxPrice = document.getElementById('heroPrice')?.value || '';
-  const minPrice = document.getElementById('heroMinPrice')?.value || '';
+  const maxPrice = resolvePrice('heroPrice', 'heroPriceVal');
+  const minPrice = resolvePrice('heroMinPrice', 'heroMinPriceVal');
   const beds     = document.getElementById('heroBeds')?.value || '';
   document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 
