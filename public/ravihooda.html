@@ -3080,7 +3080,7 @@ const MAP_GEOCODE_LIMIT = 100; // geocode all listings; geoCache persists across
 const geoCache = {};
 const geoPending = {};
 let geoQueue = [], geoActiveCount = 0, _geocoder = null;
-const GEO_CONCURRENCY = 8;      // process several geocodes at once (single-flight was ~2.5/s)
+const GEO_CONCURRENCY = 15;     // Google Geocoding API allows 50 req/s; 15 concurrent is safe
 
 // Persist resolved coordinates so coverage accumulates across loads/visits.
 try { Object.assign(geoCache, JSON.parse(localStorage.getItem('hooda_geocache') || '{}')); } catch {}
@@ -3352,20 +3352,33 @@ function renderMapListings(listings, fitView=false) {
     if (geocodePending === 0) fitOnce();
   };
 
+  const total = Math.min(listings.length, MAP_GEOCODE_LIMIT);
+  let resolved = 0;
+  const countEl = document.getElementById('mapResultCount');
+  const updatePinCount = () => {
+    if (myToken !== mapRenderToken) return;
+    if (countEl && geocodePending > 0)
+      countEl.textContent = `${placed} / ${total} pinning…`;
+    else if (countEl)
+      countEl.textContent = listings.length;
+  };
+
   listings.forEach((l, i) => {
     const lat = parseFloat(l.Latitude), lng = parseFloat(l.Longitude);
-    if (lat && lng) { place(l, i, { lat, lng }); return; }
+    if (lat && lng) { place(l, i, { lat, lng }); resolved++; updatePinCount(); return; }
     if (i < MAP_GEOCODE_LIMIT) {
       geocodePending++;
       geocodeListing(l).then(pos => {
         geocodePending--;
+        resolved++;
         place(l, i, pos);
-        // After last geocode resolves, fit if not done yet
+        updatePinCount();
         if (geocodePending === 0) fitOnce();
       });
     }
   });
 
+  updatePinCount();
   // Fit immediately for listings that already had coords (no geocoding needed)
   if (geocodePending === 0 && placed > 0) fitOnce();
 }
