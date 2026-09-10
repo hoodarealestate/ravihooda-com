@@ -3174,6 +3174,33 @@ function initMap() {
     // Clear stored coords if user edits the input manually
     heroAddrEl.addEventListener('input', () => { window._heroPlaceLat = null; window._heroPlaceLng = null; });
   }
+
+  // Map section search box — Google Places Autocomplete
+  const mapSearchEl = document.getElementById('mapSearchInput');
+  if (mapSearchEl && google.maps.places) {
+    const mapAc = new google.maps.places.Autocomplete(mapSearchEl, {
+      bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(43.0, -80.2),
+        new google.maps.LatLng(44.5, -78.5)
+      ),
+      strictBounds: false,
+      componentRestrictions: { country: 'ca' },
+      types: ['geocode', 'establishment'],
+      fields: ['geometry', 'formatted_address']
+    });
+    mapAc.addListener('place_changed', () => {
+      const place = mapAc.getPlace();
+      if (!place.geometry?.location) return;
+      const loc = place.geometry.location;
+      map.panTo(loc);
+      map.setZoom(13);
+      const type = document.getElementById('mapType')?.value || '';
+      const minP = document.getElementById('mapMinPrice')?.value || '';
+      const maxP = document.getElementById('mapMaxPrice')?.value || '';
+      const beds = document.getElementById('mapBeds')?.value || '';
+      loadMapListings('', type, minP, maxP, beds, false, loc.lat(), loc.lng(), 3);
+    });
+  }
 }
 
 // Map Google geocoder city names → PropTx city names used in the IDX feed
