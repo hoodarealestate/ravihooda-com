@@ -2647,20 +2647,17 @@ let listingsShown = 12;            // grid pagination
 const LISTINGS_PAGE = 12;
 const FREE_VIEW_LIMIT = 3;         // free property detail views before registration
 
-async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', lat=null, lng=null) {
+async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', street='') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
   try {
     const p = new URLSearchParams();
-    if (lat != null && lng != null) {
-      p.set('lat', lat); p.set('lng', lng); p.set('radiusKm', '3');
-    } else if (city) {
-      p.set('city', city);
-    }
+    if (city) p.set('city', city);
     if (propertyType) p.set('type', propertyType);
     if (maxPrice) p.set('maxPrice', maxPrice);
     if (minPrice) p.set('minPrice', minPrice);
     if (beds) p.set('beds', beds);
+    if (street) p.set('street', street);
     // Same-origin call: the page is served from www.ravihooda.com, but the apex
     // ravihooda.com 308-redirects there. Hardcoding the apex forced an
     // unnecessary cross-origin redirect on every load; using the page's own
@@ -2744,34 +2741,37 @@ function filterListings(btn, type) {
 
 function searchListings() {
   const address  = (document.getElementById('heroAddress')?.value || '').trim();
-  const city     = document.getElementById('heroCity')?.value || '';
+  const city     = window._heroPlaceCity || document.getElementById('heroCity')?.value || '';
+  const street   = window._heroPlaceStreet || '';
   const type     = document.getElementById('heroType')?.value || '';
   const maxPrice = document.getElementById('heroPrice')?.value || '';
   const minPrice = document.getElementById('heroMinPrice')?.value || '';
   const beds     = document.getElementById('heroBeds')?.value || '';
   document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 
-  // Use coords stored by Places Autocomplete when user selected a suggestion
-  if (address && window._heroPlaceLat != null && window._heroPlaceLng != null) {
-    fetchListings(city, type, maxPrice, minPrice, beds, window._heroPlaceLat, window._heroPlaceLng);
+  // If a Places suggestion was selected, city+street are already resolved
+  if (window._heroPlaceCity != null) {
+    fetchListings(city, type, maxPrice, minPrice, beds, street);
     return;
   }
 
+  // If address typed manually without selecting autocomplete, geocode it to extract city
   if (address && window.google?.maps) {
-    // Fallback: geocode the typed text (handles Enter without selecting a suggestion)
     getGeocoder().geocode(
       { address: address + ', Ontario, Canada', componentRestrictions: { country: 'CA' } },
       (results, status) => {
         if (status === 'OK' && results?.[0]) {
-          const loc = results[0].geometry.location;
-          fetchListings(city, type, maxPrice, minPrice, beds, loc.lat(), loc.lng());
+          const comps = results[0].address_components || [];
+          const resolvedCity = resolveGtaCity(comps) || city;
+          const routeComp = comps.find(c => c.types.includes('route'))?.long_name || '';
+          fetchListings(resolvedCity, type, maxPrice, minPrice, beds, routeComp);
         } else {
-          fetchListings(city, type, maxPrice, minPrice, beds);
+          fetchListings(city, type, maxPrice, minPrice, beds, '');
         }
       }
     );
   } else {
-    fetchListings(city, type, maxPrice, minPrice, beds);
+    fetchListings(city, type, maxPrice, minPrice, beds, '');
   }
 }
 
@@ -3153,52 +3153,47 @@ function initMap() {
   // Hero address search — Google Places Autocomplete
   const heroAddrEl = document.getElementById('heroAddress');
   if (heroAddrEl && google.maps.places) {
-    const gtaBounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(43.0, -80.2),
-      new google.maps.LatLng(44.5, -78.5)
-    );
     const ac = new google.maps.places.Autocomplete(heroAddrEl, {
-      bounds: gtaBounds,
+      bounds: new google.maps.LatLngBounds(new google.maps.LatLng(43.0,-80.2), new google.maps.LatLng(44.5,-78.5)),
       strictBounds: false,
       componentRestrictions: { country: 'ca' },
       types: ['geocode', 'establishment'],
-      fields: ['geometry', 'formatted_address']
+      fields: ['geometry', 'address_components', 'formatted_address']
     });
     ac.addListener('place_changed', () => {
       const place = ac.getPlace();
-      if (!place.geometry?.location) return;
-      window._heroPlaceLat = place.geometry.location.lat();
-      window._heroPlaceLng = place.geometry.location.lng();
-      searchListings(); // auto-trigger search on selection
+      if (!place.address_components) return;
+      const comps = place.address_components;
+      window._heroPlaceCity   = resolveGtaCity(comps);
+      window._heroPlaceStreet = (comps.find(c => c.types.includes('route'))?.long_name || '').replace(/\s+(St|Ave|Rd|Blvd|Dr|Crt|Cres|Pl|Pkwy|Way|Ln|Terr?|Gate|Trail|Hwy|Circ?)(\.?)$/i,'').trim();
+      if (place.geometry?.location) { map.panTo(place.geometry.location); map.setZoom(13); }
+      searchListings();
     });
-    // Clear stored coords if user edits the input manually
-    heroAddrEl.addEventListener('input', () => { window._heroPlaceLat = null; window._heroPlaceLng = null; });
+    heroAddrEl.addEventListener('input', () => { window._heroPlaceCity = null; window._heroPlaceStreet = null; });
   }
 
   // Map section search box — Google Places Autocomplete
   const mapSearchEl = document.getElementById('mapSearchInput');
   if (mapSearchEl && google.maps.places) {
     const mapAc = new google.maps.places.Autocomplete(mapSearchEl, {
-      bounds: new google.maps.LatLngBounds(
-        new google.maps.LatLng(43.0, -80.2),
-        new google.maps.LatLng(44.5, -78.5)
-      ),
+      bounds: new google.maps.LatLngBounds(new google.maps.LatLng(43.0,-80.2), new google.maps.LatLng(44.5,-78.5)),
       strictBounds: false,
       componentRestrictions: { country: 'ca' },
       types: ['geocode', 'establishment'],
-      fields: ['geometry', 'formatted_address']
+      fields: ['geometry', 'address_components']
     });
     mapAc.addListener('place_changed', () => {
       const place = mapAc.getPlace();
       if (!place.geometry?.location) return;
-      const loc = place.geometry.location;
-      map.panTo(loc);
-      map.setZoom(13);
+      map.panTo(place.geometry.location); map.setZoom(13);
+      const comps  = place.address_components || [];
+      const city   = resolveGtaCity(comps);
+      const street = comps.find(c => c.types.includes('route'))?.long_name || '';
       const type = document.getElementById('mapType')?.value || '';
       const minP = document.getElementById('mapMinPrice')?.value || '';
       const maxP = document.getElementById('mapMaxPrice')?.value || '';
       const beds = document.getElementById('mapBeds')?.value || '';
-      loadMapListings('', type, minP, maxP, beds, false, loc.lat(), loc.lng(), 3);
+      loadMapListings(city, type, minP, maxP, beds, true, street);
     });
   }
 }
@@ -3239,13 +3234,15 @@ function searchThisArea() {
   const minP = document.getElementById('mapMinPrice')?.value || '';
   const maxP = document.getElementById('mapMaxPrice')?.value || '';
   const beds = document.getElementById('mapBeds')?.value || '';
-  // Use the map's actual center lat/lng for proximity search (radius based on zoom)
-  const zoom = map.getZoom() || 11;
-  const radiusKm = zoom >= 14 ? 1 : zoom >= 12 ? 2 : zoom >= 10 ? 5 : 10;
-  loadMapListings('', type, minP, maxP, beds, false, center.lat(), center.lng(), radiusKm);
+  // Reverse-geocode the map centre → resolve to PropTx city name
+  getGeocoder().geocode({ location: center }, (results, status) => {
+    const comps = (status === 'OK' && results?.[0]?.address_components) || [];
+    const city = resolveGtaCity(comps);
+    loadMapListings(city, type, minP, maxP, beds);
+  });
 }
 
-async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false, lat=null, lng=null, radiusKm=3) {
+async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false, street='') {
   document.getElementById('mapResultsList').innerHTML =
     '<div style="padding:32px 16px;text-align:center;color:var(--gray)"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading listings…</p></div>';
   document.getElementById('mapResultCount').textContent = '—';
@@ -3253,11 +3250,8 @@ async function loadMapListings(city='', propType='', minPrice='', maxPrice='', b
 
   try {
     const mapParams = new URLSearchParams();
-    if (lat != null && lng != null) {
-      mapParams.set('lat', lat); mapParams.set('lng', lng); mapParams.set('radiusKm', radiusKm);
-    } else if (city) {
-      mapParams.set('city', city);
-    }
+    if (city)    mapParams.set('city', city);
+    if (street)  mapParams.set('street', street);
     if (propType) mapParams.set('type', propType);
     if (minPrice) mapParams.set('minPrice', minPrice);
     if (maxPrice) mapParams.set('maxPrice', maxPrice);
@@ -3485,14 +3479,16 @@ function debounceMapSearch() {
     // can only filter by City, so we resolve the typed area to its city).
     getGeocoder().geocode({ address: q + ', Ontario, Canada' }, (results, status) => {
       if (status !== 'OK' || !results[0]) return;
-      const loc = results[0].geometry.location;
-      map.panTo(loc);
+      map.panTo(results[0].geometry.location);
       map.setZoom(13);
+      const comps = results[0].address_components || [];
+      const city = resolveGtaCity(comps);
+      const street = comps.find(c => c.types.includes('route'))?.long_name || '';
       const type = document.getElementById('mapType').value;
       const minP = document.getElementById('mapMinPrice').value;
       const maxP = document.getElementById('mapMaxPrice').value;
       const beds = document.getElementById('mapBeds').value;
-      loadMapListings('', type, minP, maxP, beds, false, loc.lat(), loc.lng(), 3);
+      if (city || street) loadMapListings(city, type, minP, maxP, beds, true, street);
     });
   }, 600);
 }

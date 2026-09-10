@@ -86,6 +86,7 @@ export async function GET(req: NextRequest) {
     const maxPrice     = searchParams.get('maxPrice')
     const minPrice     = searchParams.get('minPrice')
     const beds         = searchParams.get('beds')
+    const street       = searchParams.get('street')   // street name for contains() filter
     const filters: string[] = [
       "StandardStatus eq 'Active'",
       "TransactionType eq 'For Sale'"
@@ -96,22 +97,8 @@ export async function GET(req: NextRequest) {
     if (maxPrice)     filters.push(`ListPrice le ${maxPrice}`)
     if (minPrice)     filters.push(`ListPrice ge ${minPrice}`)
     if (beds)         filters.push(`BedroomsTotal ge ${beds}`)
-
-    // Proximity filter — bounding box around a lat/lng point
-    // ~1 degree lat = 111km, ~1 degree lng = 73km at Toronto latitude
-    const lat  = searchParams.get('lat')
-    const lng  = searchParams.get('lng')
-    const radiusKm = parseFloat(searchParams.get('radiusKm') || '1.5')
-    if (lat && lng) {
-      const latN = parseFloat(lat)
-      const lngN = parseFloat(lng)
-      const latDelta = radiusKm / 111.0
-      const lngDelta = radiusKm / 73.0
-      filters.push(`Latitude ge ${(latN - latDelta).toFixed(6)}`)
-      filters.push(`Latitude le ${(latN + latDelta).toFixed(6)}`)
-      filters.push(`Longitude ge ${(lngN - lngDelta).toFixed(6)}`)
-      filters.push(`Longitude le ${(lngN + lngDelta).toFixed(6)}`)
-    }
+    // PropTx IDX Latitude/Longitude are null — street name search uses contains() instead
+    if (street)       filters.push(`contains(StreetName,'${street.replace(/'/g, "''")}')`)
 
     const select = [
       'ListingKey', 'ListPrice', 'StreetNumber', 'StreetName', 'StreetSuffix',
