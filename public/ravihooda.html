@@ -3149,7 +3149,7 @@ const MAP_GEOCODE_LIMIT = 100; // geocode all listings; geoCache persists across
 const geoCache = {};
 const geoPending = {};
 let geoQueue = [], geoActiveCount = 0, _geocoder = null;
-const GEO_CONCURRENCY = 15;     // Google Geocoding API allows 50 req/s; 15 concurrent is safe
+const GEO_CONCURRENCY = 25;     // Google Geocoding API allows 50 req/s; 25 concurrent is safe
 
 // Persist resolved coordinates so coverage accumulates across loads/visits.
 try { Object.assign(geoCache, JSON.parse(localStorage.getItem('hooda_geocache') || '{}')); } catch {}
@@ -3280,14 +3280,15 @@ function initMap() {
       const place = mapAc.getPlace();
       if (!place.geometry?.location) return;
       map.panTo(place.geometry.location); map.setZoom(13);
-      const comps  = place.address_components || [];
-      const city   = resolveGtaCity(comps);
-      const street = comps.find(c => c.types.includes('route'))?.long_name || '';
+      const comps      = place.address_components || [];
+      const city       = resolveGtaCity(comps);
+      const street     = extractStreetBaseName(comps.find(c => c.types.includes('route'))?.long_name || '');
+      const postalCode = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
       const type = document.getElementById('mapType')?.value || '';
       const minP = document.getElementById('mapMinPrice')?.value || '';
       const maxP = document.getElementById('mapMaxPrice')?.value || '';
       const beds = document.getElementById('mapBeds')?.value || '';
-      loadMapListings(city, type, minP, maxP, beds, true, street);
+      loadMapListings(city, type, minP, maxP, beds, true, street, postalCode);
     });
   }
 }
@@ -3332,24 +3333,28 @@ function searchThisArea() {
   getGeocoder().geocode({ location: center }, (results, status) => {
     const comps = (status === 'OK' && results?.[0]?.address_components) || [];
     const city = resolveGtaCity(comps);
-    loadMapListings(city, type, minP, maxP, beds);
+    loadMapListings(city, type, minP, maxP, beds, false, '', '');
   });
 }
 
-async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false, street='') {
+async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false, street='', postalCode='') {
   document.getElementById('mapResultsList').innerHTML =
     '<div style="padding:32px 16px;text-align:center;color:var(--gray)"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading listings…</p></div>';
   document.getElementById('mapResultCount').textContent = '—';
   clearMapMarkers();
 
+  // Scroll the map section into view so the user sees results appear
+  document.getElementById('mapsearch')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   try {
     const mapParams = new URLSearchParams();
-    if (city)    mapParams.set('city', city);
-    if (street)  mapParams.set('street', street);
-    if (propType) mapParams.set('type', propType);
-    if (minPrice) mapParams.set('minPrice', minPrice);
-    if (maxPrice) mapParams.set('maxPrice', maxPrice);
-    if (beds)     mapParams.set('beds', beds);
+    if (city)      mapParams.set('city', city);
+    if (postalCode) mapParams.set('postalCode', postalCode);
+    else if (street) mapParams.set('street', street);
+    if (propType)  mapParams.set('type', propType);
+    if (minPrice)  mapParams.set('minPrice', minPrice);
+    if (maxPrice)  mapParams.set('maxPrice', maxPrice);
+    if (beds)      mapParams.set('beds', beds);
     const res = await fetch(window.location.origin + '/api/listings?' + mapParams.toString());
 
     if (!res.ok) throw new Error('API');
@@ -3581,21 +3586,19 @@ function debounceMapSearch() {
   mapSearchTimer = setTimeout(() => {
     const q = document.getElementById('mapSearchInput').value.trim();
     if (q.length <= 2) return;
-    // Geocode the query, recenter the map, AND refetch listings for the matched
-    // municipality so the neighbourhood actually fills with properties (the API
-    // can only filter by City, so we resolve the typed area to its city).
-    getGeocoder().geocode({ address: q + ', Ontario, Canada' }, (results, status) => {
+    getGeocoder().geocode({ address: q + ', Ontario, Canada', componentRestrictions: { country: 'CA' } }, (results, status) => {
       if (status !== 'OK' || !results[0]) return;
       map.panTo(results[0].geometry.location);
       map.setZoom(13);
-      const comps = results[0].address_components || [];
-      const city = resolveGtaCity(comps);
-      const street = comps.find(c => c.types.includes('route'))?.long_name || '';
+      const comps      = results[0].address_components || [];
+      const city       = resolveGtaCity(comps);
+      const street     = extractStreetBaseName(comps.find(c => c.types.includes('route'))?.long_name || '');
+      const postalCode = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
       const type = document.getElementById('mapType').value;
       const minP = document.getElementById('mapMinPrice').value;
       const maxP = document.getElementById('mapMaxPrice').value;
       const beds = document.getElementById('mapBeds').value;
-      if (city || street) loadMapListings(city, type, minP, maxP, beds, true, street);
+      if (city || street || postalCode) loadMapListings(city, type, minP, maxP, beds, true, street, postalCode);
     });
   }, 600);
 }
