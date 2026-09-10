@@ -348,7 +348,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgb
 }
 .hero-search-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto;
   gap: 10px;
   align-items: center;
 }
@@ -1033,7 +1033,7 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
   margin-bottom:14px; text-align:center; font-weight:600;
 }
 .hero-search-row {
-  display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto;
+  display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr 1fr auto;
   gap:10px; align-items:center;
 }
 .hero-search-row input,.hero-search-row select {
@@ -1526,24 +1526,35 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
     <div class="hero-search-inner">
       <div class="hero-search-title">Search GTA Properties — Live MLS&reg; Data</div>
       <div class="hero-search-row">
-        <input type="text" id="heroSearch" placeholder="City, neighbourhood or MLS#&hellip;"/>
         <select id="heroCity">
           <option value="">Any GTA City</option>
           <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
           <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
           <option>Oakville</option><option>Burlington</option><option>Pickering</option>
-          <option>Ajax</option><option>Oshawa</option>
+          <option>Ajax</option><option>Oshawa</option><option>Whitby</option>
+          <option>Newmarket</option><option>Aurora</option><option>Milton</option>
         </select>
         <select id="heroType">
           <option value="">Property Type</option>
           <option>Detached</option><option>Semi-Detached</option>
           <option>Townhouse</option><option>Condo</option><option>Commercial</option>
         </select>
+        <select id="heroMinPrice">
+          <option value="">Min Price</option>
+          <option value="400000">$400K</option><option value="600000">$600K</option>
+          <option value="800000">$800K</option><option value="1000000">$1M</option>
+          <option value="1500000">$1.5M</option><option value="2000000">$2M</option>
+        </select>
         <select id="heroPrice">
           <option value="">Max Price</option>
           <option value="600000">$600K</option><option value="800000">$800K</option>
           <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
-          <option value="2000000">$2M+</option>
+          <option value="2000000">$2M</option><option value="3000000">$3M</option>
+        </select>
+        <select id="heroBeds">
+          <option value="">Beds</option>
+          <option value="1">1+</option><option value="2">2+</option>
+          <option value="3">3+</option><option value="4">4+</option><option value="5">5+</option>
         </select>
         <button class="hero-search-go" onclick="searchListings()">Search</button>
       </div>
@@ -2351,7 +2362,7 @@ function showListingDetail(l, photos) {
     l.HeatType     ? { label: 'Heat Type',   val: l.HeatType }                         : null,
     l.HeatSource   ? { label: 'Heat Source', val: l.HeatSource }                       : null,
     l.Cooling?.length ? { label: 'Cooling',  val: Array.isArray(l.Cooling) ? l.Cooling.join(', ') : l.Cooling } : null,
-    l.GarageType   ? { label: 'Garage',      val: l.GarageType }                       : null,
+    (l.GarageType && l.GarageType.toLowerCase() !== 'none') ? { label: 'Garage', val: l.GarageType } : null,
     l.Basement?.length ? { label: 'Basement', val: Array.isArray(l.Basement) ? l.Basement.join(', ') : l.Basement } : null,
     l.ApproximateAge ? { label: 'Age',       val: l.ApproximateAge + ' yrs' }          : null,
     l.TaxAnnualAmount ? { label: 'Taxes',    val: '$' + Number(l.TaxAnnualAmount).toLocaleString() + (l.TaxYear ? ' (' + l.TaxYear + ')' : '') } : null,
@@ -2398,6 +2409,8 @@ function showListingDetail(l, photos) {
           <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#1B2A41;line-height:1.1">${price}</div>
           <div style="font-size:0.97rem;color:#374151;margin-top:5px;font-weight:600">${addr}</div>
           <div style="font-size:0.85rem;color:#6B7280;margin-top:1px">${cityLine}</div>
+          ${l.ListingKey ? `<div style="font-size:0.75rem;color:#A8894A;margin-top:4px;font-weight:600;letter-spacing:.03em">MLS® # ${l.ListingKey}</div>` : ''}
+          ${broker !== 'Listing Brokerage' ? `<div style="font-size:0.75rem;color:#6B7280;margin-top:2px">${broker}</div>` : ''}
         </div>
         ${type ? `<span style="font-size:0.75rem;color:#1C3557;background:#e8eef5;padding:5px 12px;border-radius:50px;font-weight:600;white-space:nowrap;align-self:flex-start;margin-top:6px">${type}</span>` : ''}
       </div>
@@ -2709,10 +2722,12 @@ function filterListings(btn, type) {
 }
 
 function searchListings() {
-  const city  = document.getElementById('heroCity')?.value || '';
-  const type  = document.getElementById('heroType')?.value || '';
-  const price = document.getElementById('heroPrice')?.value || '';
-  fetchListings(city, type, price);
+  const city     = document.getElementById('heroCity')?.value || '';
+  const type     = document.getElementById('heroType')?.value || '';
+  const maxPrice = document.getElementById('heroPrice')?.value || '';
+  const minPrice = document.getElementById('heroMinPrice')?.value || '';
+  const beds     = document.getElementById('heroBeds')?.value || '';
+  fetchListings(city, type, maxPrice, minPrice, beds);
   document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 }
 
