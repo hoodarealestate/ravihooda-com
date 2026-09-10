@@ -2657,17 +2657,21 @@ let listingsShown = 12;            // grid pagination
 const LISTINGS_PAGE = 12;
 const FREE_VIEW_LIMIT = 3;         // free property detail views before registration
 
-async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', street='') {
+async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', street='', postalCode='', listingKey='') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
   try {
     const p = new URLSearchParams();
-    if (city) p.set('city', city);
-    if (propertyType) p.set('type', propertyType);
-    if (maxPrice) p.set('maxPrice', maxPrice);
-    if (minPrice) p.set('minPrice', minPrice);
-    if (beds) p.set('beds', beds);
-    if (street) p.set('street', street);
+    if (listingKey)  { p.set('listingKey', listingKey); }
+    else {
+      if (city)        p.set('city', city);
+      if (propertyType) p.set('type', propertyType);
+      if (maxPrice)    p.set('maxPrice', maxPrice);
+      if (minPrice)    p.set('minPrice', minPrice);
+      if (beds)        p.set('beds', beds);
+      if (postalCode)  p.set('postalCode', postalCode);
+      else if (street) p.set('street', street);
+    }
     // Same-origin call: the page is served from www.ravihooda.com, but the apex
     // ravihooda.com 308-redirects there. Hardcoding the apex forced an
     // unnecessary cross-origin redirect on every load; using the page's own
@@ -2749,6 +2753,18 @@ function filterListings(btn, type) {
   fetchListings('', type);
 }
 
+// Strip street type + direction from a Google Places route name so it matches
+// PropTx StreetName (which stores just the base, e.g. "Bloor" not "Bloor Street West")
+function extractStreetBaseName(route) {
+  if (!route) return '';
+  let s = route.trim();
+  // Strip trailing cardinal direction
+  s = s.replace(/\s+(North|South|East|West|NE|NW|SE|SW|N\.?|S\.?|E\.?|W\.?)\.?$/i, '').trim();
+  // Strip trailing street type
+  s = s.replace(/\s+(Street|Avenue|Road|Boulevard|Drive|Court|Crescent|Place|Parkway|Pathway|Way|Lane|Terrace|Terr|Gate|Trail|Circle|Gardens|Garden|Grove|Park|Square|Heights|Hollow|Mews|Row|Rise|Run|Ridge|Path|Walk|Bay|Bend|Hill|Wood|Close|Cres|Crt|Blvd|Ave|Rd|St|Dr|Pl|Pkwy|Hwy|Circ?)s?\.?$/i, '').trim();
+  return s;
+}
+
 function toggleCustomPrice(sel, inputId) {
   const inp = document.getElementById(inputId);
   if (!inp) return;
@@ -2763,37 +2779,48 @@ function resolvePrice(selId, inputId) {
 
 function searchListings() {
   const address  = (document.getElementById('heroAddress')?.value || '').trim();
-  const city     = window._heroPlaceCity || document.getElementById('heroCity')?.value || '';
-  const street   = window._heroPlaceStreet || '';
   const type     = document.getElementById('heroType')?.value || '';
   const maxPrice = resolvePrice('heroPrice', 'heroPriceVal');
   const minPrice = resolvePrice('heroMinPrice', 'heroMinPriceVal');
   const beds     = document.getElementById('heroBeds')?.value || '';
   document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
 
-  // If a Places suggestion was selected, city+street are already resolved
-  if (window._heroPlaceCity != null) {
-    fetchListings(city, type, maxPrice, minPrice, beds, street);
+  // MLS# pattern: optional letter prefix + 7-9 digits (e.g. C12345678, W9876543)
+  const mlsMatch = address.match(/^([A-Za-z]?\d{7,9})$/);
+  if (mlsMatch) {
+    openListingDetail(mlsMatch[1].toUpperCase());
     return;
   }
 
-  // If address typed manually without selecting autocomplete, geocode it to extract city
+  // If Places autocomplete resolved city/street/postal for this input, use them
+  if (window._heroPlaceCity != null) {
+    const city       = window._heroPlaceCity || document.getElementById('heroCity')?.value || '';
+    const street     = window._heroPlaceStreet || '';
+    const postalCode = window._heroPostalCode  || '';
+    fetchListings(city, type, maxPrice, minPrice, beds, street, postalCode);
+    return;
+  }
+
+  // No autocomplete selected — use city dropdown as-is, or geocode the typed text
+  const city = document.getElementById('heroCity')?.value || '';
   if (address && window.google?.maps) {
     getGeocoder().geocode(
       { address: address + ', Ontario, Canada', componentRestrictions: { country: 'CA' } },
       (results, status) => {
         if (status === 'OK' && results?.[0]) {
           const comps = results[0].address_components || [];
-          const resolvedCity = resolveGtaCity(comps) || city;
-          const routeComp = comps.find(c => c.types.includes('route'))?.long_name || '';
-          fetchListings(resolvedCity, type, maxPrice, minPrice, beds, routeComp);
+          const resolvedCity  = resolveGtaCity(comps) || city;
+          const routeComp     = comps.find(c => c.types.includes('route'))?.long_name || '';
+          const cleanStreet   = extractStreetBaseName(routeComp);
+          const postal        = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
+          fetchListings(resolvedCity, type, maxPrice, minPrice, beds, cleanStreet, postal);
         } else {
-          fetchListings(city, type, maxPrice, minPrice, beds, '');
+          fetchListings(city, type, maxPrice, minPrice, beds, '', '');
         }
       }
     );
   } else {
-    fetchListings(city, type, maxPrice, minPrice, beds, '');
+    fetchListings(city, type, maxPrice, minPrice, beds, '', '');
   }
 }
 
@@ -3187,11 +3214,14 @@ function initMap() {
       if (!place.address_components) return;
       const comps = place.address_components;
       window._heroPlaceCity   = resolveGtaCity(comps);
-      window._heroPlaceStreet = (comps.find(c => c.types.includes('route'))?.long_name || '').replace(/\s+(St|Ave|Rd|Blvd|Dr|Crt|Cres|Pl|Pkwy|Way|Ln|Terr?|Gate|Trail|Hwy|Circ?)(\.?)$/i,'').trim();
+      window._heroPlaceStreet = extractStreetBaseName(comps.find(c => c.types.includes('route'))?.long_name || '');
+      window._heroPostalCode  = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
       if (place.geometry?.location) { map.panTo(place.geometry.location); map.setZoom(13); }
       searchListings();
     });
-    heroAddrEl.addEventListener('input', () => { window._heroPlaceCity = null; window._heroPlaceStreet = null; });
+    heroAddrEl.addEventListener('input', () => {
+      window._heroPlaceCity = null; window._heroPlaceStreet = null; window._heroPostalCode = null;
+    });
   }
 
   // Map section search box — Google Places Autocomplete
