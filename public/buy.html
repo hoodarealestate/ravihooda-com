@@ -17,7 +17,7 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .nav-phone a{color:rgba(255,255,255,.8);font-size:.85rem;text-decoration:none}
 
 /* HERO */
-.hero{background:linear-gradient(rgba(28,53,87,.80),rgba(28,53,87,.88)),url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
+.hero{background:linear-gradient(rgba(28,53,87,.78),rgba(28,53,87,.85)),url('https://images.unsplash.com/photo-1449844908441-8829872d2607?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.2);border:1px solid rgba(212,185,122,.4);border-radius:50px;padding:6px 18px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:20px}
 .hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.9rem,5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:16px}
 .hero h1 em{color:var(--gold-lt);font-style:italic}
@@ -100,6 +100,35 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .agent-cred{font-size:.74rem;color:rgba(255,255,255,.5);margin-bottom:8px;line-height:1.5}
 .agent-phone{font-size:.92rem;font-weight:600;color:rgba(255,255,255,.85)}
 .agents-tagline{color:rgba(255,255,255,.45);font-size:.82rem;margin-top:18px;font-style:italic}
+.agent-photo{width:84px;height:84px;border-radius:50%;object-fit:cover;object-position:top center;margin:0 auto 12px;display:block;border:2.5px solid var(--gold-lt);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+
+/* MARKET STATS GRID */
+.market-section{background:var(--white);padding:48px 24px}
+.stat-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+@media(max-width:640px){.stat-mini-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-mini{background:#F8F6F2;border-radius:10px;padding:18px 14px;text-align:center;border-top:3px solid var(--gold)}
+.stat-mini strong{display:block;font-family:'Playfair Display',Georgia,serif;font-size:1.35rem;color:var(--navy);margin-bottom:2px}
+.stat-mini .stat-change{font-size:.78rem;font-weight:700;color:#dc2626}
+.stat-mini span.stat-label{display:block;font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.market-table{width:100%;border-collapse:collapse;margin-top:20px;border-radius:10px;overflow:hidden}
+.market-table thead tr{background:var(--navy);color:#fff}
+.market-table th{padding:11px 16px;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left}
+.market-table tbody tr:nth-child(odd){background:#F8F6F2}
+.market-table tbody tr:nth-child(even){background:#fff}
+.market-table td{padding:12px 16px;font-size:.9rem;color:#374151;border-bottom:1px solid #F3F4F6}
+.market-table td strong{color:var(--navy);font-weight:600}
+.market-source{font-size:.72rem;color:var(--gray);margin-top:10px;text-align:center;font-style:italic}
+
+/* BUYER GUIDE */
+.guide-section{background:var(--bg);padding:56px 24px}
+.guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
+@media(max-width:640px){.guide-grid{grid-template-columns:1fr}}
+.guide-item{background:var(--white);border-radius:12px;padding:20px 22px;box-shadow:0 2px 14px rgba(28,53,87,.07);display:flex;gap:14px;align-items:flex-start}
+.guide-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--gold-lt);font-family:'Playfair Display',Georgia,serif;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.guide-body h3{font-family:'Playfair Display',Georgia,serif;font-size:1rem;color:var(--navy);font-weight:700;margin-bottom:5px}
+.guide-body p{font-size:.85rem;color:var(--gray);line-height:1.6}
+.guide-note{background:rgba(168,137,74,.1);border:1px solid rgba(168,137,74,.3);border-radius:10px;padding:16px 20px;margin-top:20px;font-size:.85rem;color:var(--navy);line-height:1.6}
+.guide-note strong{color:#8A6F38}
 
 .footer{background:#12253D;padding:18px 24px;text-align:center}
 .footer p{font-size:.7rem;color:rgba(255,255,255,.3);line-height:1.8}
@@ -152,9 +181,86 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 
     <!-- OPPORTUNITY BOX -->
     <div class="opp-box">
-      <p>"Buyer opportunity window: August 2026 average GTA price is $993,410 — below the psychological $1M mark, with detached homes at $1.29M down just 1.8% from last year. New listings dropped 14.1%, meaning less choice but less competition. Buyers who act this fall lock in current pricing before inventory tightens further."</p>
+      <p>"Buyer opportunity window: August 2026 average GTA price is $993,410 — below the psychological $1M mark, with detached homes at $1.29M. New listings dropped 14.1% year-over-year, meaning less choice but less competition too. Buyers who act now lock in current pricing before inventory tightens further."</p>
       <cite>— The Hooda Team · TRREB Market Watch, August 2026</cite>
     </div>
+  </div>
+</div>
+
+<!-- MARKET DATA -->
+<div class="market-section">
+  <div class="section-inner">
+    <div class="section-label">TRREB Data</div>
+    <h2 class="section-title" style="margin-bottom:0">August 2026 GTA Market at a Glance</h2>
+    <div class="stat-mini-grid">
+      <div class="stat-mini"><strong>5,057</strong><span class="stat-change">↓ 2.1%</span><span class="stat-label">Total Sales</span></div>
+      <div class="stat-mini"><strong>12,075</strong><span class="stat-change">↓ 14.1%</span><span class="stat-label">New Listings</span></div>
+      <div class="stat-mini"><strong>$993,410</strong><span class="stat-change">↓ 2.7%</span><span class="stat-label">Avg. Selling Price</span></div>
+      <div class="stat-mini"><strong>$925,900</strong><span class="stat-change">↓ 4.5%</span><span class="stat-label">MLS® HPI Benchmark</span></div>
+    </div>
+    <table class="market-table">
+      <thead><tr><th>Property Type</th><th>Avg. Selling Price</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Detached</strong></td><td>$1,288,669</td></tr>
+        <tr><td><strong>Semi-Detached</strong></td><td>$931,665</td></tr>
+        <tr><td><strong>Townhouse</strong></td><td>$786,817</td></tr>
+        <tr><td><strong>Condo Apartment</strong></td><td>$617,593</td></tr>
+      </tbody>
+    </table>
+    <p class="market-source">Source: TRREB Market Watch Report, August 2026 · Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.</p>
+  </div>
+</div>
+
+<!-- BUYER'S GUIDE -->
+<div class="guide-section">
+  <div class="section-inner">
+    <div class="section-label">Buyer's Guide</div>
+    <h2 class="section-title">What You Need to Know Before You Buy</h2>
+    <div class="guide-grid">
+      <div class="guide-item">
+        <div class="guide-num">1</div>
+        <div class="guide-body">
+          <h3>Get Pre-Approved First</h3>
+          <p>A mortgage pre-approval tells you your real budget and shows sellers you're a serious buyer. We can refer you to trusted lenders who move fast.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">2</div>
+        <div class="guide-body">
+          <h3>Understand Your Deposit</h3>
+          <p>Typically 5% of the purchase price, due within 24 hours of an accepted offer. It's held in trust and applied to your down payment at closing — not an extra cost.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">3</div>
+        <div class="guide-body">
+          <h3>Know Your Offer Conditions</h3>
+          <p>Financing and home inspection conditions protect you. For condos, add a status certificate review condition — it reveals the building's finances and any special assessments.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">4</div>
+        <div class="guide-body">
+          <h3>Budget for Closing Costs</h3>
+          <p>Land transfer tax (double in Toronto — provincial plus municipal), legal fees, title insurance and adjustments typically add 1.5%–4% of the purchase price beyond your down payment.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">5</div>
+        <div class="guide-body">
+          <h3>Buyer Representation Is Free to You</h3>
+          <p>In most transactions, the seller pays both sides' commission. Having your own agent means someone negotiating only for your interests, at no direct cost to you.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">6</div>
+        <div class="guide-body">
+          <h3>Time Your Purchase</h3>
+          <p>New listings are down 14.1% year-over-year — well-priced homes are moving fast even in a buyer-friendlier market. Being pre-approved and ready lets you move the moment the right one appears.</p>
+        </div>
+      </div>
+    </div>
+    <div class="guide-note"><strong>Not sure where to start?</strong> Fill out the form below and we'll walk you through pre-approval, what you can realistically afford, and exactly what to expect at every step.</div>
   </div>
 </div>
 
@@ -376,11 +482,13 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
     <div class="agents-title">Your GTA Real Estate Team</div>
     <div class="agents-grid">
       <div class="agent-card">
+        <img class="agent-photo" src="/images/ravi-hooda.jpg" alt="Ravi Hooda, Broker"/>
         <div class="agent-name">Ravi Hooda</div>
         <div class="agent-cred">Broker · LUXE Luxury Listing Specialist · ACP<br/>B.Com · MBA · Licensed since 2006</div>
         <div class="agent-phone"><a href="tel:4168255032" style="color:inherit;text-decoration:none">📞 416-825-5032</a></div>
       </div>
       <div class="agent-card">
+        <img class="agent-photo" src="/images/rashmi-hooda.jpg" alt="Rashmi Hooda, Broker"/>
         <div class="agent-name">Rashmi Hooda</div>
         <div class="agent-cred">Broker · BSc · FDIT · BCA<br/>Licensed since 2011</div>
         <div class="agent-phone"><a href="tel:6477665040" style="color:inherit;text-decoration:none">📞 647-766-5040</a></div>

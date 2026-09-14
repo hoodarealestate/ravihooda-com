@@ -19,7 +19,7 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .nav-phone a{color:rgba(255,255,255,.8);font-size:.85rem;text-decoration:none}
 
 /* HERO */
-.hero{background:linear-gradient(rgba(28,53,87,.78),rgba(28,53,87,.85)),url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
+.hero{background:linear-gradient(rgba(28,53,87,.80),rgba(28,53,87,.87)),url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.2);border:1px solid rgba(212,185,122,.4);border-radius:50px;padding:6px 18px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:20px}
 .hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.2;margin-bottom:16px}
 .hero h1 em{color:var(--gold-lt);font-style:italic}
@@ -112,10 +112,30 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .agents-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 @media(max-width:480px){.agents-grid{grid-template-columns:1fr}}
 .agent-card{background:rgba(255,255,255,.06);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,.1)}
+.agent-photo{width:88px;height:88px;border-radius:50%;object-fit:cover;object-position:top center;margin:0 auto 14px;display:block;border:2.5px solid var(--gold-lt);box-shadow:0 4px 20px rgba(0,0,0,.3)}
 .agent-name{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px}
 .agent-cred{font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:8px;line-height:1.5}
 .agent-phone{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.85)}
 .agents-tagline{color:rgba(255,255,255,.5);font-size:.85rem;margin-top:20px;font-style:italic}
+
+/* MARKET STATS GRID */
+.stat-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 32px}
+@media(max-width:640px){.stat-mini-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-mini{background:#F8F6F2;border-radius:10px;padding:18px 14px;text-align:center;border-top:3px solid var(--gold)}
+.stat-mini strong{display:block;font-family:'Playfair Display',Georgia,serif;font-size:1.35rem;color:var(--navy);margin-bottom:2px}
+.stat-mini .stat-change{font-size:.78rem;font-weight:700;color:#dc2626}
+.stat-mini span.stat-label{display:block;font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+
+/* PREP GUIDE */
+.prep-section{background:var(--bg);padding:56px 24px}
+.prep-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
+@media(max-width:640px){.prep-grid{grid-template-columns:1fr}}
+.prep-item{background:var(--white);border-radius:12px;padding:20px 22px;box-shadow:0 2px 14px rgba(28,53,87,.07);display:flex;gap:14px;align-items:flex-start}
+.prep-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--gold-lt);font-family:'Playfair Display',Georgia,serif;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.prep-body h3{font-family:'Playfair Display',Georgia,serif;font-size:1rem;color:var(--navy);font-weight:700;margin-bottom:5px}
+.prep-body p{font-size:.85rem;color:var(--gray);line-height:1.6}
+.prep-note{background:rgba(168,137,74,.1);border:1px solid rgba(168,137,74,.3);border-radius:10px;padding:16px 20px;margin-top:20px;font-size:.85rem;color:var(--navy);line-height:1.6}
+.prep-note strong{color:#8A6F38}
 
 /* FOOTER */
 .footer{background:#12253D;padding:18px 24px;text-align:center}
@@ -136,7 +156,7 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
   <p class="hero-sub">The GTA market shifted in 2026 — 5,057 sales in August, with listings down 14.1%. Find out exactly what your home could sell for right now with a free, no-obligation evaluation.</p>
   <div class="hero-stats">
     <div class="hero-stat-badge">
-      <strong>6,770</strong>
+      <strong>5,057</strong>
       <span>GTA Sales in August</span>
     </div>
     <div class="hero-stat-badge">
@@ -320,17 +340,90 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 <div class="market-section">
   <div class="section-inner">
     <div class="section-label">TRREB Data</div>
-    <h2 class="section-title" style="margin-bottom:16px">June 2026 GTA Market at a Glance</h2>
+    <h2 class="section-title" style="margin-bottom:0">August 2026 GTA Market at a Glance</h2>
+    <div class="stat-mini-grid">
+      <div class="stat-mini"><strong>5,057</strong><span class="stat-change">↓ 2.1%</span><span class="stat-label">Total Sales</span></div>
+      <div class="stat-mini"><strong>12,075</strong><span class="stat-change">↓ 14.1%</span><span class="stat-label">New Listings</span></div>
+      <div class="stat-mini"><strong>$993,410</strong><span class="stat-change">↓ 2.7%</span><span class="stat-label">Avg. Selling Price</span></div>
+      <div class="stat-mini"><strong>$925,900</strong><span class="stat-change">↓ 4.5%</span><span class="stat-label">MLS® HPI Benchmark</span></div>
+    </div>
     <table class="market-table">
-      <thead><tr><th>Property Type</th><th>Avg. Selling Price</th><th>Sales Change</th></tr></thead>
+      <thead><tr><th>Property Type</th><th>Avg. Selling Price</th></tr></thead>
       <tbody>
-        <tr><td><strong>Detached</strong></td><td>$1,288,669</td><td style="color:#dc2626;font-weight:700">↓ 1.8% — most resilient</td></tr>
-        <tr><td><strong>Semi-Detached</strong></td><td>$931,665</td><td style="color:#dc2626;font-weight:700">↓ 5.0%</td></tr>
-        <tr><td><strong>Townhouse</strong></td><td>$786,817</td><td style="color:#dc2626;font-weight:700">↓ 8.6%</td></tr>
-        <tr><td><strong>Condo Apartment</strong></td><td>$617,593</td><td style="color:#dc2626;font-weight:700">↓ 3.6%</td></tr>
+        <tr><td><strong>Detached</strong></td><td>$1,288,669</td></tr>
+        <tr><td><strong>Semi-Detached</strong></td><td>$931,665</td></tr>
+        <tr><td><strong>Townhouse</strong></td><td>$786,817</td></tr>
+        <tr><td><strong>Condo Apartment</strong></td><td>$617,593</td></tr>
       </tbody>
     </table>
-    <p class="market-source">Source: TRREB Market Watch Report, August 2026 · Released September 3, 2026 · Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.</p>
+    <p class="market-source">Source: TRREB Market Watch Report, August 2026 · New listings down 14.1% year-over-year means less competition for your listing — a real advantage for sellers who price correctly. · Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.</p>
+  </div>
+</div>
+
+<!-- PREPARING YOUR PROPERTY -->
+<div class="prep-section">
+  <div class="section-inner">
+    <div class="section-label">Seller's Guide</div>
+    <h2 class="section-title">Preparing Your Property for Sale</h2>
+    <div class="prep-grid">
+      <div class="prep-item">
+        <div class="prep-num">1</div>
+        <div class="prep-body">
+          <h3>Declutter &amp; Depersonalize</h3>
+          <p>Pack away excess furniture, family photos and personal items. Buyers need to picture themselves living there — clear countertops and closets go a long way.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">2</div>
+        <div class="prep-body">
+          <h3>Handle Small Repairs First</h3>
+          <p>Leaky faucets, chipped paint, squeaky doors, loose handles — small flaws buyers notice and use to negotiate. Fix them before you list, not after an offer.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">3</div>
+        <div class="prep-body">
+          <h3>Deep Clean Everything</h3>
+          <p>Carpets, windows, grout, baseboards. A spotless home photographs better and consistently shows better in person — it's the highest-return prep step there is.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">4</div>
+        <div class="prep-body">
+          <h3>Boost Curb Appeal</h3>
+          <p>Trim the lawn, clear the walkway, freshen up the front door, update house numbers. First impressions happen before a buyer steps inside.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">5</div>
+        <div class="prep-body">
+          <h3>Professional Photos &amp; Staging</h3>
+          <p>We arrange professional photography and a staging consultation as part of our listing service — this is where your home's first online impression is made.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">6</div>
+        <div class="prep-body">
+          <h3>Gather Your Documents Early</h3>
+          <p>Survey or RPR, most recent property tax statement, mortgage payout figure, condo status certificate (if applicable), and permits/warranties for any past renovations.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">7</div>
+        <div class="prep-body">
+          <h3>Price It Right From Day One</h3>
+          <p>Overpricing costs more than underpricing — homes that sit get stigmatized and eventually sell for less. We base your price on real, current comparables, not guesswork.</p>
+        </div>
+      </div>
+      <div class="prep-item">
+        <div class="prep-num">8</div>
+        <div class="prep-body">
+          <h3>Know the Timeline</h3>
+          <p>List → showings → offers → conditions (financing, inspection) → firm sale → closing. In the current market, expect roughly 30–60 days from list to a firm deal.</p>
+        </div>
+      </div>
+    </div>
+    <div class="prep-note"><strong>Ready to start?</strong> Fill out the form above and we'll walk your property with you, point out exactly what's worth doing (and what isn't), and build a pricing strategy before you spend a dollar.</div>
   </div>
 </div>
 
@@ -340,11 +433,13 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
     <div class="agents-title">Meet Your GTA Real Estate Experts</div>
     <div class="agents-grid">
       <div class="agent-card">
+        <img class="agent-photo" src="/images/ravi-hooda.jpg" alt="Ravi Hooda, Broker"/>
         <div class="agent-name">Ravi Hooda</div>
         <div class="agent-cred">Broker · LUXE Luxury Listing Specialist · ACP<br/>B.Com · MBA · Licensed since 2006</div>
         <div class="agent-phone"><a href="tel:4168255032" style="color:inherit;text-decoration:none">📞 416-825-5032</a></div>
       </div>
       <div class="agent-card">
+        <img class="agent-photo" src="/images/rashmi-hooda.jpg" alt="Rashmi Hooda, Broker"/>
         <div class="agent-name">Rashmi Hooda</div>
         <div class="agent-cred">Broker · BSc · FDIT · BCA<br/>Licensed since 2011</div>
         <div class="agent-phone"><a href="tel:6477665040" style="color:inherit;text-decoration:none">📞 647-766-5040</a></div>
