@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>What Is Your Home Worth? | The Hooda Team — Century 21</title>
+<meta name="description" content="Get a free, no-obligation home evaluation from The Hooda Team. Find out exactly what your GTA home could sell for in today's market."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-webkit-font-smoothing:antialiased}
+:root{--navy:#1C3557;--gold:#A8894A;--gold-lt:#D4B97A;--white:#fff;--bg:#F8F6F2;--gray:#6B7280;--lgray:#E2E4E8}
+
+/* NAV */
+.nav{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none}
+.nav-logo span{color:var(--gold-lt);font-style:italic}
+.nav-phone a{color:rgba(255,255,255,.8);font-size:.85rem;text-decoration:none}
+
+/* HERO */
+.hero{background:linear-gradient(rgba(28,53,87,.78),rgba(28,53,87,.85)),url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.2);border:1px solid rgba(212,185,122,.4);border-radius:50px;padding:6px 18px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:20px}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.2;margin-bottom:16px}
+.hero h1 em{color:var(--gold-lt);font-style:italic}
+.hero-sub{font-size:1.05rem;color:rgba(255,255,255,.8);max-width:620px;margin:0 auto 28px;line-height:1.7}
+.hero-stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.hero-stat-badge{background:rgba(168,137,74,.25);border:1.5px solid var(--gold-lt);border-radius:8px;padding:10px 20px;text-align:center}
+.hero-stat-badge strong{display:block;font-family:'Playfair Display',Georgia,serif;font-size:1.4rem;color:var(--gold-lt)}
+.hero-stat-badge span{font-size:.72rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em}
+.hero-urgency{font-size:.9rem;color:rgba(255,255,255,.65);font-style:italic;margin-top:8px}
+.hero-arrow{font-size:2rem;color:var(--gold-lt);animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* WHY NOW */
+.section{padding:56px 24px}
+.section-inner{max-width:880px;margin:0 auto}
+.section-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.section-title{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:var(--navy);margin-bottom:32px;line-height:1.25}
+.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:640px){.cards-3{grid-template-columns:1fr}}
+.card{background:var(--white);border-radius:12px;padding:24px;box-shadow:0 2px 16px rgba(28,53,87,.08);border-top:3px solid var(--gold)}
+.card-icon{font-size:2rem;margin-bottom:12px}
+.card-title{font-family:'Playfair Display',Georgia,serif;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.card-text{font-size:.88rem;color:var(--gray);line-height:1.65}
+
+/* VALUE PROP */
+.value-section{background:var(--navy);padding:48px 24px}
+.value-inner{max-width:780px;margin:0 auto}
+.value-title{font-family:'Playfair Display',Georgia,serif;font-size:1.7rem;font-weight:700;color:#fff;margin-bottom:6px}
+.value-sub{color:rgba(255,255,255,.6);font-size:.9rem;margin-bottom:28px}
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:540px){.value-grid{grid-template-columns:1fr}}
+.value-item{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:rgba(255,255,255,.06);border-radius:8px;border-left:3px solid var(--gold)}
+.value-check{color:var(--gold-lt);font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.value-text{font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.5}
+
+/* FORM */
+.form-section{padding:56px 24px}
+.form-card{max-width:700px;margin:0 auto;background:var(--white);border-radius:16px;box-shadow:0 8px 48px rgba(28,53,87,.12);overflow:hidden;border-top:4px solid var(--gold)}
+.form-header{padding:28px 32px 0}
+.form-header h2{font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.form-header p{font-size:.88rem;color:var(--gray);margin-bottom:24px}
+.form-body{padding:0 32px 32px}
+@media(max-width:540px){.form-header{padding:20px 18px 0}.form-body{padding:0 18px 24px}}
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.form-row.two{grid-template-columns:1fr 1fr}
+@media(max-width:540px){.form-row.two{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.78rem;font-weight:700;color:#374151;letter-spacing:.02em;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{padding:12px 14px;border:1.5px solid var(--lgray);border-radius:9px;font-size:.92rem;font-family:'DM Sans',Arial,sans-serif;color:var(--navy);outline:none;transition:border .2s,box-shadow .2s;background:#fff;width:100%}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,53,87,.08)}
+.form-group textarea{resize:vertical;min-height:80px}
+.radio-group{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.radio-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--lgray);border-radius:8px;cursor:pointer;transition:all .2s}
+.radio-item:has(input:checked){border-color:var(--navy);background:#EEF4FA}
+.radio-item input{accent-color:var(--navy);width:16px;height:16px;flex-shrink:0}
+.radio-item span{font-size:.88rem;color:var(--navy)}
+.section-divider{height:1px;background:var(--lgray);margin:20px 0}
+.form-section-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;margin-top:20px;display:block}
+.btn-submit{width:100%;padding:16px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background .2s;font-family:'DM Sans',Arial,sans-serif;letter-spacing:.02em}
+.btn-submit:hover{background:#A8894A}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.casl{font-size:.7rem;color:var(--gray);margin-top:12px;line-height:1.6;text-align:center}
+.required{color:#dc2626}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:48px 24px}
+.success-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1a4a2e,var(--navy));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem}
+.success-screen h2{font-family:'Playfair Display',Georgia,serif;font-size:1.7rem;font-weight:700;color:var(--navy);margin-bottom:10px}
+.success-screen p{color:var(--gray);font-size:.95rem;line-height:1.7;margin-bottom:28px;max-width:420px;margin-left:auto;margin-right:auto}
+.success-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-navy{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--navy);color:#fff;border-radius:50px;font-weight:600;font-size:.9rem;text-decoration:none}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#fff;color:var(--navy);border:1.5px solid var(--lgray);border-radius:50px;font-weight:600;font-size:.9rem;text-decoration:none}
+
+/* MARKET DATA */
+.market-section{background:var(--white);padding:48px 24px}
+.market-table{width:100%;border-collapse:collapse;margin-top:20px;border-radius:10px;overflow:hidden}
+.market-table thead tr{background:var(--navy);color:#fff}
+.market-table th{padding:11px 16px;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left}
+.market-table tbody tr:nth-child(odd){background:#F8F6F2}
+.market-table tbody tr:nth-child(even){background:#fff}
+.market-table td{padding:12px 16px;font-size:.9rem;color:#374151;border-bottom:1px solid #F3F4F6}
+.market-table td strong{color:var(--navy);font-weight:600}
+.up{color:#059669;font-weight:700}
+.market-source{font-size:.72rem;color:var(--gray);margin-top:10px;text-align:center;font-style:italic}
+
+/* AGENTS */
+.agents-section{background:var(--navy);padding:48px 24px}
+.agents-inner{max-width:700px;margin:0 auto;text-align:center}
+.agents-title{font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;color:#fff;font-weight:700;margin-bottom:28px}
+.agents-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:480px){.agents-grid{grid-template-columns:1fr}}
+.agent-card{background:rgba(255,255,255,.06);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,.1)}
+.agent-name{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px}
+.agent-cred{font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:8px;line-height:1.5}
+.agent-phone{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.85)}
+.agents-tagline{color:rgba(255,255,255,.5);font-size:.85rem;margin-top:20px;font-style:italic}
+
+/* FOOTER */
+.footer{background:#12253D;padding:18px 24px;text-align:center}
+.footer p{font-size:.7rem;color:rgba(255,255,255,.3);line-height:1.8}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">The <span>Hooda</span> Team</a>
+  <div class="nav-phone"><a href="tel:4168255032">📞 416-825-5032</a></div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🏠 Free Home Evaluation</div>
+  <h1>What Is Your Home Worth<br/><em>In Today's Market?</em></h1>
+  <p class="hero-sub">The GTA market shifted in 2026 — 6,770 sales in June alone, up 9.4%. Find out exactly what your home could sell for right now with a free, no-obligation evaluation.</p>
+  <div class="hero-stats">
+    <div class="hero-stat-badge">
+      <strong>6,770</strong>
+      <span>GTA Sales in June</span>
+    </div>
+    <div class="hero-stat-badge">
+      <strong>↑ 9.4%</strong>
+      <span>Sales Growth vs 2025</span>
+    </div>
+    <div class="hero-stat-badge">
+      <strong>↑ Rising</strong>
+      <span>Month-over-Month Prices</span>
+    </div>
+  </div>
+  <p class="hero-urgency">Homeowners who list in H2 2026 are positioned ahead of returning buyer competition.</p>
+  <div class="hero-arrow" style="margin-top:24px">↓</div>
+</div>
+
+<!-- WHY NOW -->
+<div class="section" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label">Market Intelligence</div>
+    <h2 class="section-title">Why Sellers Are Moving Now</h2>
+    <div class="cards-3">
+      <div class="card">
+        <div class="card-icon">🏃</div>
+        <div class="card-title">Inventory Is Falling</div>
+        <div class="card-text">New listings dropped 12.9% year-over-year in June. Less competition means better positioning and stronger offers for sellers who list now.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Buyers Are Returning</div>
+        <div class="card-text">Sales jumped 9.4% in June 2026. TRREB predicts accelerating transactions in H2 — the buyers who've been waiting are starting to move.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-title">Prices Stabilizing</div>
+        <div class="card-text">Month-over-month, average prices rose in both May and June 2026. The rate of decline has reversed — the bottom appears to be in.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUE PROP -->
+<div class="value-section">
+  <div class="value-inner">
+    <div class="value-title">Your Free Home Evaluation Includes:</div>
+    <div class="value-sub">Everything you need to make an informed decision — no pressure, no obligation.</div>
+    <div class="value-grid">
+      <div class="value-item"><span class="value-check">✅</span><span class="value-text">Comparable sales in your neighbourhood (last 90 days)</span></div>
+      <div class="value-item"><span class="value-check">✅</span><span class="value-text">Active competition analysis — what you're up against</span></div>
+      <div class="value-item"><span class="value-check">✅</span><span class="value-text">Strategic pricing to attract the right buyers</span></div>
+      <div class="value-item"><span class="value-check">✅</span><span class="value-text">Estimated net proceeds after all costs</span></div>
+      <div class="value-item"><span class="value-check">✅</span><span class="value-text">Timeline recommendation for your specific situation</span></div>
+      <div class="value-item"><span class="value-check">✅</span><span class="value-text">Honest advice — even if "wait" is the right answer</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-section">
+  <div class="form-card">
+    <div id="formContent">
+      <div class="form-header">
+        <h2>Get Your Free Home Evaluation</h2>
+        <p>Fill in the details below and Ravi or Rashmi will contact you within 24 hours with your personalized evaluation.</p>
+      </div>
+      <div class="form-body">
+
+        <span class="form-section-label">Your Contact Information</span>
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" id="name" placeholder="John Smith"/>
+          </div>
+          <div class="form-group">
+            <label>Phone Number <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="647-000-0000"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email Address <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="john@email.com"/>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <span class="form-section-label">About Your Property</span>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Property Address <span class="required">*</span></label>
+            <input type="text" id="address" placeholder="123 Main St, Vaughan, ON"/>
+          </div>
+        </div>
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Property Type</label>
+            <select id="propType">
+              <option value="">Select type</option>
+              <option>Detached</option>
+              <option>Semi-Detached</option>
+              <option>Townhouse</option>
+              <option>Condo</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Approx. Year Built</label>
+            <input type="text" id="yearBuilt" placeholder="e.g. 2005"/>
+          </div>
+        </div>
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Square Footage</label>
+            <select id="sqft">
+              <option value="">Approximate size</option>
+              <option>Under 1,000 sq ft</option>
+              <option>1,000 – 1,500 sq ft</option>
+              <option>1,500 – 2,000 sq ft</option>
+              <option>2,000 – 2,500 sq ft</option>
+              <option>2,500 – 3,500 sq ft</option>
+              <option>3,500+ sq ft</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Recent Renovations?</label>
+            <select id="renos">
+              <option value="">Select</option>
+              <option>Yes — major renovations</option>
+              <option>Yes — minor updates</option>
+              <option>No significant renovations</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <span class="form-section-label">Your Timeline</span>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>When are you thinking of selling? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="timeline" value="ASAP — 1-2 months"/><span>As soon as possible (1–2 months)</span></label>
+            <label class="radio-item"><input type="radio" name="timeline" value="Fall/Winter — 3-6 months"/><span>This fall / winter (3–6 months)</span></label>
+            <label class="radio-item"><input type="radio" name="timeline" value="Next Year — 6-12 months"/><span>Next year (6–12 months)</span></label>
+            <label class="radio-item"><input type="radio" name="timeline" value="Just exploring"/><span>Just exploring my options</span></label>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Are you also looking to buy?</label>
+          <div class="radio-group" style="flex-direction:row;flex-wrap:wrap">
+            <label class="radio-item" style="flex:1;min-width:120px"><input type="radio" name="buying" value="Yes"/><span>Yes</span></label>
+            <label class="radio-item" style="flex:1;min-width:120px"><input type="radio" name="buying" value="No"/><span>No</span></label>
+            <label class="radio-item" style="flex:1;min-width:120px"><input type="radio" name="buying" value="Not sure yet"/><span>Not sure yet</span></label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Anything else we should know?</label>
+          <textarea id="notes" placeholder="e.g. Looking to downsize, need help with staging, curious about investment properties, specific neighbourhood preferences…"></textarea>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="submitSellForm()">Get My Free Home Evaluation →</button>
+        <p class="casl">By submitting this form you consent to being contacted by The Hooda Team regarding real estate services. Your information is protected under PIPEDA and will never be sold or shared. You may withdraw consent at any time.</p>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <h2 id="successName">We've Received Your Request!</h2>
+      <p>Ravi or Rashmi will call you within 24 hours with your personalized home evaluation. In the meantime, explore the current GTA market.</p>
+      <div class="success-btns">
+        <a href="/" class="btn-navy">🏠 View Current Listings</a>
+        <a href="tel:4168255032" class="btn-outline">📞 Call Us Now</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET DATA -->
+<div class="market-section">
+  <div class="section-inner">
+    <div class="section-label">TRREB Data</div>
+    <h2 class="section-title" style="margin-bottom:16px">June 2026 GTA Market at a Glance</h2>
+    <table class="market-table">
+      <thead><tr><th>Property Type</th><th>Avg. Selling Price</th><th>Sales Change</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Detached</strong></td><td>$1,364,204</td><td class="up">↑ 9.1%</td></tr>
+        <tr><td><strong>Semi-Detached</strong></td><td>$1,038,973</td><td class="up">↑ 3.0%</td></tr>
+        <tr><td><strong>Townhouse</strong></td><td>$844,579</td><td class="up">↑ 4.3%</td></tr>
+        <tr><td><strong>Condo Apartment</strong></td><td>$630,688</td><td class="up">↑ 14.3%</td></tr>
+      </tbody>
+    </table>
+    <p class="market-source">Source: TRREB Market Watch Report, June 2026 · Data deemed reliable but not guaranteed accurate by PROPTX INNOVATIONS INC.</p>
+  </div>
+</div>
+
+<!-- AGENTS -->
+<div class="agents-section">
+  <div class="agents-inner">
+    <div class="agents-title">Meet Your GTA Real Estate Experts</div>
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-name">Ravi Hooda</div>
+        <div class="agent-cred">Broker · LUXE Luxury Listing Specialist · ACP<br/>B.Com · MBA · Licensed since 2006</div>
+        <div class="agent-phone"><a href="tel:4168255032" style="color:inherit;text-decoration:none">📞 416-825-5032</a></div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Rashmi Hooda</div>
+        <div class="agent-cred">Broker · BSc · FDIT · BCA<br/>Licensed since 2011</div>
+        <div class="agent-phone"><a href="tel:6477665040" style="color:inherit;text-decoration:none">📞 647-766-5040</a></div>
+      </div>
+    </div>
+    <p class="agents-tagline">Century 21 Red Star Realty Inc., Brokerage · 35+ combined years of GTA real estate</p>
+    <p class="agents-tagline" style="margin-top:6px">"Service You Deserve. People You Can Trust."</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>
+    Century 21 Red Star Realty Inc., Brokerage · ravihooda.com · hoodarealestate@gmail.com<br/>
+    Not intended to solicit properties already listed with another brokerage.<br/>
+    © 2026 The Hooda Team. All rights reserved. · <a href="/" style="color:rgba(255,255,255,.4)">Back to ravihooda.com</a>
+  </p>
+</footer>
+
+<script>
+async function submitSellForm() {
+  const name     = document.getElementById('name').value.trim();
+  const phone    = document.getElementById('phone').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const address  = document.getElementById('address').value.trim();
+  const timeline = document.querySelector('input[name="timeline"]:checked')?.value || '';
+
+  if (!name)    { alert('Please enter your name.'); return; }
+  if (!phone)   { alert('Please enter your phone number.'); return; }
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  if (!address) { alert('Please enter your property address.'); return; }
+  if (!timeline){ alert('Please select your selling timeline.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  const propType  = document.getElementById('propType').value;
+  const yearBuilt = document.getElementById('yearBuilt').value;
+  const sqft      = document.getElementById('sqft').value;
+  const renos     = document.getElementById('renos').value;
+  const buying    = document.querySelector('input[name="buying"]:checked')?.value || 'Not specified';
+  const notes     = document.getElementById('notes').value.trim();
+
+  const message = [
+    'SELLER LEAD — Free Home Evaluation Request',
+    '',
+    'PROPERTY DETAILS:',
+    'Address: ' + address,
+    propType  ? 'Type: ' + propType : '',
+    yearBuilt ? 'Year Built: ' + yearBuilt : '',
+    sqft      ? 'Size: ' + sqft : '',
+    renos     ? 'Renovations: ' + renos : '',
+    '',
+    'SELLER INTENTIONS:',
+    'Timeline: ' + timeline,
+    'Also buying: ' + buying,
+    notes     ? 'Notes: ' + notes : '',
+  ].filter(Boolean).join('\n');
+
+  try {
+    await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, type: 'home-value', message, property: address, source: 'Sell Landing Page' })
+    });
+  } catch(e) { console.error(e); }
+
+  // Show success
+  document.getElementById('formContent').style.display = 'none';
+  const success = document.getElementById('successScreen');
+  success.style.display = 'block';
+  document.getElementById('successName').textContent = 'Thank you, ' + name.split(' ')[0] + '!';
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

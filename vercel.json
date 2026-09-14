@@ -5,25 +5,45 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "home-sale.ca" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "home-sale.ca"
+        }
+      ],
       "destination": "https://ravihooda.com/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.home-sale.ca" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.home-sale.ca"
+        }
+      ],
       "destination": "https://ravihooda.com/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "mlssale.ca" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "mlssale.ca"
+        }
+      ],
       "destination": "https://ravihooda.com/:path*",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.mlssale.ca" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.mlssale.ca"
+        }
+      ],
       "destination": "https://ravihooda.com/:path*",
       "permanent": true
     },
@@ -61,6 +81,16 @@
       "source": "/home-evaluation",
       "destination": "/home-value",
       "permanent": true
+    },
+    {
+      "source": "/sell",
+      "destination": "/sell.html",
+      "permanent": false
+    },
+    {
+      "source": "/buy",
+      "destination": "/buy.html",
+      "permanent": false
     }
   ]
 }

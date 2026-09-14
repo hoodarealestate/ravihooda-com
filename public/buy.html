@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Find Your Dream Home in the GTA | The Hooda Team — Century 21</title>
+<meta name="description" content="Tell The Hooda Team exactly what you're looking for. Get off-market listings, power of sale deals, and exclusive GTA properties before they hit public sites."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-webkit-font-smoothing:antialiased}
+:root{--navy:#1C3557;--gold:#A8894A;--gold-lt:#D4B97A;--white:#fff;--bg:#F8F6F2;--gray:#6B7280;--lgray:#E2E4E8;--green:#059669}
+.nav{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none}
+.nav-logo span{color:var(--gold-lt);font-style:italic}
+.nav-phone a{color:rgba(255,255,255,.8);font-size:.85rem;text-decoration:none}
+
+/* HERO */
+.hero{background:linear-gradient(rgba(28,53,87,.80),rgba(28,53,87,.88)),url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.2);border:1px solid rgba(212,185,122,.4);border-radius:50px;padding:6px 18px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:20px}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.9rem,5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:16px}
+.hero h1 em{color:var(--gold-lt);font-style:italic}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,.8);max-width:620px;margin:0 auto 24px;line-height:1.7}
+.trust-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.trust-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:500}
+.hero-urgency{font-size:.88rem;color:rgba(255,255,255,.65);font-style:italic;max-width:520px;margin:0 auto}
+.hero-arrow{font-size:2rem;color:var(--gold-lt);animation:bounce 2s infinite;margin-top:20px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+.section{padding:52px 24px}
+.section-inner{max-width:880px;margin:0 auto}
+.section-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.section-title{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--navy);margin-bottom:28px;line-height:1.25}
+.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:640px){.cards-3{grid-template-columns:1fr}}
+.card{background:var(--white);border-radius:12px;padding:22px;box-shadow:0 2px 14px rgba(28,53,87,.08);border-top:3px solid var(--gold)}
+.card-icon{font-size:2rem;margin-bottom:10px}
+.card-title{font-family:'Playfair Display',Georgia,serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.card-text{font-size:.86rem;color:var(--gray);line-height:1.6}
+
+/* OPPORTUNITY BOX */
+.opp-box{background:linear-gradient(135deg,var(--navy),#142844);border-radius:14px;padding:28px 32px;color:#fff;border-left:5px solid var(--gold);margin:32px 0}
+.opp-box p{font-family:'Playfair Display',Georgia,serif;font-size:1.05rem;font-style:italic;line-height:1.7;color:rgba(255,255,255,.9)}
+.opp-box cite{font-size:.78rem;color:var(--gold-lt);font-style:normal;font-weight:600;display:block;margin-top:10px}
+
+/* FORM */
+.form-section{padding:52px 24px;background:var(--white)}
+.form-card{max-width:720px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 8px 48px rgba(28,53,87,.12);overflow:hidden;border-top:4px solid var(--gold)}
+.form-header{padding:28px 32px 0}
+.form-header h2{font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.form-header p{font-size:.88rem;color:var(--gray);margin-bottom:20px}
+.form-body{padding:0 32px 32px}
+@media(max-width:540px){.form-header{padding:20px 18px 0}.form-body{padding:0 18px 24px}}
+.form-row{display:grid;gap:14px;margin-bottom:14px}
+.form-row.two{grid-template-columns:1fr 1fr}
+.form-row.three{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:540px){.form-row.two,.form-row.three{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.75rem;font-weight:700;color:#374151;letter-spacing:.03em;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{padding:11px 13px;border:1.5px solid var(--lgray);border-radius:9px;font-size:.9rem;font-family:'DM Sans',Arial,sans-serif;color:var(--navy);outline:none;transition:border .2s,box-shadow .2s;background:#fff;width:100%}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,53,87,.08)}
+.form-group textarea{resize:vertical;min-height:80px}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:6px}
+.check-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid var(--lgray);border-radius:8px;cursor:pointer;transition:all .2s}
+.check-item:has(input:checked){border-color:var(--navy);background:#EEF4FA}
+.check-item input{accent-color:var(--navy);width:15px;height:15px;flex-shrink:0}
+.check-item span{font-size:.84rem;color:var(--navy)}
+.radio-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.radio-pill{position:relative}
+.radio-pill input{position:absolute;opacity:0;width:0;height:0}
+.radio-pill label{display:block;padding:9px 16px;border:1.5px solid var(--lgray);border-radius:50px;font-size:.84rem;cursor:pointer;transition:all .2s;white-space:nowrap;color:var(--navy)}
+.radio-pill input:checked + label{border-color:var(--navy);background:var(--navy);color:#fff;font-weight:600}
+.radio-pill label:hover{border-color:var(--gold)}
+.section-divider{height:1px;background:var(--lgray);margin:20px 0}
+.form-section-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;margin-top:18px;display:block}
+.btn-submit{width:100%;padding:16px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background .2s;font-family:'DM Sans',Arial,sans-serif;letter-spacing:.02em}
+.btn-submit:hover{background:#8A6F38}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.casl{font-size:.7rem;color:var(--gray);margin-top:12px;line-height:1.6;text-align:center}
+.required{color:#dc2626}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:48px 24px}
+.success-icon{font-size:3rem;margin-bottom:12px}
+.success-screen h2{font-family:'Playfair Display',Georgia,serif;font-size:1.7rem;font-weight:700;color:var(--navy);margin-bottom:10px}
+.success-screen p{color:var(--gray);font-size:.95rem;line-height:1.7;margin-bottom:28px;max-width:420px;margin-left:auto;margin-right:auto}
+.success-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-navy{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--navy);color:#fff;border-radius:50px;font-weight:600;font-size:.9rem;text-decoration:none}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--gold);color:#fff;border-radius:50px;font-weight:600;font-size:.9rem;text-decoration:none}
+
+/* AGENTS */
+.agents-section{background:var(--navy);padding:48px 24px}
+.agents-inner{max-width:700px;margin:0 auto;text-align:center}
+.agents-title{font-family:'Playfair Display',Georgia,serif;font-size:1.4rem;color:#fff;font-weight:700;margin-bottom:24px}
+.agents-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:480px){.agents-grid{grid-template-columns:1fr}}
+.agent-card{background:rgba(255,255,255,.06);border-radius:12px;padding:22px;border:1px solid rgba(255,255,255,.1)}
+.agent-name{font-family:'Playfair Display',Georgia,serif;font-size:1.05rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px}
+.agent-cred{font-size:.74rem;color:rgba(255,255,255,.5);margin-bottom:8px;line-height:1.5}
+.agent-phone{font-size:.92rem;font-weight:600;color:rgba(255,255,255,.85)}
+.agents-tagline{color:rgba(255,255,255,.45);font-size:.82rem;margin-top:18px;font-style:italic}
+
+.footer{background:#12253D;padding:18px 24px;text-align:center}
+.footer p{font-size:.7rem;color:rgba(255,255,255,.3);line-height:1.8}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">The <span>Hooda</span> Team</a>
+  <div class="nav-phone"><a href="tel:4168255032">📞 416-825-5032</a></div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🔍 VIP Buyer Access</div>
+  <h1>Find Your Perfect GTA Home<br/><em>Before It Hits the Market</em></h1>
+  <p class="hero-sub">Tell us exactly what you're looking for. Ravi & Rashmi will send you matching listings — including off-market properties, power of sale deals, and exclusive opportunities that never appear on public sites.</p>
+  <div class="trust-badges">
+    <div class="trust-badge">🔍 Off-Market Access</div>
+    <div class="trust-badge">💰 Power of Sale Deals</div>
+    <div class="trust-badge">⚡ Same-Day Alerts</div>
+    <div class="trust-badge">🤝 Zero Pressure</div>
+  </div>
+  <p class="hero-urgency">Buyer competition is returning to the GTA. The best deals go to buyers who are ready — let us make sure you're first in line.</p>
+  <div class="hero-arrow">↓</div>
+</div>
+
+<!-- WHAT BUYERS GET -->
+<div class="section" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label">Exclusive Buyer Services</div>
+    <h2 class="section-title">What You Get as a Hooda Team Buyer</h2>
+    <div class="cards-3">
+      <div class="card">
+        <div class="card-icon">🔑</div>
+        <div class="card-title">VIP Buyer Access</div>
+        <div class="card-text">Get listings the moment they enter the MLS — before most buyers even know they exist. We also share pre-market and pocket listings from our network.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-title">Power of Sale Deals</div>
+        <div class="card-text">We track court-ordered sales and estate properties across the GTA — often priced 10–20% below market. Register once and we alert you immediately.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧭</div>
+        <div class="card-title">Zero Pressure Search</div>
+        <div class="card-text">We work on your timeline. No rushing, no pressure. Just finding the right home at the right price — with expert negotiation when you're ready to offer.</div>
+      </div>
+    </div>
+
+    <!-- OPPORTUNITY BOX -->
+    <div class="opp-box">
+      <p>"Buyer opportunity window: June 2026 saw prices still 3.9% below June 2025 peaks — but rising month-over-month. Buyers who act now lock in pre-recovery pricing before Q4 competition heats up."</p>
+      <cite>— The Hooda Team · Based on TRREB Market Watch, June 2026</cite>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-section">
+  <div class="form-card">
+    <div id="formContent">
+      <div class="form-header">
+        <h2>Tell Us What You're Looking For</h2>
+        <p>The more detail you give us, the better we can match you with the right properties — including ones that never go public.</p>
+      </div>
+      <div class="form-body">
+
+        <span class="form-section-label">Your Contact Information</span>
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" id="name" placeholder="Sarah Johnson"/>
+          </div>
+          <div class="form-group">
+            <label>Phone Number <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="647-000-0000"/>
+          </div>
+        </div>
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Email Address <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="sarah@email.com"/>
+          </div>
+          <div class="form-group">
+            <label>Best Time to Call</label>
+            <select id="callTime">
+              <option value="">Select time</option>
+              <option>Morning (9am – 12pm)</option>
+              <option>Afternoon (12pm – 5pm)</option>
+              <option>Evening (5pm – 8pm)</option>
+              <option>Anytime</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <span class="form-section-label">Where Are You Looking?</span>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Preferred Cities / Areas <span class="required">*</span></label>
+          <div class="checkbox-grid">
+            <label class="check-item"><input type="checkbox" name="cities" value="Toronto"/><span>Toronto</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Mississauga"/><span>Mississauga</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Brampton"/><span>Brampton</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Vaughan"/><span>Vaughan</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Markham"/><span>Markham</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Richmond Hill"/><span>Richmond Hill</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Oakville"/><span>Oakville</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Burlington"/><span>Burlington</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Pickering"/><span>Pickering</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Ajax"/><span>Ajax</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Oshawa"/><span>Oshawa</span></label>
+            <label class="check-item"><input type="checkbox" name="cities" value="Anywhere in GTA"/><span>Anywhere in GTA</span></label>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <span class="form-section-label">What Are You Looking For?</span>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Property Type</label>
+          <div class="radio-row">
+            <div class="radio-pill"><input type="radio" name="propType" id="pt1" value="Detached"/><label for="pt1">Detached</label></div>
+            <div class="radio-pill"><input type="radio" name="propType" id="pt2" value="Semi-Detached"/><label for="pt2">Semi-Detached</label></div>
+            <div class="radio-pill"><input type="radio" name="propType" id="pt3" value="Townhouse"/><label for="pt3">Townhouse</label></div>
+            <div class="radio-pill"><input type="radio" name="propType" id="pt4" value="Condo"/><label for="pt4">Condo</label></div>
+            <div class="radio-pill"><input type="radio" name="propType" id="pt5" value="Any type"/><label for="pt5">Open to any</label></div>
+          </div>
+        </div>
+
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Minimum Bedrooms</label>
+            <select id="beds">
+              <option value="">Any</option>
+              <option value="1">1+ bedrooms</option>
+              <option value="2">2+ bedrooms</option>
+              <option value="3">3+ bedrooms</option>
+              <option value="4">4+ bedrooms</option>
+              <option value="5">5+ bedrooms</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Minimum Bathrooms</label>
+            <select id="baths">
+              <option value="">Any</option>
+              <option>1+</option><option>2+</option><option>3+</option><option>4+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <span class="form-section-label">Your Budget</span>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Budget Range <span class="required">*</span></label>
+          <div class="radio-row">
+            <div class="radio-pill"><input type="radio" name="budget" id="b1" value="Under $500K"/><label for="b1">Under $500K</label></div>
+            <div class="radio-pill"><input type="radio" name="budget" id="b2" value="$500K–$750K"/><label for="b2">$500K–$750K</label></div>
+            <div class="radio-pill"><input type="radio" name="budget" id="b3" value="$750K–$1M"/><label for="b3">$750K–$1M</label></div>
+            <div class="radio-pill"><input type="radio" name="budget" id="b4" value="$1M–$1.5M"/><label for="b4">$1M–$1.5M</label></div>
+            <div class="radio-pill"><input type="radio" name="budget" id="b5" value="$1.5M–$2M"/><label for="b5">$1.5M–$2M</label></div>
+            <div class="radio-pill"><input type="radio" name="budget" id="b6" value="$2M+"/><label for="b6">$2M+</label></div>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <span class="form-section-label">A Few More Details</span>
+
+        <div class="form-row two">
+          <div class="form-group">
+            <label>Interested in Power of Sale deals?</label>
+            <select id="pos">
+              <option value="">Select</option>
+              <option>Yes — definitely interested</option>
+              <option>Yes — tell me more first</option>
+              <option>No — prefer standard listings</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Are you pre-approved?</label>
+            <select id="preApproved">
+              <option value="">Select</option>
+              <option>Yes — fully pre-approved</option>
+              <option>In progress</option>
+              <option>No — need help with this</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row two">
+          <div class="form-group">
+            <label>First-time buyer?</label>
+            <select id="firstTime">
+              <option value="">Select</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Home to sell first?</label>
+            <select id="toSell">
+              <option value="">Select</option>
+              <option>Yes — need to sell first</option>
+              <option>No</option>
+              <option>Maybe</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Purchase Timeline <span class="required">*</span></label>
+          <div class="radio-row">
+            <div class="radio-pill"><input type="radio" name="timeline" id="t1" value="Ready to offer now"/><label for="t1">Ready now</label></div>
+            <div class="radio-pill"><input type="radio" name="timeline" id="t2" value="1–3 months"/><label for="t2">1–3 months</label></div>
+            <div class="radio-pill"><input type="radio" name="timeline" id="t3" value="3–6 months"/><label for="t3">3–6 months</label></div>
+            <div class="radio-pill"><input type="radio" name="timeline" id="t4" value="6–12 months"/><label for="t4">6–12 months</label></div>
+            <div class="radio-pill"><input type="radio" name="timeline" id="t5" value="Just browsing"/><label for="t5">Just browsing</label></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Anything specific you're looking for?</label>
+          <textarea id="notes" placeholder="e.g. Must have garage, near a specific school, open to power of sale, investment property, needs granny suite, large backyard…"></textarea>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="submitBuyForm()">Start My Home Search →</button>
+        <p class="casl">By submitting this form you consent to being contacted by The Hooda Team regarding real estate services. Your information is protected under PIPEDA and will never be sold or shared. You may withdraw consent at any time.</p>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">🏡</div>
+      <h2 id="successName">Your Search Is Underway!</h2>
+      <p>Ravi or Rashmi will be in touch within 24 hours with properties that match your criteria — including exclusive and off-market opportunities not found anywhere else.</p>
+      <div class="success-btns">
+        <a href="/#listings" class="btn-navy">🔍 Browse Live Listings</a>
+        <a href="/#powerofsale" class="btn-gold">💰 Power of Sale Deals</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY CHOOSE US -->
+<div class="section" style="background:var(--bg)">
+  <div class="section-inner">
+    <div class="section-label">Why Buyers Choose Us</div>
+    <h2 class="section-title">The Hooda Team Advantage</h2>
+    <div class="cards-3">
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <div class="card-title">Instant Alerts</div>
+        <div class="card-text">New listings matching your criteria sent immediately — not hours later like public sites. In a competitive market, minutes matter.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <div class="card-title">Expert Negotiation</div>
+        <div class="card-text">35+ combined years of GTA deal-making. We know how to structure offers that win without overpaying — and we always have your interests first.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <div class="card-title">Full-Service Support</div>
+        <div class="card-text">From mortgage referrals to trusted home inspectors to real estate lawyers — we coordinate the whole process so nothing falls through the cracks.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AGENTS -->
+<div class="agents-section">
+  <div class="agents-inner">
+    <div class="agents-title">Your GTA Real Estate Team</div>
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-name">Ravi Hooda</div>
+        <div class="agent-cred">Broker · LUXE Luxury Listing Specialist · ACP<br/>B.Com · MBA · Licensed since 2006</div>
+        <div class="agent-phone"><a href="tel:4168255032" style="color:inherit;text-decoration:none">📞 416-825-5032</a></div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Rashmi Hooda</div>
+        <div class="agent-cred">Broker · BSc · FDIT · BCA<br/>Licensed since 2011</div>
+        <div class="agent-phone"><a href="tel:6477665040" style="color:inherit;text-decoration:none">📞 647-766-5040</a></div>
+      </div>
+    </div>
+    <p class="agents-tagline">Century 21 Red Star Realty Inc., Brokerage · "Service You Deserve. People You Can Trust."</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>
+    Century 21 Red Star Realty Inc., Brokerage · ravihooda.com · hoodarealestate@gmail.com<br/>
+    Not intended to solicit buyers already under contract with another brokerage.<br/>
+    © 2026 The Hooda Team. All rights reserved. · <a href="/" style="color:rgba(255,255,255,.4)">Back to ravihooda.com</a>
+  </p>
+</footer>
+
+<script>
+async function submitBuyForm() {
+  const name     = document.getElementById('name').value.trim();
+  const phone    = document.getElementById('phone').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const cities   = [...document.querySelectorAll('input[name="cities"]:checked')].map(c=>c.value).join(', ');
+  const budget   = document.querySelector('input[name="budget"]:checked')?.value || '';
+  const timeline = document.querySelector('input[name="timeline"]:checked')?.value || '';
+
+  if (!name)    { alert('Please enter your name.'); return; }
+  if (!phone)   { alert('Please enter your phone number.'); return; }
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  if (!cities)  { alert('Please select at least one preferred area.'); return; }
+  if (!budget)  { alert('Please select your budget range.'); return; }
+  if (!timeline){ alert('Please select your purchase timeline.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  const propType   = document.querySelector('input[name="propType"]:checked')?.value || '';
+  const beds       = document.getElementById('beds').value;
+  const baths      = document.getElementById('baths').value;
+  const pos        = document.getElementById('pos').value;
+  const preApproved= document.getElementById('preApproved').value;
+  const firstTime  = document.getElementById('firstTime').value;
+  const toSell     = document.getElementById('toSell').value;
+  const callTime   = document.getElementById('callTime').value;
+  const notes      = document.getElementById('notes').value.trim();
+
+  const message = [
+    'BUYER LEAD — Home Search Request',
+    '',
+    'SEARCH CRITERIA:',
+    'Areas: ' + cities,
+    propType  ? 'Property Type: ' + propType : '',
+    beds      ? 'Min Bedrooms: ' + beds : '',
+    baths     ? 'Min Bathrooms: ' + baths : '',
+    'Budget: ' + budget,
+    '',
+    'BUYER PROFILE:',
+    'Timeline: ' + timeline,
+    'Power of Sale Interest: ' + (pos || 'Not specified'),
+    'Pre-approved: ' + (preApproved || 'Not specified'),
+    'First-time buyer: ' + (firstTime || 'Not specified'),
+    'Home to sell: ' + (toSell || 'Not specified'),
+    callTime  ? 'Best time to call: ' + callTime : '',
+    notes     ? 'Notes: ' + notes : '',
+  ].filter(Boolean).join('\n');
+
+  try {
+    await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, type: 'inquiry', message, source: 'Buy Landing Page', timeline })
+    });
+  } catch(e) { console.error(e); }
+
+  document.getElementById('formContent').style.display = 'none';
+  const success = document.getElementById('successScreen');
+  success.style.display = 'block';
+  document.getElementById('successName').textContent = 'Your Search Is Underway, ' + name.split(' ')[0] + '!';
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
