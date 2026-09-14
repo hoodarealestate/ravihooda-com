@@ -9,24 +9,48 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-webkit-font-smoothing:antialiased}
+html{font-size:18px}
+body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-webkit-font-smoothing:antialiased;font-size:1rem}
 :root{--navy:#1C3557;--gold:#A8894A;--gold-lt:#D4B97A;--white:#fff;--bg:#F8F6F2;--gray:#6B7280;--lgray:#E2E4E8;--green:#059669}
 .nav{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none}
 .nav-logo span{color:var(--gold-lt);font-style:italic}
 .nav-phone a{color:rgba(255,255,255,.8);font-size:.85rem;text-decoration:none}
 
-/* HERO */
-.hero{background:linear-gradient(rgba(28,53,87,.78),rgba(28,53,87,.85)),url('https://images.unsplash.com/photo-1449844908441-8829872d2607?w=1920&q=80') center/cover;padding:64px 24px 56px;text-align:center;color:#fff}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.2);border:1px solid rgba(212,185,122,.4);border-radius:50px;padding:6px 18px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:20px}
-.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.9rem,5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:16px}
+/* HERO — full-height showcase, matches ravihooda.com */
+.hero{min-height:100vh;position:relative;display:flex;flex-direction:column;overflow:hidden;color:#fff}
+.hero-slide{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=85');background-size:cover;background-position:center;z-index:0;animation:kenburns 22s ease-in-out infinite alternate}
+@keyframes kenburns{0%{transform:scale(1)}100%{transform:scale(1.09)}}
+.hero-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(10,22,42,.25) 0%,rgba(10,22,42,.15) 30%,rgba(10,22,42,.62) 72%,rgba(10,22,42,.88) 100%)}
+.hero-team{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;padding:48px 24px 0;text-align:center}
+.hero-team-label{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.15);border:1px solid rgba(212,185,122,.45);border-radius:50px;padding:7px 20px;font-size:.85rem;font-weight:600;color:var(--gold-lt);letter-spacing:.16em;text-transform:uppercase;margin-bottom:32px;backdrop-filter:blur(10px)}
+.hero-team-label span{width:7px;height:7px;background:var(--gold-lt);border-radius:50%;display:inline-block;animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero-brokers{display:flex;align-items:flex-start;justify-content:center;gap:56px;margin-bottom:8px;flex-wrap:wrap}
+.broker-card{display:flex;flex-direction:column;align-items:center}
+.broker-photo-wrap{position:relative;width:160px;height:160px;margin-bottom:16px}
+.broker-photo-ring{position:absolute;inset:0;border-radius:50%;padding:3px;background:conic-gradient(var(--gold-lt) 0deg,var(--gold) 90deg,var(--navy) 180deg,var(--gold) 270deg,var(--gold-lt) 360deg);animation:ringRotate 6s linear infinite}
+@keyframes ringRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.broker-photo-inner{position:absolute;inset:4px;border-radius:50%;overflow:hidden;background:var(--lgray);border:3px solid rgba(255,255,255,.92)}
+.broker-photo-inner img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.broker-name{font-family:'Playfair Display',Georgia,serif;font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:2px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.broker-title{font-size:.92rem;color:rgba(255,255,255,.75);margin-bottom:10px;font-weight:400;letter-spacing:.03em}
+.broker-creds{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-bottom:4px}
+.broker-cred{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px);color:rgba(255,255,255,.9);font-size:.8rem;font-weight:600;padding:3px 11px;border-radius:50px;letter-spacing:.04em}
+.broker-cred.gold{background:rgba(168,137,74,.22);border-color:var(--gold-lt);color:var(--gold-lt)}
+.broker-phone-btn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:rgba(28,53,87,.55);border:1px solid rgba(212,185,122,.5);color:var(--gold-lt);padding:8px 18px;border-radius:50px;font-size:.85rem;font-weight:600;letter-spacing:.03em;transition:all .25s;text-decoration:none;backdrop-filter:blur(8px)}
+.broker-phone-btn:hover{background:var(--gold);border-color:var(--gold);color:#fff;transform:translateY(-2px)}
+.hero-headline{position:relative;z-index:5;text-align:center;padding:36px 24px 0}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,137,74,.2);border:1px solid rgba(212,185,122,.4);border-radius:50px;padding:7px 20px;font-size:.85rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:22px}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:700;line-height:1.2;margin-bottom:18px;text-shadow:0 2px 24px rgba(0,0,0,.4)}
 .hero h1 em{color:var(--gold-lt);font-style:italic}
-.hero-sub{font-size:1rem;color:rgba(255,255,255,.8);max-width:620px;margin:0 auto 24px;line-height:1.7}
-.trust-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
-.trust-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 16px;font-size:.8rem;color:#fff;font-weight:500}
-.hero-urgency{font-size:.88rem;color:rgba(255,255,255,.65);font-style:italic;max-width:520px;margin:0 auto}
-.hero-arrow{font-size:2rem;color:var(--gold-lt);animation:bounce 2s infinite;margin-top:20px}
+.hero-sub{font-size:1.1rem;color:rgba(255,255,255,.85);max-width:660px;margin:0 auto 26px;line-height:1.7}
+.trust-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:26px}
+.trust-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:9px 18px;font-size:.9rem;color:#fff;font-weight:500}
+.hero-urgency{font-size:.98rem;color:rgba(255,255,255,.72);font-style:italic;max-width:560px;margin:0 auto}
+.hero-arrow{font-size:2.2rem;color:var(--gold-lt);animation:bounce 2s infinite;margin:20px auto 36px;position:relative;z-index:5;text-align:center}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+@media(max-width:640px){.hero-brokers{gap:24px}.broker-photo-wrap{width:110px;height:110px}.broker-name{font-size:1.05rem}}
 
 .section{padding:52px 24px}
 .section-inner{max-width:880px;margin:0 auto}
@@ -36,8 +60,8 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 @media(max-width:640px){.cards-3{grid-template-columns:1fr}}
 .card{background:var(--white);border-radius:12px;padding:22px;box-shadow:0 2px 14px rgba(28,53,87,.08);border-top:3px solid var(--gold)}
 .card-icon{font-size:2rem;margin-bottom:10px}
-.card-title{font-family:'Playfair Display',Georgia,serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:6px}
-.card-text{font-size:.86rem;color:var(--gray);line-height:1.6}
+.card-title{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.card-text{font-size:1rem;color:var(--gray);line-height:1.6}
 
 /* OPPORTUNITY BOX */
 .opp-box{background:linear-gradient(135deg,var(--navy),#142844);border-radius:14px;padding:28px 32px;color:#fff;border-left:5px solid var(--gold);margin:32px 0}
@@ -49,7 +73,7 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .form-card{max-width:720px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 8px 48px rgba(28,53,87,.12);overflow:hidden;border-top:4px solid var(--gold)}
 .form-header{padding:28px 32px 0}
 .form-header h2{font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:6px}
-.form-header p{font-size:.88rem;color:var(--gray);margin-bottom:20px}
+.form-header p{font-size:1rem;color:var(--gray);margin-bottom:20px}
 .form-body{padding:0 32px 32px}
 @media(max-width:540px){.form-header{padding:20px 18px 0}.form-body{padding:0 18px 24px}}
 .form-row{display:grid;gap:14px;margin-bottom:14px}
@@ -57,19 +81,19 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .form-row.three{grid-template-columns:1fr 1fr 1fr}
 @media(max-width:540px){.form-row.two,.form-row.three{grid-template-columns:1fr}}
 .form-group{display:flex;flex-direction:column;gap:5px}
-.form-group label{font-size:.75rem;font-weight:700;color:#374151;letter-spacing:.03em;text-transform:uppercase}
-.form-group input,.form-group select,.form-group textarea{padding:11px 13px;border:1.5px solid var(--lgray);border-radius:9px;font-size:.9rem;font-family:'DM Sans',Arial,sans-serif;color:var(--navy);outline:none;transition:border .2s,box-shadow .2s;background:#fff;width:100%}
+.form-group label{font-size:.85rem;font-weight:700;color:#374151;letter-spacing:.03em;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{padding:11px 13px;border:1.5px solid var(--lgray);border-radius:9px;font-size:1.02rem;font-family:'DM Sans',Arial,sans-serif;color:var(--navy);outline:none;transition:border .2s,box-shadow .2s;background:#fff;width:100%}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,53,87,.08)}
 .form-group textarea{resize:vertical;min-height:80px}
 .checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:6px}
 .check-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid var(--lgray);border-radius:8px;cursor:pointer;transition:all .2s}
 .check-item:has(input:checked){border-color:var(--navy);background:#EEF4FA}
 .check-item input{accent-color:var(--navy);width:15px;height:15px;flex-shrink:0}
-.check-item span{font-size:.84rem;color:var(--navy)}
+.check-item span{font-size:.95rem;color:var(--navy)}
 .radio-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .radio-pill{position:relative}
 .radio-pill input{position:absolute;opacity:0;width:0;height:0}
-.radio-pill label{display:block;padding:9px 16px;border:1.5px solid var(--lgray);border-radius:50px;font-size:.84rem;cursor:pointer;transition:all .2s;white-space:nowrap;color:var(--navy)}
+.radio-pill label{display:block;padding:10px 18px;border:1.5px solid var(--lgray);border-radius:50px;font-size:.95rem;cursor:pointer;transition:all .2s;white-space:nowrap;color:var(--navy)}
 .radio-pill input:checked + label{border-color:var(--navy);background:var(--navy);color:#fff;font-weight:600}
 .radio-pill label:hover{border-color:var(--gold)}
 .section-divider{height:1px;background:var(--lgray);margin:20px 0}
@@ -77,7 +101,7 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .btn-submit{width:100%;padding:16px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background .2s;font-family:'DM Sans',Arial,sans-serif;letter-spacing:.02em}
 .btn-submit:hover{background:#8A6F38}
 .btn-submit:disabled{opacity:.6;cursor:not-allowed}
-.casl{font-size:.7rem;color:var(--gray);margin-top:12px;line-height:1.6;text-align:center}
+.casl{font-size:.8rem;color:var(--gray);margin-top:12px;line-height:1.6;text-align:center}
 .required{color:#dc2626}
 
 /* SUCCESS */
@@ -92,14 +116,14 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 /* AGENTS */
 .agents-section{background:var(--navy);padding:48px 24px}
 .agents-inner{max-width:700px;margin:0 auto;text-align:center}
-.agents-title{font-family:'Playfair Display',Georgia,serif;font-size:1.4rem;color:#fff;font-weight:700;margin-bottom:24px}
+.agents-title{font-family:'Playfair Display',Georgia,serif;font-size:1.9rem;color:#fff;font-weight:700;margin-bottom:24px}
 .agents-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:480px){.agents-grid{grid-template-columns:1fr}}
 .agent-card{background:rgba(255,255,255,.06);border-radius:12px;padding:22px;border:1px solid rgba(255,255,255,.1)}
 .agent-name{font-family:'Playfair Display',Georgia,serif;font-size:1.05rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px}
 .agent-cred{font-size:.74rem;color:rgba(255,255,255,.5);margin-bottom:8px;line-height:1.5}
 .agent-phone{font-size:.92rem;font-weight:600;color:rgba(255,255,255,.85)}
-.agents-tagline{color:rgba(255,255,255,.45);font-size:.82rem;margin-top:18px;font-style:italic}
+.agents-tagline{color:rgba(255,255,255,.6);font-size:.95rem;margin-top:18px;font-style:italic}
 .agent-photo{width:84px;height:84px;border-radius:50%;object-fit:cover;object-position:top center;margin:0 auto 12px;display:block;border:2.5px solid var(--gold-lt);box-shadow:0 4px 20px rgba(0,0,0,.3)}
 
 /* MARKET STATS GRID */
@@ -107,17 +131,17 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 .stat-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
 @media(max-width:640px){.stat-mini-grid{grid-template-columns:repeat(2,1fr)}}
 .stat-mini{background:#F8F6F2;border-radius:10px;padding:18px 14px;text-align:center;border-top:3px solid var(--gold)}
-.stat-mini strong{display:block;font-family:'Playfair Display',Georgia,serif;font-size:1.35rem;color:var(--navy);margin-bottom:2px}
-.stat-mini .stat-change{font-size:.78rem;font-weight:700;color:#dc2626}
-.stat-mini span.stat-label{display:block;font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.stat-mini strong{display:block;font-family:'Playfair Display',Georgia,serif;font-size:1.65rem;color:var(--navy);margin-bottom:2px}
+.stat-mini .stat-change{font-size:.88rem;font-weight:700;color:#dc2626}
+.stat-mini span.stat-label{display:block;font-size:.8rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
 .market-table{width:100%;border-collapse:collapse;margin-top:20px;border-radius:10px;overflow:hidden}
 .market-table thead tr{background:var(--navy);color:#fff}
-.market-table th{padding:11px 16px;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left}
+.market-table th{padding:13px 16px;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left}
 .market-table tbody tr:nth-child(odd){background:#F8F6F2}
 .market-table tbody tr:nth-child(even){background:#fff}
-.market-table td{padding:12px 16px;font-size:.9rem;color:#374151;border-bottom:1px solid #F3F4F6}
+.market-table td{padding:14px 16px;font-size:1.02rem;color:#374151;border-bottom:1px solid #F3F4F6}
 .market-table td strong{color:var(--navy);font-weight:600}
-.market-source{font-size:.72rem;color:var(--gray);margin-top:10px;text-align:center;font-style:italic}
+.market-source{font-size:.82rem;color:var(--gray);margin-top:10px;text-align:center;font-style:italic}
 
 /* BUYER GUIDE */
 .guide-section{background:var(--bg);padding:56px 24px}
@@ -125,9 +149,9 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 @media(max-width:640px){.guide-grid{grid-template-columns:1fr}}
 .guide-item{background:var(--white);border-radius:12px;padding:20px 22px;box-shadow:0 2px 14px rgba(28,53,87,.07);display:flex;gap:14px;align-items:flex-start}
 .guide-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--gold-lt);font-family:'Playfair Display',Georgia,serif;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.95rem}
-.guide-body h3{font-family:'Playfair Display',Georgia,serif;font-size:1rem;color:var(--navy);font-weight:700;margin-bottom:5px}
-.guide-body p{font-size:.85rem;color:var(--gray);line-height:1.6}
-.guide-note{background:rgba(168,137,74,.1);border:1px solid rgba(168,137,74,.3);border-radius:10px;padding:16px 20px;margin-top:20px;font-size:.85rem;color:var(--navy);line-height:1.6}
+.guide-body h3{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;color:var(--navy);font-weight:700;margin-bottom:5px}
+.guide-body p{font-size:.98rem;color:var(--gray);line-height:1.6}
+.guide-note{background:rgba(168,137,74,.1);border:1px solid rgba(168,137,74,.3);border-radius:10px;padding:18px 22px;margin-top:20px;font-size:.98rem;color:var(--navy);line-height:1.6}
 .guide-note strong{color:#8A6F38}
 
 .footer{background:#12253D;padding:18px 24px;text-align:center}
@@ -143,16 +167,55 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-badge">🔍 VIP Buyer Access</div>
-  <h1>Find Your Perfect GTA Home<br/><em>Before It Hits the Market</em></h1>
-  <p class="hero-sub">Tell us exactly what you're looking for. Ravi & Rashmi will send you matching listings — including off-market properties, power of sale deals, and exclusive opportunities that never appear on public sites.</p>
-  <div class="trust-badges">
-    <div class="trust-badge">🔍 Off-Market Access</div>
-    <div class="trust-badge">💰 Power of Sale Deals</div>
-    <div class="trust-badge">⚡ Same-Day Alerts</div>
-    <div class="trust-badge">🤝 Zero Pressure</div>
+  <div class="hero-slide"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-team">
+    <div class="hero-team-label"><span></span>GTA's Trusted Real Estate Team</div>
+    <div class="hero-brokers">
+      <div class="broker-card">
+        <div class="broker-photo-wrap">
+          <div class="broker-photo-ring"></div>
+          <div class="broker-photo-inner"><img src="/images/ravi-hooda.jpg" alt="Ravi Hooda, Broker"/></div>
+        </div>
+        <div class="broker-name">Ravi Hooda</div>
+        <div class="broker-title">Broker · Licensed since 2006</div>
+        <div class="broker-creds">
+          <span class="broker-cred gold">LUXE Specialist</span>
+          <span class="broker-cred">ACP</span>
+          <span class="broker-cred">B.Com · MBA</span>
+        </div>
+        <a href="tel:4168255032" class="broker-phone-btn">📞 416-825-5032</a>
+      </div>
+      <div class="broker-card">
+        <div class="broker-photo-wrap">
+          <div class="broker-photo-ring"></div>
+          <div class="broker-photo-inner"><img src="/images/rashmi-hooda.jpg" alt="Rashmi Hooda, Broker"/></div>
+        </div>
+        <div class="broker-name">Rashmi Hooda</div>
+        <div class="broker-title">Broker · Licensed since 2011</div>
+        <div class="broker-creds">
+          <span class="broker-cred">BSc</span>
+          <span class="broker-cred">FDIT</span>
+          <span class="broker-cred">BCA</span>
+        </div>
+        <a href="tel:6477665040" class="broker-phone-btn">📞 647-766-5040</a>
+      </div>
+    </div>
   </div>
-  <p class="hero-urgency">Buyer competition is returning to the GTA. The best deals go to buyers who are ready — let us make sure you're first in line.</p>
+
+  <div class="hero-headline">
+    <div class="hero-badge">🔍 VIP Buyer Access</div>
+    <h1>Find Your Perfect GTA Home<br/><em>Before It Hits the Market</em></h1>
+    <p class="hero-sub">Tell us exactly what you're looking for. Ravi &amp; Rashmi will send you matching listings — including off-market properties, power of sale deals, and exclusive opportunities that never appear on public sites.</p>
+    <div class="trust-badges">
+      <div class="trust-badge">🔍 Off-Market Access</div>
+      <div class="trust-badge">💰 Power of Sale Deals</div>
+      <div class="trust-badge">⚡ Same-Day Alerts</div>
+      <div class="trust-badge">🤝 Zero Pressure</div>
+    </div>
+    <p class="hero-urgency">Buyer competition is returning to the GTA. The best deals go to buyers who are ready — let us make sure you're first in line.</p>
+  </div>
   <div class="hero-arrow">↓</div>
 </div>
 
@@ -476,23 +539,14 @@ body{font-family:'DM Sans',Arial,sans-serif;background:#F8F6F2;color:#1A1F2E;-we
   </div>
 </div>
 
-<!-- AGENTS -->
+<!-- CLOSING CTA -->
 <div class="agents-section">
   <div class="agents-inner">
-    <div class="agents-title">Your GTA Real Estate Team</div>
-    <div class="agents-grid">
-      <div class="agent-card">
-        <img class="agent-photo" src="/images/ravi-hooda.jpg" alt="Ravi Hooda, Broker"/>
-        <div class="agent-name">Ravi Hooda</div>
-        <div class="agent-cred">Broker · LUXE Luxury Listing Specialist · ACP<br/>B.Com · MBA · Licensed since 2006</div>
-        <div class="agent-phone"><a href="tel:4168255032" style="color:inherit;text-decoration:none">📞 416-825-5032</a></div>
-      </div>
-      <div class="agent-card">
-        <img class="agent-photo" src="/images/rashmi-hooda.jpg" alt="Rashmi Hooda, Broker"/>
-        <div class="agent-name">Rashmi Hooda</div>
-        <div class="agent-cred">Broker · BSc · FDIT · BCA<br/>Licensed since 2011</div>
-        <div class="agent-phone"><a href="tel:6477665040" style="color:inherit;text-decoration:none">📞 647-766-5040</a></div>
-      </div>
+    <div class="agents-title">Ready to Start Your Search?</div>
+    <p style="color:rgba(255,255,255,.75);font-size:1.05rem;max-width:560px;margin:0 auto 28px;line-height:1.7">Fill out the form above, or call Ravi or Rashmi directly — either way, you'll hear back within 24 hours with real matches, not a mailing list.</p>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="tel:4168255032" class="broker-phone-btn" style="font-size:1rem;padding:12px 26px">📞 Ravi — 416-825-5032</a>
+      <a href="tel:6477665040" class="broker-phone-btn" style="font-size:1rem;padding:12px 26px">📞 Rashmi — 647-766-5040</a>
     </div>
     <p class="agents-tagline">Century 21 Red Star Realty Inc., Brokerage · "Service You Deserve. People You Can Trust."</p>
   </div>
