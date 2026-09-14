@@ -86,38 +86,27 @@ export async function GET(req: NextRequest) {
     const maxPrice     = searchParams.get('maxPrice')
     const minPrice     = searchParams.get('minPrice')
     const beds         = searchParams.get('beds')
-    const street       = searchParams.get('street')  // street name search
-    const postalCode   = searchParams.get('postal')   // postal code search
-
+    const street       = searchParams.get('street')      // street base name, e.g. "Bloor"
+    const postalCode   = searchParams.get('postalCode')   // e.g. "M5V 3A8" — more precise than street
+    const listingKey   = searchParams.get('listingKey')   // direct MLS# lookup
     const filters: string[] = [
       "StandardStatus eq 'Active'",
       "TransactionType eq 'For Sale'"
     ]
-    if (city)         filters.push(cityFilter(city))
-    if (propertyType) filters.push(typeFilter(propertyType))
-    else              filters.push(RESIDENTIAL)
-    if (maxPrice)     filters.push(`ListPrice le ${maxPrice}`)
-    if (minPrice)     filters.push(`ListPrice ge ${minPrice}`)
-    if (beds)         filters.push(`BedroomsTotal ge ${beds}`)
-    // Street name search — use contains() for partial match
-    if (street)       filters.push(`contains(tolower(StreetName),'${street.toLowerCase().trim().replace(/'/g,"''")}')`)
-    // Postal code search — strip spaces, match start
-    if (postalCode)   filters.push(`startswith(tolower(PostalCode),'${postalCode.toLowerCase().replace(/\s/g,'').trim()}')`)
-
-    // Proximity filter — bounding box around a lat/lng point
-    // ~1 degree lat = 111km, ~1 degree lng = 73km at Toronto latitude
-    const lat  = searchParams.get('lat')
-    const lng  = searchParams.get('lng')
-    const radiusKm = parseFloat(searchParams.get('radiusKm') || '1.5')
-    if (lat && lng) {
-      const latN = parseFloat(lat)
-      const lngN = parseFloat(lng)
-      const latDelta = radiusKm / 111.0
-      const lngDelta = radiusKm / 73.0
-      filters.push(`Latitude ge ${(latN - latDelta).toFixed(6)}`)
-      filters.push(`Latitude le ${(latN + latDelta).toFixed(6)}`)
-      filters.push(`Longitude ge ${(lngN - lngDelta).toFixed(6)}`)
-      filters.push(`Longitude le ${(lngN + lngDelta).toFixed(6)}`)
+    if (listingKey) {
+      // Direct MLS# lookup — bypass all other filters
+      filters.length = 0
+      filters.push(`ListingKey eq '${listingKey.replace(/'/g, "''")}'`)
+    } else {
+      if (city)         filters.push(cityFilter(city))
+      if (propertyType) filters.push(typeFilter(propertyType))
+      else              filters.push(RESIDENTIAL)
+      if (maxPrice)     filters.push(`ListPrice le ${maxPrice}`)
+      if (minPrice)     filters.push(`ListPrice ge ${minPrice}`)
+      if (beds)         filters.push(`BedroomsTotal ge ${beds}`)
+      // Postal code is most precise for address searches; street is a fallback
+      if (postalCode)   filters.push(`startswith(PostalCode,'${postalCode.substring(0,3).toUpperCase()}')`)
+      else if (street)  filters.push(`contains(StreetName,'${street.replace(/'/g, "''")}')`  )
     }
 
     const select = [

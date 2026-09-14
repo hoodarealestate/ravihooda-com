@@ -348,12 +348,19 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgb
 }
 .hero-search-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: center;
 }
+.hero-filter-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
 .hero-search-row input,
-.hero-search-row select {
+.hero-search-row select,
+.hero-filter-row select {
   padding: 12px 14px;
   border: 1.5px solid var(--lgray);
   border-radius: 10px;
@@ -366,7 +373,8 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgb
   width: 100%;
 }
 .hero-search-row input:focus,
-.hero-search-row select:focus { border-color: var(--sky); }
+.hero-search-row select:focus,
+.hero-filter-row select:focus { border-color: var(--sky); }
 .hero-search-go {
   background: #1C3557;
   color: #FFFFFF;
@@ -404,8 +412,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgb
 
 /* responsive */
 @media (max-width: 900px) {
-  .hero-search-row { grid-template-columns: 1fr 1fr; }
-  .hero-search-go { grid-column: 1 / -1; }
+  .hero-filter-row { grid-template-columns: 1fr 1fr; }
   .hero-brokers { gap: 24px; }
   .broker-photo-wrap { width: 130px; height: 130px; }
   .hero-brand-name { font-size: 1.4rem; }
@@ -415,7 +422,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgb
   .broker-card { flex-direction: row; align-items: center; text-align: left; gap: 16px; }
   .broker-photo-wrap { width: 90px; height: 90px; flex-shrink: 0; margin-bottom: 0; }
   .broker-creds { justify-content: flex-start; }
-  .hero-search-row { grid-template-columns: 1fr; }
+  .hero-filter-row { grid-template-columns: 1fr; }
   .hero-search-inner { padding: 20px 16px; }
 }
 
@@ -1033,15 +1040,21 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
   margin-bottom:14px; text-align:center; font-weight:600;
 }
 .hero-search-row {
-  display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto;
+  display:grid; grid-template-columns:1fr auto;
   gap:10px; align-items:center;
 }
-.hero-search-row input,.hero-search-row select {
+.hero-filter-row {
+  display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;
+  gap:10px; margin-top:10px;
+}
+.hero-search-row input,.hero-search-row select,
+.hero-filter-row input,.hero-filter-row select {
   padding:11px 14px; border:1.5px solid var(--lgray); border-radius:8px;
   font-family:var(--font-body); font-size: 0.94rem; color:var(--navy);
   background:var(--white); outline:none; transition:border-color 0.2s; width:100%;
 }
-.hero-search-row input:focus,.hero-search-row select:focus { border-color:#1C3557; }
+.hero-search-row input:focus,.hero-search-row select:focus,
+.hero-filter-row input:focus,.hero-filter-row select:focus { border-color:#1C3557; }
 .hero-search-go {
   background:#1C3557; color:#FFFFFF; border:none; border-radius:8px;
   padding:11px 26px; font-family:var(--font-body); font-size: 0.97rem;
@@ -1058,8 +1071,9 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
 }
 .hero-quick-tag:hover { background:#1C3557; color:#fff; border-color:#1C3557; }
 @media(max-width:900px){
-  .hero-search-row{grid-template-columns:1fr 1fr;}
-  .hero-search-go{grid-column:1/-1;}
+  .hero-search-row{grid-template-columns:1fr auto;}
+  .hero-filter-row{grid-template-columns:1fr 1fr;}
+  .hero-search-go{}
   .hero-brokers{gap:24px;}
   .broker-photo-wrap{width:120px;height:120px;}
   .hero-caption{display:none;}
@@ -1526,38 +1540,50 @@ footer { background: #1C3557; color: rgba(255,255,255,0.8); padding: 60px 24px 2
     <div class="hero-search-inner">
       <div class="hero-search-title">Search GTA Properties — Live MLS&reg; Data</div>
       <div class="hero-search-row">
-        <input type="text" id="heroStreet" placeholder="Street name (e.g. Maple, King, Bay)&hellip;" style="grid-column:span 2"/>
+        <input type="text" id="heroAddress" placeholder="Address, street, or neighbourhood&hellip;" autocomplete="off" onkeydown="if(event.key==='Enter')searchListings()"/>
+        <button class="hero-search-go" onclick="searchListings()">Search</button>
+      </div>
+      <div class="hero-filter-row">
         <select id="heroCity">
           <option value="">Any GTA City</option>
           <option>Toronto</option><option>Mississauga</option><option>Brampton</option>
           <option>Vaughan</option><option>Markham</option><option>Richmond Hill</option>
           <option>Oakville</option><option>Burlington</option><option>Pickering</option>
-          <option>Ajax</option><option>Oshawa</option>
+          <option>Ajax</option><option>Oshawa</option><option>Whitby</option>
+          <option>Newmarket</option><option>Aurora</option><option>Milton</option>
         </select>
         <select id="heroType">
           <option value="">Property Type</option>
           <option>Detached</option><option>Semi-Detached</option>
           <option>Townhouse</option><option>Condo</option><option>Commercial</option>
         </select>
-        <select id="heroMinPrice">
-          <option value="">Min Price</option>
-          <option value="300000">$300K</option><option value="500000">$500K</option>
-          <option value="700000">$700K</option><option value="900000">$900K</option>
-          <option value="1200000">$1.2M</option>
-        </select>
-        <select id="heroPrice">
-          <option value="">Max Price</option>
-          <option value="600000">$600K</option><option value="800000">$800K</option>
-          <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
-          <option value="2000000">$2M</option><option value="3000000">$3M+</option>
-        </select>
+        <div style="position:relative">
+          <select id="heroMinPrice" onchange="toggleCustomPrice(this,'heroMinPriceVal')">
+            <option value="">Min Price</option>
+            <option value="400000">$400K</option><option value="600000">$600K</option>
+            <option value="800000">$800K</option><option value="1000000">$1M</option>
+            <option value="1500000">$1.5M</option><option value="2000000">$2M</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <input type="number" id="heroMinPriceVal" placeholder="Min $" min="0" step="1000"
+            style="display:none;position:absolute;inset:0;width:100%;border:1.5px solid var(--sky);border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.94rem;background:var(--white);outline:none"/>
+        </div>
+        <div style="position:relative">
+          <select id="heroPrice" onchange="toggleCustomPrice(this,'heroPriceVal')">
+            <option value="">Max Price</option>
+            <option value="600000">$600K</option><option value="800000">$800K</option>
+            <option value="1000000">$1M</option><option value="1500000">$1.5M</option>
+            <option value="2000000">$2M</option><option value="3000000">$3M</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <input type="number" id="heroPriceVal" placeholder="Max $" min="0" step="1000"
+            style="display:none;position:absolute;inset:0;width:100%;border:1.5px solid var(--sky);border-radius:10px;padding:12px 14px;font-family:var(--font-body);font-size:0.94rem;background:var(--white);outline:none"/>
+        </div>
         <select id="heroBeds">
-          <option value="">Any Beds</option>
-          <option value="1">1+ bed</option><option value="2">2+ beds</option>
-          <option value="3">3+ beds</option><option value="4">4+ beds</option>
-          <option value="5">5+ beds</option>
+          <option value="">Beds</option>
+          <option value="1">1+</option><option value="2">2+</option>
+          <option value="3">3+</option><option value="4">4+</option><option value="5">5+</option>
         </select>
-        <button class="hero-search-go" onclick="searchListings()" style="grid-column:span 2">🔍 Search Listings</button>
       </div>
       <div class="hero-quick-tags">
         <button class="hero-quick-tag" onclick="quickSearch('Toronto')">Toronto</button>
@@ -2305,6 +2331,10 @@ function openListingDetail(key) {
     openVowGate('You\'ve viewed your ' + FREE_VIEW_LIMIT + ' free properties. Register a free account to keep viewing full listing details across the GTA.');
     return;
   }
+  // Push shareable URL so the listing can be linked/shared
+  const shareUrl = window.location.origin + window.location.pathname + '?listing=' + encodeURIComponent(key);
+  window.history.pushState({ listing: key }, '', shareUrl);
+
   // Show loading state immediately
   const body = document.getElementById('listingModalBody');
   body.innerHTML = '<div style="text-align:center;padding:60px 20px"><div class="spinner" style="margin:0 auto 16px"></div><p style="color:#9CA3AF;font-size:0.9rem">Loading listing details…</p></div>';
@@ -2363,7 +2393,7 @@ function showListingDetail(l, photos) {
     l.HeatType     ? { label: 'Heat Type',   val: l.HeatType }                         : null,
     l.HeatSource   ? { label: 'Heat Source', val: l.HeatSource }                       : null,
     l.Cooling?.length ? { label: 'Cooling',  val: Array.isArray(l.Cooling) ? l.Cooling.join(', ') : l.Cooling } : null,
-    l.GarageType   ? { label: 'Garage',      val: l.GarageType }                       : null,
+    (l.GarageType && l.GarageType.toLowerCase() !== 'none') ? { label: 'Garage', val: l.GarageType } : null,
     l.Basement?.length ? { label: 'Basement', val: Array.isArray(l.Basement) ? l.Basement.join(', ') : l.Basement } : null,
     l.ApproximateAge ? { label: 'Age',       val: l.ApproximateAge + ' yrs' }          : null,
     l.TaxAnnualAmount ? { label: 'Taxes',    val: '$' + Number(l.TaxAnnualAmount).toLocaleString() + (l.TaxYear ? ' (' + l.TaxYear + ')' : '') } : null,
@@ -2401,6 +2431,25 @@ function showListingDetail(l, photos) {
     : `<div style="text-align:center;font-size:0.78rem;color:#A8894A;margin-top:8px">${remain} free ${remain===1?'view':'views'} remaining — <a href="#" onclick="closeListingModal();openVowModal();return false" style="color:#1C3557;text-decoration:underline">register free</a> for unlimited access.</div>`;
 
   const safeAddr = addr.replace(/'/g, "\\'");
+  const shareUrl = window.location.origin + window.location.pathname + '?listing=' + encodeURIComponent(l.ListingKey || '');
+  const shareText = encodeURIComponent((addr ? addr + ', ' : '') + (l.City || '') + ' — ' + (l.ListPrice ? '$' + Number(l.ListPrice).toLocaleString() : '') + ' | MLS® ' + (l.ListingKey || ''));
+  const shareHtml = `<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+    <a href="https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener" title="Share on WhatsApp"
+       style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;font-size:0.82rem;font-weight:600;padding:8px 14px;border-radius:8px;text-decoration:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" rel="noopener" title="Share on Facebook"
+       style="display:inline-flex;align-items:center;gap:6px;background:#1877F2;color:#fff;font-size:0.82rem;font-weight:600;padding:8px 14px;border-radius:8px;text-decoration:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Facebook
+    </a>
+    <button onclick="(function(){navigator.clipboard&&navigator.clipboard.writeText('${shareUrl.replace(/'/g,"\\'")}').then(()=>{var b=document.getElementById('lmCopyBtn');if(b){b.textContent='✓ Copied!';setTimeout(()=>{b.textContent='Copy Link'},2000)}});})()" id="lmCopyBtn"
+       style="display:inline-flex;align-items:center;gap:6px;background:#F3F4F6;color:#374151;font-size:0.82rem;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid #D1D5DB;cursor:pointer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copy Link
+    </button>
+  </div>`;
 
   document.getElementById('listingModalBody').innerHTML = `
     ${galleryHtml}
@@ -2410,6 +2459,8 @@ function showListingDetail(l, photos) {
           <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#1B2A41;line-height:1.1">${price}</div>
           <div style="font-size:0.97rem;color:#374151;margin-top:5px;font-weight:600">${addr}</div>
           <div style="font-size:0.85rem;color:#6B7280;margin-top:1px">${cityLine}</div>
+          ${l.ListingKey ? `<div style="font-size:0.75rem;color:#A8894A;margin-top:4px;font-weight:600;letter-spacing:.03em">MLS® # ${l.ListingKey}</div>` : ''}
+          ${broker !== 'Listing Brokerage' ? `<div style="font-size:0.75rem;color:#6B7280;margin-top:2px">${broker}</div>` : ''}
         </div>
         ${type ? `<span style="font-size:0.75rem;color:#1C3557;background:#e8eef5;padding:5px 12px;border-radius:50px;font-weight:600;white-space:nowrap;align-self:flex-start;margin-top:6px">${type}</span>` : ''}
       </div>
@@ -2425,6 +2476,7 @@ function showListingDetail(l, photos) {
 
       ${detailGridHtml}
       ${descHtml}
+      ${shareHtml}
 
       <div class="lm-inquiry">
         <h4>Book a Showing or Ask a Question</h4>
@@ -2478,6 +2530,9 @@ async function submitListingInquiry(addr, key) {
 function closeListingModal() {
   document.getElementById('listingModal').classList.remove('open');
   document.body.style.overflow = '';
+  // Clear the ?listing= param from the URL without reloading
+  const clean = window.location.pathname;
+  window.history.pushState({}, '', clean);
 }
 
 // Open the registration modal with a gate-specific message.
@@ -2629,17 +2684,21 @@ let listingsShown = 12;            // grid pagination
 const LISTINGS_PAGE = 12;
 const FREE_VIEW_LIMIT = 3;         // free property detail views before registration
 
-async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', street='') {
+async function fetchListings(city='', propertyType='', maxPrice='', minPrice='', beds='', street='', postalCode='', listingKey='') {
   const grid = document.getElementById('listingsGrid');
   grid.innerHTML = '<div class="listings-loading"><div class="spinner"></div><p>Loading live MLS listings…</p></div>';
   try {
     const p = new URLSearchParams();
-    if (city)         p.set('city', city);
-    if (propertyType) p.set('type', propertyType);
-    if (maxPrice)     p.set('maxPrice', maxPrice);
-    if (minPrice)     p.set('minPrice', minPrice);
-    if (beds)         p.set('beds', beds);
-    if (street)       p.set('street', street);
+    if (listingKey)  { p.set('listingKey', listingKey); }
+    else {
+      if (city)        p.set('city', city);
+      if (propertyType) p.set('type', propertyType);
+      if (maxPrice)    p.set('maxPrice', maxPrice);
+      if (minPrice)    p.set('minPrice', minPrice);
+      if (beds)        p.set('beds', beds);
+      if (postalCode)  p.set('postalCode', postalCode);
+      else if (street) p.set('street', street);
+    }
     // Same-origin call: the page is served from www.ravihooda.com, but the apex
     // ravihooda.com 308-redirects there. Hardcoding the apex forced an
     // unnecessary cross-origin redirect on every load; using the page's own
@@ -2721,15 +2780,75 @@ function filterListings(btn, type) {
   fetchListings('', type);
 }
 
+// Strip street type + direction from a Google Places route name so it matches
+// PropTx StreetName (which stores just the base, e.g. "Bloor" not "Bloor Street West")
+function extractStreetBaseName(route) {
+  if (!route) return '';
+  let s = route.trim();
+  // Strip trailing cardinal direction
+  s = s.replace(/\s+(North|South|East|West|NE|NW|SE|SW|N\.?|S\.?|E\.?|W\.?)\.?$/i, '').trim();
+  // Strip trailing street type
+  s = s.replace(/\s+(Street|Avenue|Road|Boulevard|Drive|Court|Crescent|Place|Parkway|Pathway|Way|Lane|Terrace|Terr|Gate|Trail|Circle|Gardens|Garden|Grove|Park|Square|Heights|Hollow|Mews|Row|Rise|Run|Ridge|Path|Walk|Bay|Bend|Hill|Wood|Close|Cres|Crt|Blvd|Ave|Rd|St|Dr|Pl|Pkwy|Hwy|Circ?)s?\.?$/i, '').trim();
+  return s;
+}
+
+function toggleCustomPrice(sel, inputId) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (sel.value === 'custom') { inp.style.display = ''; inp.focus(); }
+  else inp.style.display = 'none';
+}
+function resolvePrice(selId, inputId) {
+  const sel = document.getElementById(selId);
+  if (sel?.value === 'custom') return document.getElementById(inputId)?.value || '';
+  return sel?.value || '';
+}
+
 function searchListings() {
-  const street   = document.getElementById('heroStreet')?.value.trim() || '';
-  const city     = document.getElementById('heroCity')?.value || '';
+  const address  = (document.getElementById('heroAddress')?.value || '').trim();
   const type     = document.getElementById('heroType')?.value || '';
-  const minPrice = document.getElementById('heroMinPrice')?.value || '';
-  const maxPrice = document.getElementById('heroPrice')?.value || '';
+  const maxPrice = resolvePrice('heroPrice', 'heroPriceVal');
+  const minPrice = resolvePrice('heroMinPrice', 'heroMinPriceVal');
   const beds     = document.getElementById('heroBeds')?.value || '';
-  fetchListings(city, type, maxPrice, minPrice, beds, street);
   document.getElementById('listings')?.scrollIntoView({behavior:'smooth'});
+
+  // MLS# pattern: optional letter prefix + 7-9 digits (e.g. C12345678, W9876543)
+  const mlsMatch = address.match(/^([A-Za-z]?\d{7,9})$/);
+  if (mlsMatch) {
+    openListingDetail(mlsMatch[1].toUpperCase());
+    return;
+  }
+
+  // If Places autocomplete resolved city/street/postal for this input, use them
+  if (window._heroPlaceCity != null) {
+    const city       = window._heroPlaceCity || document.getElementById('heroCity')?.value || '';
+    const street     = window._heroPlaceStreet || '';
+    const postalCode = window._heroPostalCode  || '';
+    fetchListings(city, type, maxPrice, minPrice, beds, street, postalCode);
+    return;
+  }
+
+  // No autocomplete selected — use city dropdown as-is, or geocode the typed text
+  const city = document.getElementById('heroCity')?.value || '';
+  if (address && window.google?.maps) {
+    getGeocoder().geocode(
+      { address: address + ', Ontario, Canada', componentRestrictions: { country: 'CA' } },
+      (results, status) => {
+        if (status === 'OK' && results?.[0]) {
+          const comps = results[0].address_components || [];
+          const resolvedCity  = resolveGtaCity(comps) || city;
+          const routeComp     = comps.find(c => c.types.includes('route'))?.long_name || '';
+          const cleanStreet   = extractStreetBaseName(routeComp);
+          const postal        = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
+          fetchListings(resolvedCity, type, maxPrice, minPrice, beds, cleanStreet, postal);
+        } else {
+          fetchListings(city, type, maxPrice, minPrice, beds, '', '');
+        }
+      }
+    );
+  } else {
+    fetchListings(city, type, maxPrice, minPrice, beds, '', '');
+  }
 }
 
 function quickSearch(city) {
@@ -2906,6 +3025,21 @@ window.addEventListener('DOMContentLoaded', () => {
   loadPriceDrops();
   initScrollReveal();
   initFloatingCta();
+
+  // Auto-open listing from shareable link (?listing=KEY)
+  const listingParam = new URLSearchParams(window.location.search).get('listing');
+  if (listingParam) openListingDetail(listingParam);
+});
+
+// Handle browser Back button — close modal if we navigated back from a listing URL
+window.addEventListener('popstate', (e) => {
+  const modal = document.getElementById('listingModal');
+  if (modal && modal.classList.contains('open')) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  } else if (e.state?.listing) {
+    openListingDetail(e.state.listing);
+  }
 });
 
 // ── SCROLL REVEAL ─────────────────────────────────────────────
@@ -3011,11 +3145,11 @@ const MAPS_KEY = 'AIzaSyDDsqASShU4BZECa0sVbc4WgfC1bl4Kt_M';
 // are cached and capped to limit Geocoding API calls.
 let markersByKey = {};
 let mapRenderToken = 0;
-const MAP_GEOCODE_LIMIT = 30; // only pin first 30; sidebar shows all 100
+const MAP_GEOCODE_LIMIT = 100; // geocode all listings; geoCache persists across visits
 const geoCache = {};
 const geoPending = {};
 let geoQueue = [], geoActiveCount = 0, _geocoder = null;
-const GEO_CONCURRENCY = 8;      // process several geocodes at once (single-flight was ~2.5/s)
+const GEO_CONCURRENCY = 25;     // Google Geocoding API allows 50 req/s; 25 concurrent is safe
 
 // Persist resolved coordinates so coverage accumulates across loads/visits.
 try { Object.assign(geoCache, JSON.parse(localStorage.getItem('hooda_geocache') || '{}')); } catch {}
@@ -3106,6 +3240,57 @@ function initMap() {
   });
 
   loadMapListings('', '', '', '', '', true); // fitView=true only on initial load
+
+  // Hero address search — Google Places Autocomplete
+  const heroAddrEl = document.getElementById('heroAddress');
+  if (heroAddrEl && google.maps.places) {
+    const ac = new google.maps.places.Autocomplete(heroAddrEl, {
+      bounds: new google.maps.LatLngBounds(new google.maps.LatLng(43.0,-80.2), new google.maps.LatLng(44.5,-78.5)),
+      strictBounds: false,
+      componentRestrictions: { country: 'ca' },
+      types: ['geocode', 'establishment'],
+      fields: ['geometry', 'address_components', 'formatted_address']
+    });
+    ac.addListener('place_changed', () => {
+      const place = ac.getPlace();
+      if (!place.address_components) return;
+      const comps = place.address_components;
+      window._heroPlaceCity   = resolveGtaCity(comps);
+      window._heroPlaceStreet = extractStreetBaseName(comps.find(c => c.types.includes('route'))?.long_name || '');
+      window._heroPostalCode  = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
+      if (place.geometry?.location) { map.panTo(place.geometry.location); map.setZoom(13); }
+      searchListings();
+    });
+    heroAddrEl.addEventListener('input', () => {
+      window._heroPlaceCity = null; window._heroPlaceStreet = null; window._heroPostalCode = null;
+    });
+  }
+
+  // Map section search box — Google Places Autocomplete
+  const mapSearchEl = document.getElementById('mapSearchInput');
+  if (mapSearchEl && google.maps.places) {
+    const mapAc = new google.maps.places.Autocomplete(mapSearchEl, {
+      bounds: new google.maps.LatLngBounds(new google.maps.LatLng(43.0,-80.2), new google.maps.LatLng(44.5,-78.5)),
+      strictBounds: false,
+      componentRestrictions: { country: 'ca' },
+      types: ['geocode', 'establishment'],
+      fields: ['geometry', 'address_components']
+    });
+    mapAc.addListener('place_changed', () => {
+      const place = mapAc.getPlace();
+      if (!place.geometry?.location) return;
+      map.panTo(place.geometry.location); map.setZoom(13);
+      const comps      = place.address_components || [];
+      const city       = resolveGtaCity(comps);
+      const street     = extractStreetBaseName(comps.find(c => c.types.includes('route'))?.long_name || '');
+      const postalCode = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
+      const type = document.getElementById('mapType')?.value || '';
+      const minP = document.getElementById('mapMinPrice')?.value || '';
+      const maxP = document.getElementById('mapMaxPrice')?.value || '';
+      const beds = document.getElementById('mapBeds')?.value || '';
+      loadMapListings(city, type, minP, maxP, beds, true, street, postalCode);
+    });
+  }
 }
 
 // Map Google geocoder city names → PropTx city names used in the IDX feed
@@ -3144,26 +3329,32 @@ function searchThisArea() {
   const minP = document.getElementById('mapMinPrice')?.value || '';
   const maxP = document.getElementById('mapMaxPrice')?.value || '';
   const beds = document.getElementById('mapBeds')?.value || '';
+  // Reverse-geocode the map centre → resolve to PropTx city name
   getGeocoder().geocode({ location: center }, (results, status) => {
     const comps = (status === 'OK' && results?.[0]?.address_components) || [];
     const city = resolveGtaCity(comps);
-    loadMapListings(city, type, minP, maxP, beds);
+    loadMapListings(city, type, minP, maxP, beds, false, '', '');
   });
 }
 
-async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false) {
+async function loadMapListings(city='', propType='', minPrice='', maxPrice='', beds='', fitView=false, street='', postalCode='') {
   document.getElementById('mapResultsList').innerHTML =
     '<div style="padding:32px 16px;text-align:center;color:var(--gray)"><div class="spinner" style="margin:0 auto 12px"></div><p>Loading listings…</p></div>';
   document.getElementById('mapResultCount').textContent = '—';
   clearMapMarkers();
 
+  // Scroll the map section into view so the user sees results appear
+  document.getElementById('mapsearch')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   try {
     const mapParams = new URLSearchParams();
-    if (city)     mapParams.set('city', city);
-    if (propType) mapParams.set('type', propType);
-    if (minPrice) mapParams.set('minPrice', minPrice);
-    if (maxPrice) mapParams.set('maxPrice', maxPrice);
-    if (beds)     mapParams.set('beds', beds);
+    if (city)      mapParams.set('city', city);
+    if (postalCode) mapParams.set('postalCode', postalCode);
+    else if (street) mapParams.set('street', street);
+    if (propType)  mapParams.set('type', propType);
+    if (minPrice)  mapParams.set('minPrice', minPrice);
+    if (maxPrice)  mapParams.set('maxPrice', maxPrice);
+    if (beds)      mapParams.set('beds', beds);
     const res = await fetch(window.location.origin + '/api/listings?' + mapParams.toString());
 
     if (!res.ok) throw new Error('API');
@@ -3238,20 +3429,33 @@ function renderMapListings(listings, fitView=false) {
     if (geocodePending === 0) fitOnce();
   };
 
+  const total = Math.min(listings.length, MAP_GEOCODE_LIMIT);
+  let resolved = 0;
+  const countEl = document.getElementById('mapResultCount');
+  const updatePinCount = () => {
+    if (myToken !== mapRenderToken) return;
+    if (countEl && geocodePending > 0)
+      countEl.textContent = `${placed} / ${total} pinning…`;
+    else if (countEl)
+      countEl.textContent = listings.length;
+  };
+
   listings.forEach((l, i) => {
     const lat = parseFloat(l.Latitude), lng = parseFloat(l.Longitude);
-    if (lat && lng) { place(l, i, { lat, lng }); return; }
+    if (lat && lng) { place(l, i, { lat, lng }); resolved++; updatePinCount(); return; }
     if (i < MAP_GEOCODE_LIMIT) {
       geocodePending++;
       geocodeListing(l).then(pos => {
         geocodePending--;
+        resolved++;
         place(l, i, pos);
-        // After last geocode resolves, fit if not done yet
+        updatePinCount();
         if (geocodePending === 0) fitOnce();
       });
     }
   });
 
+  updatePinCount();
   // Fit immediately for listings that already had coords (no geocoding needed)
   if (geocodePending === 0 && placed > 0) fitOnce();
 }
@@ -3382,27 +3586,19 @@ function debounceMapSearch() {
   mapSearchTimer = setTimeout(() => {
     const q = document.getElementById('mapSearchInput').value.trim();
     if (q.length <= 2) return;
-    // Geocode the query, recenter the map, AND refetch listings for the matched
-    // municipality so the neighbourhood actually fills with properties (the API
-    // can only filter by City, so we resolve the typed area to its city).
-    getGeocoder().geocode({ address: q + ', Ontario, Canada' }, (results, status) => {
+    getGeocoder().geocode({ address: q + ', Ontario, Canada', componentRestrictions: { country: 'CA' } }, (results, status) => {
       if (status !== 'OK' || !results[0]) return;
       map.panTo(results[0].geometry.location);
       map.setZoom(13);
-      const comps = results[0].address_components || [];
-      const locality = comps.find(c => c.types.includes('locality'))
-                    || comps.find(c => c.types.includes('sublocality'))
-                    || comps.find(c => c.types.includes('administrative_area_level_2'));
-      const city = locality ? locality.long_name : '';
-      if (city && city !== lastMapCity) {
-        lastMapCity = city;
-        // keep any active dropdown filters
-        const type = document.getElementById('mapType').value;
-        const minP = document.getElementById('mapMinPrice').value;
-        const maxP = document.getElementById('mapMaxPrice').value;
-        const beds = document.getElementById('mapBeds').value;
-        loadMapListings(city, type, minP, maxP, beds);
-      }
+      const comps      = results[0].address_components || [];
+      const city       = resolveGtaCity(comps);
+      const street     = extractStreetBaseName(comps.find(c => c.types.includes('route'))?.long_name || '');
+      const postalCode = comps.find(c => c.types.includes('postal_code'))?.short_name || '';
+      const type = document.getElementById('mapType').value;
+      const minP = document.getElementById('mapMinPrice').value;
+      const maxP = document.getElementById('mapMaxPrice').value;
+      const beds = document.getElementById('mapBeds').value;
+      if (city || street || postalCode) loadMapListings(city, type, minP, maxP, beds, true, street, postalCode);
     });
   }, 600);
 }
