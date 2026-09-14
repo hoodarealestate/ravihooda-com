@@ -48,16 +48,6 @@
       "permanent": true
     },
     {
-      "source": "/sell",
-      "destination": "/sell.html",
-      "permanent": false
-    },
-    {
-      "source": "/buy",
-      "destination": "/buy.html",
-      "permanent": false
-    },
-    {
       "source": "/landing/whats-my-home-worth",
       "destination": "/home-value",
       "permanent": true
