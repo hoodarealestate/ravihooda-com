@@ -48,6 +48,31 @@
       "permanent": true
     },
     {
+      "source": "/sell",
+      "destination": "/sell.html",
+      "permanent": false
+    },
+    {
+      "source": "/buy",
+      "destination": "/buy.html",
+      "permanent": false
+    },
+    {
+      "source": "/landing/whats-my-home-worth",
+      "destination": "/home-value",
+      "permanent": true
+    },
+    {
+      "source": "/landing/:path*",
+      "destination": "/home-value",
+      "permanent": true
+    },
+    {
+      "source": "/home-evaluation",
+      "destination": "/home-value",
+      "permanent": true
+    },
+    {
       "source": "/node/add/dream_home/lead_form_view",
       "destination": "/dream-home",
       "permanent": true
@@ -66,31 +91,6 @@
       "source": "/node/:path*",
       "destination": "/dream-home",
       "permanent": true
-    },
-    {
-      "source": "/landing/whats-my-home-worth",
-      "destination": "/home-value",
-      "permanent": true
-    },
-    {
-      "source": "/landing/:path*",
-      "destination": "/home-value",
-      "permanent": true
-    },
-    {
-      "source": "/home-evaluation",
-      "destination": "/home-value",
-      "permanent": true
-    },
-    {
-      "source": "/sell",
-      "destination": "/sell.html",
-      "permanent": false
-    },
-    {
-      "source": "/buy",
-      "destination": "/buy.html",
-      "permanent": false
     }
   ]
 }
