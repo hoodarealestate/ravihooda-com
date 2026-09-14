@@ -10,6 +10,16 @@ const nextConfig = {
         permanent: false,
       },
       {
+        source: '/sell',
+        destination: '/sell.html',
+        permanent: false,
+      },
+      {
+        source: '/buy',
+        destination: '/buy.html',
+        permanent: false,
+      },
+      {
         source: '/112-nordic-road',
         destination: '/112-nordic-road/index.html',
         permanent: false,
