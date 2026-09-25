@@ -20,6 +20,11 @@ const nextConfig = {
         permanent: false,
       },
       {
+        source: '/new-homes',
+        destination: '/new-homes.html',
+        permanent: false,
+      },
+      {
         source: '/112-nordic-road',
         destination: '/112-nordic-road/index.html',
         permanent: false,
